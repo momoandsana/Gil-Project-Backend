@@ -1,4 +1,4 @@
-package com.web.gilproject.Service;
+package com.web.gilproject.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ListObjectsRequest;

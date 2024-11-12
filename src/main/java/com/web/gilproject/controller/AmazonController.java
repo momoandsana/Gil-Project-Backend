@@ -1,7 +1,7 @@
-package com.web.gilproject.Controller;
+package com.web.gilproject.controller;
 
 
-import com.web.gilproject.Service.AmazonService;
+import com.web.gilproject.service.AmazonService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
