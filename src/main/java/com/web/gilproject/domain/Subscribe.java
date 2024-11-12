@@ -25,6 +25,6 @@ public class Subscribe {
     private User subscribeUser;
 
     @CreationTimestamp
-    private LocalDateTime subscribeTime;
+    private LocalDateTime subscribeDate;
 
 }

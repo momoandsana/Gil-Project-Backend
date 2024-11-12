@@ -22,7 +22,7 @@ public class Notification {
     private String content;
 
     @CreationTimestamp
-    private LocalDateTime dateTime;
+    private LocalDateTime date;
 
     private Integer state;
 }
