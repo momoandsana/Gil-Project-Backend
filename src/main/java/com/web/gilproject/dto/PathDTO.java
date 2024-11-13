@@ -1,5 +1,6 @@
 package com.web.gilproject.dto;
 
+import com.web.gilproject.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 public class PathDTO {
     private double id;
-    private double userId;
+    private User user;
     private int state;
     private String title;
     private String content;
