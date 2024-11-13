@@ -1,5 +1,7 @@
 package com.web.gilproject.config;
 
+import com.web.gilproject.jwt.JWTFilter;
+import com.web.gilproject.jwt.JWTUtil;
 import com.web.gilproject.jwt.LoginFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -12,6 +14,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -19,6 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final AuthenticationConfiguration authenticationConfiguration;
+    private final JWTUtil jwtUtil;
 
     //AuthenticationManager Bean 등록
     @Bean
@@ -55,7 +59,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/login", "/", "/join").permitAll() //모든 권한 허용
-                        .requestMatchers("/admin").hasRole("ADMIN") //ADMIN 권한 가진사람만 허용
+                        //.requestMatchers("/admin").hasRole("ADMIN") //ADMIN 권한 가진사람만 허용
                         .anyRequest().authenticated()); //로그인한 사용자만 허용
 
         //세션 설정 - JWT에서는 항상 세션을 STATELESS 상태로 관리
@@ -64,8 +68,11 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         
         //커스텀 필터 등록
-        http.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration)), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration),jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
+        //JWT 필터 추가
+        http
+                .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
 
         return http.build();
     }
