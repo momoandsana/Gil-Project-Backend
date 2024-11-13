@@ -1,7 +1,7 @@
 package com.web.gilproject.service;
 
-import com.web.gilproject.domain.UserEntity_JHW;
-import com.web.gilproject.dto.JoinDTO;
+import com.web.gilproject.domain.User;
+import com.web.gilproject.dto.UserDTO_JHW;
 import com.web.gilproject.repository.UserRepository_JHW;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,18 +17,23 @@ public class JoinService {
 
     }
 
-    public void joinProcess(JoinDTO joinDTO) {
-        String username = joinDTO.getUsername();
-        String password = joinDTO.getPassword();
+    public void joinProcess(UserDTO_JHW userDTOJHW) {
+        //DTO 가져오기(이메일 회원가입 입력필드)
+        String name = userDTOJHW.getName();
+        String nickName =userDTOJHW.getNickName();
+        String email = userDTOJHW.getEmail();
+        String password = userDTOJHW.getPassword();
 
-        Boolean isExist = userRepository.existsByUsername(username);
+        Boolean isExist = userRepository.existsByEmail(email);
 
         if (isExist) return;
-        UserEntity_JHW data = new UserEntity_JHW();
 
-        data.setUsername(username);
+        //DTO -> Entity 데이터 주입
+        User data = new User();
+        data.setName(name);
+        data.setNickName(nickName);
+        data.setEmail(email);
         data.setPassword(bCryptPasswordEncoder.encode(password)); //암호화
-        data.setRole("ROLE_ADMIN");
 
         userRepository.save(data);
     }

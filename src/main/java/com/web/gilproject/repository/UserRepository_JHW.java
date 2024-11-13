@@ -1,14 +1,14 @@
 package com.web.gilproject.repository;
 
-import com.web.gilproject.domain.UserEntity_JHW;
+import com.web.gilproject.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserRepository_JHW extends JpaRepository<UserEntity_JHW,Long> {
+public interface UserRepository_JHW extends JpaRepository<User, Long> {
 
     /**
-     * 유저이름으로 유저가 있는지 확인
-     * @param username
+     * 이메일로 유저 찾기
+     * @param email
      * @return
      */
-    Boolean existsByUsername(String username);
+    Boolean existsByEmail(String email);
 }
