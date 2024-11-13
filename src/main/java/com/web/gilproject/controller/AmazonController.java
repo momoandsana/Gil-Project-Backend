@@ -21,7 +21,7 @@ public class AmazonController {
         this.s3Service = s3Service;
     }
 
-    // 업로드
+    // 업로드, 멀티파트 이용
     @PostMapping("/upload")
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
         try {
@@ -46,7 +46,7 @@ public class AmazonController {
         return ResponseEntity.ok(fileUrls);
     }
 
-    // 특정 폴더로 파일 업로드
+    // 특정 폴더로 파일 업로드, 멀티파트 이용
     @PostMapping("/uploadFolder/{folder}")
     public ResponseEntity<String> uploadFileToFolder(
             @RequestParam("file") MultipartFile file,
