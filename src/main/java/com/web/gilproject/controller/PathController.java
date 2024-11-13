@@ -55,7 +55,6 @@ public class PathController {
                 .content(paramPath.getContent())
                 .state(paramPath.getState())
                 .title(paramPath.getTitle())
-                .content(paramPath.getContent())
                 .time(paramPath.getTime())
                 .distance(paramPath.getDistance())
                 .startLong(startPoint.x)
@@ -67,7 +66,7 @@ public class PathController {
 
     @GetMapping("/")
     //루트만 가져오는 방식.
-    public ResponseEntity<?> selectAll() {
+    public ResponseEntity<?> findRouteByUserId() {
         List<String> wktStrings = pathService.getAllRoutesAsWKT();
         GeometryFactory geometryFactory = new GeometryFactory();
 

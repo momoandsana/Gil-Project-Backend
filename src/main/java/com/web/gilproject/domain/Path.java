@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.LineString;
 
 import java.time.LocalDateTime;
@@ -38,13 +39,13 @@ public class Path {
 
     private Integer time; //소요시간(sec)
 
-    private double distance;
+    private Double distance;
 
     @Column(name = "start_lat")
-    private double startLat;
+    private Double startLat;
 
     @Column(name = "start_long")
-    private double startLong;
+    private Double startLong;
 
     @Column(columnDefinition = "geometry(LineString, 4326)") //GIS에서 제공하는 수식
     private LineString route;

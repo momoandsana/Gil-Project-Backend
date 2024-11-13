@@ -5,8 +5,6 @@ import com.web.gilproject.repository.PathRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import web.mvc.entity.Path;
-import web.mvc.repository.PathRepository;
 
 import java.util.List;
 
