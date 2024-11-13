@@ -22,9 +22,9 @@ public class Pin {
 
     private String content;
 
-    private String latitude;
+    private Double latitude;
 
-    private String longitude;
+    private Double longitude;
 
     private Integer state;
 }

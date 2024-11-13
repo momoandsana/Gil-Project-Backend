@@ -11,7 +11,7 @@ import java.util.Set;
 
 @Data
 @Entity
-@DynamicUpdate
+@DynamicUpdate //수정된 부분만 업데이트 되게하는 어노테이션
 public class Post {
 
     @Id
@@ -29,10 +29,12 @@ public class Post {
 
     private Integer state;
 
+    private String title;
+
     @Column(columnDefinition = "TEXT") // 게시물 길이제한 x
     private String content;
 
-    private String tag;
+    private String tag; //태그(후순위 활용)
 
     @CreationTimestamp
     private LocalDateTime writeDate;
@@ -40,19 +42,16 @@ public class Post {
     @UpdateTimestamp
     private LocalDateTime updateDate;
 
-    // 어노테이션?
-    private LocalDateTime deleteDate;
-
-    private Integer readNum;
+    private Integer readNum; //조회수
 
     @OneToMany(mappedBy = "post",cascade = CascadeType.ALL,orphanRemoval = true)
-    private Set<PostLike> postLikes;
+    private Set<PostLike> postLikes; //게시글 좋아요
 
     @OneToMany(mappedBy = "post",cascade = CascadeType.ALL,orphanRemoval = true)
-    private Set<Reply> replies;
+    private Set<Reply> replies; //댓글
 
     @OneToMany(mappedBy = "post",cascade = CascadeType.ALL,orphanRemoval = true)
-    private Set<PostWishlist> postWishLists;
+    private Set<PostWishlist> postWishLists; //게시글 찜
 
 
 }

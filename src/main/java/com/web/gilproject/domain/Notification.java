@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
-public class Notification {
+public class Notification { //알림
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "notification_id")
@@ -22,7 +22,7 @@ public class Notification {
     private String content;
 
     @CreationTimestamp
-    private LocalDateTime date;
+    private LocalDateTime date; //알림 발생 날짜
 
-    private Integer state;
+    private Integer state; //읽음 확인
 }
