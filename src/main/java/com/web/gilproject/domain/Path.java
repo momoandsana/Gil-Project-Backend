@@ -21,7 +21,7 @@ public class Path {
     @JoinColumn(name="USER_ID",nullable = false)
     private User user;
 
-    private Integer state;
+    private Integer state; //경로 삭제 여부(softDelete)
 
     private String title;
 
@@ -30,7 +30,7 @@ public class Path {
     @CreationTimestamp
     private LocalDateTime createdDate;
 
-    private Integer time;
+    private Integer time; //소요시간(sec)
 
     private double distance;
 
@@ -40,7 +40,7 @@ public class Path {
     @Column(name = "start_long")
     private double startLong;
 
-    @Column(columnDefinition = "geometry(LineString, 4326)")
+    @Column(columnDefinition = "geometry(LineString, 4326)") //GIS에서 제공하는 수식
     private LineString route;
 
     @OneToMany(mappedBy = "path",cascade = CascadeType.ALL,orphanRemoval = true)

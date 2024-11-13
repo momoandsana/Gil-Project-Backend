@@ -18,6 +18,11 @@ public class Reply {
     @JoinColumn(name="POST_ID",nullable = false)
     private Post post;
 
+    private Integer state; //댓글 삭제 여부
+
+    private String content;
+    
     @OneToMany(mappedBy = "reply",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<ReplyLike> replyLikes;
+
 }

@@ -27,7 +27,13 @@ public class User {
 
     private String imageUrl;
 
-    private Integer state;
+    private String password;
+
+    private String email;
+
+    private String latitude;
+
+    private String longitude;
 
     @CreationTimestamp
     private LocalDateTime joinDate;
@@ -35,16 +41,9 @@ public class User {
     @UpdateTimestamp
     private LocalDateTime updateDate;
 
-    // 어노테이션?
-    private LocalDateTime leaveDate;
-
-    private String latitude;
-
-    private String longitude;
-
-    private String email;
-
     private Integer point;
+
+    private Integer state;
 
     @OneToMany(mappedBy ="user",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Post> posts;
