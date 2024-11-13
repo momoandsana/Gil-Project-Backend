@@ -3,6 +3,7 @@ package com.web.gilproject.domain;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
+import org.locationtech.jts.geom.LineString;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -21,8 +22,6 @@ public class Path {
     private User user;
 
     private Integer state;
-    // 수정 필요!! LineString
-    private String route;
 
     private String title;
 
@@ -33,9 +32,16 @@ public class Path {
 
     private Integer time;
 
-    private Double startLat;
+    private double distance;
 
-    private Double startLong;
+    @Column(name = "start_lat")
+    private double startLat;
+
+    @Column(name = "start_long")
+    private double startLong;
+
+    @Column(columnDefinition = "geometry(LineString, 4326)")
+    private LineString route;
 
     @OneToMany(mappedBy = "path",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Pin> pins;
