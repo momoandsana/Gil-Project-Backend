@@ -52,6 +52,8 @@ dependencies {
 
 
 //    implementation 'org.springframework.boot:spring-boot-starter-security'
+    //base64설정
+    implementation 'org.springframework:spring-test'
 }
 
 tasks.named('test') {
