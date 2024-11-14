@@ -19,7 +19,7 @@ public class User {
     @SequenceGenerator(name="user_id",sequenceName = "user_id_seq",allocationSize=1)
     private Long id;
 
-    private Integer platform;
+    private Integer platform; // 0: 이메일, 1: 구글, 2: 네이버, 3: 카카오
 
     private String name;
 
@@ -31,9 +31,9 @@ public class User {
 
     private String email;
 
-    private String latitude;
+    private Double latitude;
 
-    private String longitude;
+    private Double longitude;
 
     @CreationTimestamp
     private LocalDateTime joinDate;
@@ -43,7 +43,7 @@ public class User {
 
     private Integer point;
 
-    private Integer state;
+    private Integer state; // 0: 정상 1: 탈퇴
 
     @OneToMany(mappedBy ="user",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Post> posts;

@@ -18,6 +18,4 @@ public interface UserRepository_JHW extends JpaRepository<User, Long> {
      * @return 회원 객체
      */
     User findByEmail(String email);
-
-    //User findbyUsername(String username);
 }

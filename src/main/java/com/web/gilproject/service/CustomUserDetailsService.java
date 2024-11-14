@@ -20,7 +20,7 @@ public class CustomUserDetailsService implements UserDetailsService {
      * 이메일로 인증(메소드 이름은 신경쓰지마세요)
      * @param email 회원 이메일
      * @return
-     * @throws UsernameNotFoundException
+     * @throws UsernameNotFoundException 이메일이 없는 경우 오류
      */
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -29,6 +29,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         if(userData !=null){
             return new CustomUserDetails(userData);
         }
+
         return null;
     }
 

@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -14,13 +13,10 @@ public class CustomUserDetails implements UserDetails {
 
     private final User user;
 
-    /**
-     * Role 값 반환
-     * @return
-     */
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Collection<GrantedAuthority> authorities = new ArrayList<>();
+        /*Collection<GrantedAuthority> authorities = new ArrayList<>();
 
         authorities.add(new GrantedAuthority() {
             @Override
@@ -28,6 +24,7 @@ public class CustomUserDetails implements UserDetails {
                 return "";
             }
         });
+        */
 
         return List.of();
     }

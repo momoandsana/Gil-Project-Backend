@@ -22,14 +22,13 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        String userName = obtainUsername(request);
+        String email = obtainUsername(request);
         String password = obtainPassword(request);
+        System.out.println("email = " + email);
 
-        System.out.println("userName = " + userName);
-
-        //세번째 인자는 Role
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userName, password, null);
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(email, password, null); //세번째 인자는 Role
         System.out.println("authToken = " + authToken);
+
         return authenticationManager.authenticate(authToken);
     }
 
@@ -37,21 +36,21 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     //로그인 성공시 실행하는 메소드 (여기서 JWT 발급)
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) {
-        System.out.println("successful authentication");
+        System.out.println("로그인 성공");
 
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-        String name = customUserDetails.getUsername();
         String email = customUserDetails.getEmail();
 
-        String token = jwtUtil.createJwt(name,email,10 * 60 * 60 * 1000L); //10시간
+        String token = jwtUtil.createJwt(email,1000 * 60 * 3L); //3분
 
+        //헤더에 발급된 JWT 실어주기
         response.addHeader("Authorization", "Bearer " + token);
     }
 
     //로그인 실패시 실행하는 메소드
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) {
-        System.out.println("unsuccessful authentication");
+        System.out.println("로그인 실패");
 
         response.setStatus(401);
     }

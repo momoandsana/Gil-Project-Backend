@@ -1,8 +1,6 @@
 package com.web.gilproject.jwt;
 
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -24,10 +22,12 @@ public class JWTUtil {
 
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("username", String.class);
     }
+
     public String getEmail(String token) {
 
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("email", String.class);
     }
+
     public Boolean isExpired(String token) {
 
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
@@ -35,17 +35,15 @@ public class JWTUtil {
 
     /**
      * JWT 생성
-     * @param name
+     *
      * @param email
      * @param expiredMs 만료시간(ms)
      * @return
      */
-    public String createJwt(String name, String email, Long expiredMs) {
-        System.out.println("JWT 만료 시간(ms): " + new Date(System.currentTimeMillis() + expiredMs).getTime());
+    public String createJwt(String email, Long expiredMs) {
 
         return Jwts.builder()
-                .claim("username", name)
-                .claim("email",email)
+                .claim("email", email)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiredMs))
                 .signWith(secretKey) //시그니처 부분

@@ -3,6 +3,7 @@ package com.web.gilproject.config;
 import com.web.gilproject.jwt.JWTFilter;
 import com.web.gilproject.jwt.JWTUtil;
 import com.web.gilproject.jwt.LoginFilter;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +16,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+
+import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
@@ -43,6 +48,26 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        //CORS 설정
+        http
+                .cors((cors)->cors.configurationSource(new CorsConfigurationSource() {
+                    @Override
+                    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+                        CorsConfiguration config = new CorsConfiguration();
+
+                        //허용할 주소
+                        config.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+                        //허용할 메소드
+                        config.setAllowedMethods(Collections.singletonList("*"));
+                        //프론트에서 credential 설정을 할 경우 마찬가지로 true
+                        config.setAllowCredentials(true);
+                        //허용할 헤더
+                        config.setAllowedHeaders(Collections.singletonList("Authorization"));
+                        config.setMaxAge(3600L);
+
+                        return config;
+                    }
+                }));
 
         //csrf disable
         http
@@ -60,7 +85,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/login", "/", "/join").permitAll() //모든 권한 허용
                         //.requestMatchers("/admin").hasRole("ADMIN") //ADMIN 권한 가진사람만 허용
-                        .anyRequest().authenticated()); //로그인한 사용자만 허용
+                        .anyRequest().authenticated()); //그 외는 로그인한 사용자만 허용
 
         //세션 설정 - JWT에서는 항상 세션을 STATELESS 상태로 관리
         http

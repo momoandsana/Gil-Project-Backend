@@ -13,7 +13,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Date;
 
 /**
  * JWT 검증 클래스
@@ -50,20 +49,20 @@ public class JWTFilter extends OncePerRequestFilter {
             return;
         }
 
-        //토큰에서 username과 email 획득
-        String username = jwtUtil.getUsername(token);
+        //토큰에서 email 획득
+        //String username = jwtUtil.getUsername(token);
         String email = jwtUtil.getEmail(token);
 
         //userEntity를 생성하여 값 set
         User userEntity = new User();
-        userEntity.setName(username);
+        userEntity.setEmail(email);
         userEntity.setPassword("temppassword"); //임시비밀번호 - DB에서 매번 조회할 필요없기 때문에 아무 값으로 초기화
 
         //UserDetails에 회원 정보 객체 담기
         CustomUserDetails customUserDetails = new CustomUserDetails(userEntity);
 
         //스프링 시큐리티 인증 토큰 생성
-        Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
+        Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, null);
 
         //세션에 사용자 등록
         SecurityContextHolder.getContext().setAuthentication(authToken);
