@@ -1,5 +1,6 @@
 package com.web.gilproject.domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -25,6 +26,7 @@ public class Post {
 
     @OneToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="PATH_ID",nullable=false)
+    @JsonManagedReference
     private Path path;
 
     private Integer state;
