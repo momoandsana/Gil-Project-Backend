@@ -40,8 +40,11 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         String email = customUserDetails.getEmail();
+        String username = customUserDetails.getUsername();
+        //Long id = customUserDetails.getId();
+       // System.out.println("id = " + id);
 
-        String token = jwtUtil.createJwt(email,1000 * 60 * 3L); //3분
+        String token = jwtUtil.createJwt(username,email,1000 * 60 * 60 * 24L); //24시간
 
         //헤더에 발급된 JWT 실어주기
         response.addHeader("Authorization", "Bearer " + token);

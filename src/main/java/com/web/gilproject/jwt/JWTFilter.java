@@ -49,13 +49,14 @@ public class JWTFilter extends OncePerRequestFilter {
             return;
         }
 
-        //토큰에서 email 획득
-        //String username = jwtUtil.getUsername(token);
+        //토큰에서 username, email 획득
+        String username = jwtUtil.getUsername(token);
         String email = jwtUtil.getEmail(token);
 
         //userEntity를 생성하여 값 set
         User userEntity = new User();
         userEntity.setEmail(email);
+        userEntity.setName(username);
         userEntity.setPassword("temppassword"); //임시비밀번호 - DB에서 매번 조회할 필요없기 때문에 아무 값으로 초기화
 
         //UserDetails에 회원 정보 객체 담기

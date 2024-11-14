@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -16,16 +17,6 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        /*Collection<GrantedAuthority> authorities = new ArrayList<>();
-
-        authorities.add(new GrantedAuthority() {
-            @Override
-            public String getAuthority() {
-                return "";
-            }
-        });
-        */
-
         return List.of();
     }
 
@@ -41,6 +32,10 @@ public class CustomUserDetails implements UserDetails {
 
     public String getEmail() {
         return user.getEmail();
+    }
+
+    public Long getId() {
+        return user.getId();
     }
 
     @Override

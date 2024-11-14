@@ -35,14 +35,15 @@ public class JWTUtil {
 
     /**
      * JWT 생성
-     *
-     * @param email
+     * @param name 이름
+     * @param email 이메일
      * @param expiredMs 만료시간(ms)
      * @return
      */
-    public String createJwt(String email, Long expiredMs) {
+    public String createJwt(String name, String email, Long expiredMs) {
 
         return Jwts.builder()
+                .claim("username",name)
                 .claim("email", email)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiredMs))
