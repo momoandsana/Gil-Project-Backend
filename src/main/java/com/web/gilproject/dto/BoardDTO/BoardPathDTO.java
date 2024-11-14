@@ -1,7 +1,9 @@
 package com.web.gilproject.dto.BoardDTO;
 
 import com.web.gilproject.domain.Path;
-import org.locationtech.jts.geom.LineString;
+
+import java.util.Arrays;
+import java.util.List;
 
 public record BoardPathDTO(
         Long id,
@@ -10,7 +12,7 @@ public record BoardPathDTO(
         double distance,
         double startLat,
         double startLong,
-        LineString route
+        List<double[]> route
 )
 {
     public static BoardPathDTO from(Path path)
@@ -22,7 +24,9 @@ public record BoardPathDTO(
                 path.getDistance(),
                 path.getStartLat(),
                 path.getStartLong(),
-                path.getRoute()
+                Arrays.stream(path.getRoute().getCoordinates())
+                        .map(coord->new double[]{coord.x,coord.y})
+                        .toList()
         );
     }
 }

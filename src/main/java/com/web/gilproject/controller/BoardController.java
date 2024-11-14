@@ -27,6 +27,9 @@ public class BoardController {
     public ResponseEntity<List<BoardPathDTO>> getAllPaths(@PathVariable Long userId)
     {
         List<BoardPathDTO> boardPathListDTO=boardService.getAllPathsById(userId);
+        for (BoardPathDTO boardPathDTO : boardPathListDTO) {
+            System.out.println(boardPathDTO);
+        }
         return ResponseEntity.ok(boardPathListDTO);
     }
 

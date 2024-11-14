@@ -1,6 +1,5 @@
 package com.web.gilproject.domain;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -48,6 +47,5 @@ public class Path {
     private Set<Pin> pins;
 
     @OneToOne(mappedBy = "path",cascade = CascadeType.ALL,orphanRemoval = true)
-    @JsonBackReference
     private Post post;
 }
