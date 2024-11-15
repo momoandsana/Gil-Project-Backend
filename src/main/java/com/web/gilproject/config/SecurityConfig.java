@@ -3,11 +3,13 @@ package com.web.gilproject.config;
 import com.web.gilproject.jwt.JWTFilter;
 import com.web.gilproject.jwt.JWTUtil;
 import com.web.gilproject.jwt.LoginFilter;
+import com.web.gilproject.service.CustomOAuth2UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -28,6 +30,9 @@ public class SecurityConfig {
 
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JWTUtil jwtUtil;
+
+    //OAuth
+    private final CustomOAuth2UserService customOAuth2UserService;
 
     //AuthenticationManager Bean 등록
     @Bean
@@ -80,12 +85,20 @@ public class SecurityConfig {
         http
                 .httpBasic((auth) -> auth.disable());
 
+        //oauth2
+        http
+                .oauth2Login((oauth2) -> oauth2
+                        .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
+                                .userService(customOAuth2UserService)));
+
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/login", "/", "/join").permitAll() //모든 권한 허용
+                        //.requestMatchers("/login", "/", "/join").permitAll() //모든 권한 허용
                         //.requestMatchers("/admin").hasRole("ADMIN") //ADMIN 권한 가진사람만 허용
-                        .anyRequest().authenticated()); //그 외는 로그인한 사용자만 허용
+                        //.anyRequest().authenticated()); //모든 로그인한 사용자만 허용
+                        .anyRequest().permitAll()); //모든 요청 허용
+
 
         //세션 설정 - JWT에서는 항상 세션을 STATELESS 상태로 관리
         http

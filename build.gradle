@@ -62,6 +62,14 @@ dependencies {
     /*spring dev tools*/
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
+    /*Java Mail Sender(이메일 인증)*/
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+    /*OAuth2*/
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+
+
 }
 
 tasks.named('test') {

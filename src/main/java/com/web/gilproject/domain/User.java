@@ -3,6 +3,7 @@ package com.web.gilproject.domain;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.beans.factory.support.ReplaceOverride;
 
@@ -12,6 +13,7 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name="USERS")
+@DynamicInsert
 public class User {
 
     @Id
