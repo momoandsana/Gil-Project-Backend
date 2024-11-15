@@ -3,6 +3,8 @@ package com.web.gilproject.controller;
 import com.web.gilproject.domain.Post;
 import com.web.gilproject.dto.BoardDTO.BoardPathDTO;
 import com.web.gilproject.dto.BoardDTO.ImageUploadDTO;
+import com.web.gilproject.dto.BoardDTO.TempFileUploadResponseDTO;
+import com.web.gilproject.service.AmazonService;
 import com.web.gilproject.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +14,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
@@ -19,6 +22,7 @@ import java.util.Map;
 public class BoardController {
 //    private final PathService pathService;
     private final BoardService boardService;
+    private final AmazonService s3Service;
 
 
     /*
@@ -41,7 +45,7 @@ public class BoardController {
     사용자가 게시물을 작성하면서 사진을 업로드를 하게 되면 임시 저장소에 사진을 저장한다
     저장한 사진의 주소를 프론트로 반환한다
      */
-    @PostMapping("/images")
+    @PostMapping("/image")
     public ResponseEntity<Map<String,String>>saveImage(@RequestBody ImageUploadDTO imageUploadDTO)
     {
         String base64Data= imageUploadDTO.base64Data();
@@ -56,6 +60,25 @@ public class BoardController {
         response.put("filePath",tmpFilePath);
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/image-s3")
+    public ResponseEntity<List<TempFileUploadResponseDTO>> uploadFromTemp(@RequestBody List<String> filePaths)
+    {
+        List<TempFileUploadResponseDTO> responseList=filePaths.stream()
+                .map(path->{
+                    try{
+                        String awsUrl=boardService.uploadFileFromTemp(path);
+                        return new TempFileUploadResponseDTO(path,awsUrl);
+                    }
+                    catch (IOException e)
+                    {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(responseList);
+    }
+
 
 
 
