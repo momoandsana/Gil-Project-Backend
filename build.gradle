@@ -68,8 +68,8 @@ dependencies {
     /*OAuth2*/
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
-
-
+    //base64설정
+    implementation 'org.springframework:spring-test'
 }
 
 tasks.named('test') {

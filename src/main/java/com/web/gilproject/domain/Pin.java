@@ -1,12 +1,18 @@
 package com.web.gilproject.domain;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.awt.print.Pageable;
 
-@Data
+//@Data
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Setter
+@Getter
+@ToString(exclude = "path")
 public class Pin {
 
     @Id
@@ -25,6 +31,4 @@ public class Pin {
     private Double latitude;
 
     private Double longitude;
-
-    private Integer state;
 }
