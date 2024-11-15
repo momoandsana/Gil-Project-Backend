@@ -3,6 +3,7 @@ package com.web.gilproject.domain;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.beans.factory.support.ReplaceOverride;
 
@@ -12,6 +13,7 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name="USERS")
+@DynamicUpdate //수정된 부분만 업데이트 되게하는 어노테이션
 public class User {
 
     @Id
@@ -30,6 +32,8 @@ public class User {
     private String password;
 
     private String email;
+
+    private String comment; //자기소개글
 
     private String latitude;
 
