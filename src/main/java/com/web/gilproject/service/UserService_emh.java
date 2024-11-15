@@ -17,5 +17,10 @@ public interface UserService_emh {
      * @param id
      * @param userDTO
      */
-    void updateUser(Long id, UserDTO userDTO);
+    void updateUserInfo(Long id, UserDTO userDTO);
+
+    /**
+     * 내 프로필 수정
+     */
+    void updateUserImg(Long id);
 }

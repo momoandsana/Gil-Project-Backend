@@ -44,6 +44,7 @@ public class UserDTO {
         this.imageUrl = user.getImageUrl();
         this.password = user.getPassword();
         this.email = user.getEmail();
+        this.comment = user.getComment();
         this.latitude = user.getLatitude();
         this.longitude = user.getLongitude();
         this.joinDate = user.getJoinDate();
