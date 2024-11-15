@@ -17,4 +17,6 @@ public interface PathRepository extends JpaRepository<Path, Long>{
 
     @Query("SELECT p FROM Path p WHERE p.route = :route")
     List<Path> findPathByRoute(@Param("route") LineString route);
+
+     List<Path> findByUserId(Long userId);
 }
