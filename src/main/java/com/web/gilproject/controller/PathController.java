@@ -6,6 +6,7 @@ import com.web.gilproject.domain.User;
 import com.web.gilproject.dto.CoordinateDto;
 import com.web.gilproject.dto.PathDTO;
 import com.web.gilproject.dto.PathResDTO;
+import com.web.gilproject.dto.PinResDTO;
 import com.web.gilproject.service.AmazonService;
 import com.web.gilproject.service.PathService;
 import com.web.gilproject.service.PinService;
@@ -126,10 +127,42 @@ public class PathController {
         });
     }
 
+    //프론트에 보내준 userId로 경로+핀 뿌리기
     @GetMapping("/{userId}")
     public ResponseEntity<?> getPath(@PathVariable Long userId) {
         List<PathResDTO> pathResDTOList = pathService.findPathByUserIdTransform(userId);
 
         return ResponseEntity.ok(pathResDTOList);
     }
+
+    //핀 업데이트
+    @PutMapping("/{pinId}")
+    public void pinUpdate(@PathVariable Long pinId, @RequestBody PinResDTO pinResDTO) {
+        try {
+            // Base64로 전달된 이미지 처리
+            String imageUrl = null;
+            if (pinResDTO.getImageUrl() != null && !pinResDTO.getImageUrl().isEmpty()) {
+                MultipartFile imageFile = convertBase64ToMultipartFile(pinResDTO.getImageUrl());
+                imageUrl = s3Service.uploadFile(imageFile);
+            }
+
+            // PinResDTO에 이미지 URL 설정
+            if (imageUrl != null) {
+                pinResDTO.setImageUrl(imageUrl);
+            }
+
+            // Pin 업데이트
+            pinService.update(pinId, pinResDTO);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to update pin", e);
+        }
+    }
+
+    //핀 삭제
+    @DeleteMapping("/{pinId}")
+    public void pinDelete(@PathVariable Long pinId) {
+        pinService.delete(pinId);
+    }
+
 }
