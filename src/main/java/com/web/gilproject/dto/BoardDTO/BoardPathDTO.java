@@ -7,14 +7,14 @@ import java.util.List;
 import java.util.Map;
 
 public record BoardPathDTO(
-        Long id,
+        Long routeId,
         String title,
-        String content,
-        Integer time,
+        String description,
+        Integer recordedTime,
         double distance,
         double startLat,
         double startLong,
-        List<Map<String, Double>> route
+        List<Map<String, Double>> routeCoordinates
 ) {
     public static BoardPathDTO from(Path path) {
         return new BoardPathDTO(
