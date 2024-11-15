@@ -67,7 +67,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             userEntity.setEmail(oAuth2Response.getEmail());
             userRepository.save(userEntity);
 
-            UserDTO_JHW userDTO = new UserDTO_JHW();
+            UserDTO userDTO = new UserDTO();
             userDTO.setName(oAuth2Response.getName());
             userDTO.setEmail(oAuth2Response.getEmail());
             return new CustomOAuth2User(userDTO);

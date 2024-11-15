@@ -1,7 +1,7 @@
 package com.web.gilproject.service;
 
 import com.web.gilproject.domain.User;
-import com.web.gilproject.dto.UserDTO_JHW;
+import com.web.gilproject.dto.UserDTO;
 import com.web.gilproject.repository.UserRepository_JHW;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -13,7 +13,7 @@ public class JoinService {
     private final UserRepository_JHW userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public void joinProcess(UserDTO_JHW userDTOJHW) {
+    public void joinProcess(UserDTO userDTOJHW) {
         //DTO 가져오기(이메일 회원가입 입력필드)
         String name = userDTOJHW.getName();
         String nickName =userDTOJHW.getNickName();
