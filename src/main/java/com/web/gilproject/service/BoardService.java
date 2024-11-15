@@ -65,6 +65,7 @@ public class BoardService {
         File file=new File(filePath);
 
         String fileName=file.getName();
+        String key="upload_images/"+fileName;
 
         ObjectMetadata metadata=new ObjectMetadata();
         metadata.setContentLength(file.length());
@@ -72,7 +73,7 @@ public class BoardService {
 
         try(FileInputStream inputStream=new FileInputStream(filePath))
         {
-            amazonS3.putObject(bucketName,fileName,inputStream,metadata);
+            amazonS3.putObject(bucketName,key,inputStream,metadata);
         }
 
         String awsUrl=amazonS3.getUrl(bucketName,fileName).toString();

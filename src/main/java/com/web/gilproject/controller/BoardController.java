@@ -61,6 +61,9 @@ public class BoardController {
         return ResponseEntity.ok(response);
     }
 
+    /*
+    ToDo:마지막에 모든 jpg 삭제하는 기능
+     */
     @PostMapping("/image-s3")
     public ResponseEntity<List<TempFileUploadResponseDTO>> uploadFromTemp(@RequestBody List<String> filePaths)
     {
@@ -78,9 +81,6 @@ public class BoardController {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(responseList);
     }
-
-
-
 
 
     /*
