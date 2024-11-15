@@ -2,6 +2,8 @@ package com.web.gilproject.domain;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.beans.factory.support.ReplaceOverride;
@@ -9,9 +11,11 @@ import org.springframework.beans.factory.support.ReplaceOverride;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-@Data
+//@Data
 @Entity
 @Table(name="USERS")
+@Setter
+@Getter
 public class User {
 
     @Id

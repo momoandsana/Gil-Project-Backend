@@ -27,6 +27,7 @@ public class PathDTO {
     private Double startLat;
     private Double startLong;
     private List<CoordinateDto> routeCoordinates;
+    private String startAddr;
     private Set<Pin> pins;
 
 }

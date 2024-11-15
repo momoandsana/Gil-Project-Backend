@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PinDTO {
-    private int id;
-    private int pathId;
+    private Long id;
+    private Long pathId;
     private String imageUrl;
     private String content;
     private String latitude;

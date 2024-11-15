@@ -5,6 +5,7 @@ import com.web.gilproject.domain.Pin;
 import com.web.gilproject.domain.User;
 import com.web.gilproject.dto.CoordinateDto;
 import com.web.gilproject.dto.PathDTO;
+import com.web.gilproject.dto.PathResDTO;
 import com.web.gilproject.service.AmazonService;
 import com.web.gilproject.service.PathService;
 import com.web.gilproject.service.PinService;
@@ -14,12 +15,10 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
@@ -48,21 +47,19 @@ public class PathController {
         return lineString;
     }
 
-    //LineString의 시작점 구하기
+    /*//LineString의 시작점 구하기
     public Coordinate getStartPoint(LineString lineString) {
         // 시작점은 첫 번째 좌표이므로 index 0을 사용
         return lineString.getCoordinateN(0);
-    }
+    }*/
 
     //base64로 들어온 이미지 다시 변환하여 s3에 넣기.
     public static MultipartFile convertBase64ToMultipartFile(String base64Image) {
         try {
-            // Base64 문자열에서 "data:image/jpeg;base64," 같은 접두사 제거
             String[] parts = base64Image.split(",");
             String imageString = parts.length > 1 ? parts[1] : parts[0];
             byte[] imageBytes = Base64.getDecoder().decode(imageString);
 
-            // MockMultipartFile을 사용하여 MultipartFile 생성
             return new MockMultipartFile("file", "image.jpg", "image/jpeg", imageBytes);
         } catch (Exception e) {
             e.printStackTrace();
@@ -70,58 +67,49 @@ public class PathController {
         }
     }
 
-    //경로와 핀 등록.
     @PostMapping("/")
     public void insert(@RequestBody PathDTO paramPath) {
         System.out.println(paramPath);
 
-        // 1. userId로 사용자 조회
-        User user = pathService.findById(paramPath.getUser());
+        // LineString 생성
+        LineString lineString = getLineString(paramPath.getRouteCoordinates());
 
-        // 2. 경로가 이미 존재하는지 확인
-        List<Path> pathList = pathService.findPathByUserId(user.getId());
+        // route로 경로 조회
+        List<Path> pathList = pathService.findPathByRoute(lineString);
 
-        // 3. path 초기화
         Path path;
         if (pathList == null || pathList.isEmpty()) {
             // 기존 경로가 없으면 새로 생성
-            LineString lineString = getLineString(paramPath.getRouteCoordinates());
-            Coordinate startPoint = getStartPoint(lineString);
-
             path = Path.builder()
-                    .user(user)
+                    .user(pathService.findById(paramPath.getUser()))
                     .content(paramPath.getContent())
                     .state(paramPath.getState())
                     .title(paramPath.getTitle())
                     .time(paramPath.getTime())
                     .distance(paramPath.getDistance())
-                    .startLong(startPoint.x)
-                    .startLat(startPoint.y)
+                    .startLong(paramPath.getStartLong())
+                    .startLat(paramPath.getStartLat())
+                    .startAddr(paramPath.getStartAddr())
                     .route(lineString)
                     .build();
 
-            // 새 Path 저장
             pathService.insert(path);
         } else {
-            // 기존 경로가 존재하면 첫 번째 항목을 사용
-            path = pathList.get(0);
+            path = pathList.get(0); // 기존 경로 사용
         }
 
-        // 4. 새로운 핀 데이터 저장
         final Path finalPath = path;
+
+        // Pin 데이터 처리
         paramPath.getPins().forEach(pinDTO -> {
             try {
-                System.out.println("imageFile 1번 = " + pinDTO.getImageUrl());
                 String imageUrl = null;
 
-                // Base64 이미지를 MultipartFile로 변환하고 S3에 업로드
                 if (pinDTO.getImageUrl() != null && !pinDTO.getImageUrl().isEmpty()) {
                     MultipartFile imageFile = convertBase64ToMultipartFile(pinDTO.getImageUrl());
-                    System.out.println("imageFile 2번 = " + imageFile);
                     imageUrl = s3Service.uploadFile(imageFile);
                 }
 
-                // 빌더를 사용하여 Pin 객체 생성
                 Pin pin = Pin.builder()
                         .path(finalPath)
                         .content(pinDTO.getContent())
@@ -138,40 +126,10 @@ public class PathController {
         });
     }
 
+    @GetMapping("/{userId}")
+    public ResponseEntity<?> getPath(@PathVariable Long userId) {
+        List<PathResDTO> pathResDTOList = pathService.findPathByUserIdTransform(userId);
 
-    /*@GetMapping("/")
-    //해당 유저의 루트만 가져오는 방식.
-    public ResponseEntity<?> findRouteByUserId() {
-        List<String> wktStrings = pathService.getAllRoutesAsWKT();
-        GeometryFactory geometryFactory = new GeometryFactory();
-
-        // 위도와 경도만 담은 DTO 리스트로 변환하여 반환
-        List<List<Map<String, Double>>> parsedCoordinates = new ArrayList<>();
-        for (String wkt : wktStrings) {
-            String coordinatesPart = wkt.replace("LINESTRING(", "").replace(")", "");
-
-            List<Map<String, Double>> points = Arrays.stream(coordinatesPart.split(","))
-                    .map(coord -> {
-                        String[] latLon = coord.trim().split(" ");
-                        Map<String, Double> pointMap = new HashMap<>();
-                        try {
-                            double latitude = Double.parseDouble(latLon[0]);
-                            double longitude = Double.parseDouble(latLon[1]);
-                            pointMap.put("latitude", latitude);
-                            pointMap.put("longitude", longitude);
-                        } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
-                            System.err.println("Invalid coordinate format: " + coord);
-                            // 오류가 발생한 경우 기본값 설정
-                            pointMap.put("latitude", 0.0);
-                            pointMap.put("longitude", 0.0);
-                        }
-                        return pointMap;
-                    })
-                    .collect(Collectors.toList());
-
-            parsedCoordinates.add(points);
-        }
-
-        return ResponseEntity.status(HttpStatus.OK).body(parsedCoordinates);
-    }*/
+        return ResponseEntity.ok(pathResDTOList);
+    }
 }
