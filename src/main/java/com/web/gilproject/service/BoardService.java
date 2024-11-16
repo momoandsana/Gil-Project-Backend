@@ -61,29 +61,30 @@ public class BoardService {
         return filePath;
     }
 
-    public String uploadFileFromTemp(String  filePath) throws IOException {
-        File file=new File(filePath);
+    public String uploadFileFromTemp(String filePath) throws IOException {
+        File file = new File(filePath);
 
-        String fileName=file.getName();
-        String key="upload_images/"+fileName;
+        String fileName = file.getName();
+        String key = "upload_images/" + fileName;
 
-        ObjectMetadata metadata=new ObjectMetadata();
+        ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(file.length());
         metadata.setContentType(Files.probeContentType(file.toPath()));
 
-        try(FileInputStream inputStream=new FileInputStream(filePath))
-        {
-            amazonS3.putObject(bucketName,key,inputStream,metadata);
+
+        try (FileInputStream inputStream = new FileInputStream(filePath)) {
+            amazonS3.putObject(bucketName, key, inputStream, metadata);
         }
 
-        String awsUrl=amazonS3.getUrl(bucketName,fileName).toString();
 
-        if(!file.delete())// 파일 업로드하고 나서 temp 폴더에서 해당 파일 삭제
-        {
-            throw new IOException("Failed to delete file");
+        String awsUrl = amazonS3.getUrl(bucketName, key).toString();
+
+
+        if (!file.delete()) {
+            throw new IOException("사진 파일 삭제 실패");
         }
+
         return awsUrl;
-
     }
 }
 
