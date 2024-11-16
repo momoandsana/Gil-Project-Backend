@@ -42,7 +42,7 @@ public class BoardController {
     public ResponseEntity<List<BoardPathResponseDTO>> getAllPaths(Authentication authentication) {
 
         CustomUserDetails customMemberDetails=(CustomUserDetails)authentication.getPrincipal();
-        Long id=customMemberDetails.getId();
+        Long userId=customMemberDetails.getId();
         List<BoardPathResponseDTO> boardPathListDTO = boardService.getAllPathsById(userId);
 //        for (BoardPathDTO boardPathDTO : boardPathListDTO) {
 //            System.out.println(boardPathDTO);
