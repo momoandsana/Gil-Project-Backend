@@ -55,6 +55,7 @@ public class BoardController {
      * 사진 저장 함수
      * 사용자가 게시물을 작성하면서 사진을 업로드를 하게 되면 임시 저장소에 사진을 저장한다
      * 저장한 사진의 주소를 프론트로 반환한다
+     * 여기서 만든 주소를 주면 WebConfig 에서 서버의 실제 파일 경로와 매핑해준다
      *
      * @param imageUploadDTO
      * @param request
@@ -78,7 +79,7 @@ public class BoardController {
 
         // 요청의 기본 URL을 기반으로 파일의 URL을 생성
         String baseUrl = ServletUriComponentsBuilder.fromRequestUri(request)
-                .replacePath(null)
+                .replacePath(null)// localhost:8080 뒤에는 제거한다. http://localhost:8080/api/resource → http://localhost:8080
                 .build()
                 .toUriString();
 
