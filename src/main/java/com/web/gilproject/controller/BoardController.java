@@ -3,6 +3,7 @@ package com.web.gilproject.controller;
 import com.web.gilproject.domain.Post;
 import com.web.gilproject.dto.BoardDTO.BoardPathDTO;
 import com.web.gilproject.dto.BoardDTO.ImageUploadRequestDTO;
+import com.web.gilproject.dto.BoardDTO.S3ImageResponseDTO;
 import com.web.gilproject.dto.BoardDTO.TempImageResponseDTO;
 import com.web.gilproject.service.AmazonService;
 import com.web.gilproject.service.BoardService;
@@ -81,13 +82,13 @@ public class BoardController {
     ToDo:마지막에 모든 jpg 삭제하는 기능
      */
     @PostMapping("/image-s3")
-    public ResponseEntity<List<TempImageResponseDTO>> uploadFromTemp(@RequestBody List<String> filePaths)
+    public ResponseEntity<List<S3ImageResponseDTO>> uploadFromTemp(@RequestBody List<String> filePaths)
     {
-        List<TempImageResponseDTO> responseList=filePaths.stream()
+        List<S3ImageResponseDTO> responseList=filePaths.stream()
                 .map(path->{
                     try{
                         String awsUrl=boardService.uploadFileFromTemp(path);
-                        return new TempImageResponseDTO(path,awsUrl);
+                        return new S3ImageResponseDTO(path,awsUrl);
                     }
                     catch (IOException e)
                     {
