@@ -1,15 +1,17 @@
 package com.web.gilproject.controller;
 
 import com.web.gilproject.domain.Post;
-import com.web.gilproject.dto.BoardDTO.BoardPathDTO;
+import com.web.gilproject.dto.BoardDTO.BoardPathResponseDTO;
 import com.web.gilproject.dto.BoardDTO.ImageUploadRequestDTO;
 import com.web.gilproject.dto.BoardDTO.S3ImageResponseDTO;
 import com.web.gilproject.dto.BoardDTO.TempImageResponseDTO;
+import com.web.gilproject.dto.CustomUserDetails;
 import com.web.gilproject.service.AmazonService;
 import com.web.gilproject.service.BoardService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -22,30 +24,41 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/posts")
 public class BoardController {
-//    private final PathService pathService;
+    //    private final PathService pathService;
     private final BoardService boardService;
     private final AmazonService s3Service;
 
 
-    /*
-    ToDo:나중에 토큰에서 사용자 정보 꺼내서 해당 사용자의 경로 가지고 오기
-     임시로 사용자 아이디 받아서 해당 아이디 사용자의 경로들 가지고 오기
-     나중에 front 에서 export interface 만들기
+    /**
+     * ToDo:나중에 front 에서 export interface 만들기
+     *
+     *
+     *
+     * @param authentication
+     * @return
      */
-    @GetMapping("/{userId}/paths")
-    public ResponseEntity<List<BoardPathDTO>> getAllPaths(@PathVariable Long userId)
-    {
-        List<BoardPathDTO> boardPathListDTO=boardService.getAllPathsById(userId);
+    //@GetMapping("/{userId}/paths")
+    @GetMapping("/paths")
+    public ResponseEntity<List<BoardPathResponseDTO>> getAllPaths(Authentication authentication) {
+
+        CustomUserDetails customMemberDetails=(CustomUserDetails)authentication.getPrincipal();
+        Long id=customMemberDetails.getId();
+        List<BoardPathResponseDTO> boardPathListDTO = boardService.getAllPathsById(userId);
 //        for (BoardPathDTO boardPathDTO : boardPathListDTO) {
 //            System.out.println(boardPathDTO);
 //        }
         return ResponseEntity.ok(boardPathListDTO);
     }
 
-    /*
-    사진 저장 함수
-    사용자가 게시물을 작성하면서 사진을 업로드를 하게 되면 임시 저장소에 사진을 저장한다
-    저장한 사진의 주소를 프론트로 반환한다
+
+    /**
+     * 사진 저장 함수
+     * 사용자가 게시물을 작성하면서 사진을 업로드를 하게 되면 임시 저장소에 사진을 저장한다
+     * 저장한 사진의 주소를 프론트로 반환한다
+     *
+     * @param imageUploadDTO
+     * @param request
+     * @return
      */
     @PostMapping("/image")
     public ResponseEntity<TempImageResponseDTO> saveImage(@RequestBody ImageUploadRequestDTO imageUploadDTO, HttpServletRequest request) {
@@ -71,10 +84,9 @@ public class BoardController {
 
         String tempImageUrl = baseUrl + "/temp-images/" + fileName;
 
-        // 응답 DTO 생성
         TempImageResponseDTO response = new TempImageResponseDTO(tmpFilePath, tempImageUrl);
 
-        // 응답 반환
+
         return ResponseEntity.ok(response);
     }
 
@@ -82,16 +94,13 @@ public class BoardController {
     ToDo:마지막에 모든 jpg 삭제하는 기능
      */
     @PostMapping("/image-s3")
-    public ResponseEntity<List<S3ImageResponseDTO>> uploadFromTemp(@RequestBody List<String> filePaths)
-    {
-        List<S3ImageResponseDTO> responseList=filePaths.stream()
-                .map(path->{
-                    try{
-                        String awsUrl=boardService.uploadFileFromTemp(path);
-                        return new S3ImageResponseDTO(path,awsUrl);
-                    }
-                    catch (IOException e)
-                    {
+    public ResponseEntity<List<S3ImageResponseDTO>> uploadFromTemp(@RequestBody List<String> filePaths) {
+        List<S3ImageResponseDTO> responseList = filePaths.stream()
+                .map(path -> {
+                    try {
+                        String awsUrl = boardService.uploadFileFromTemp(path);
+                        return new S3ImageResponseDTO(path, awsUrl);
+                    } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
                 })
@@ -133,9 +142,6 @@ public class BoardController {
     // 게시글 삭제
 
     // 경로별
-
-
-
 
 
 }

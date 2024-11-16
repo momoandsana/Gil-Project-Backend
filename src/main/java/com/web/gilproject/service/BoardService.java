@@ -3,7 +3,7 @@ package com.web.gilproject.service;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.web.gilproject.domain.Path;
-import com.web.gilproject.dto.BoardDTO.BoardPathDTO;
+import com.web.gilproject.dto.BoardDTO.BoardPathResponseDTO;
 import com.web.gilproject.repository.BoardRepository;
 import com.web.gilproject.repository.PathRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,11 +31,11 @@ public class BoardService {
     private static final String TMP_DIR=System.getProperty("java.io.tmpdir");
     private final AmazonS3 amazonS3;
 
-    public List<BoardPathDTO> getAllPathsById(Long userId) {
+    public List<BoardPathResponseDTO> getAllPathsById(Long userId) {
         List<Path> paths = pathRepository.findByUserId(userId);
 
         return paths.stream()
-                .map(BoardPathDTO::from)
+                .map(BoardPathResponseDTO::from)
                 .collect(Collectors.toList());
         //return paths;
     }
@@ -80,6 +80,7 @@ public class BoardService {
         String awsUrl = amazonS3.getUrl(bucketName, key).toString();
 
 
+        // 업로드하고 로컬에서는 해당 파일 삭제
         if (!file.delete()) {
             throw new IOException("사진 파일 삭제 실패");
         }
