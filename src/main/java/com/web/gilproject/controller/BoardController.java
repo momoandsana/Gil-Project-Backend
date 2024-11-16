@@ -2,18 +2,19 @@ package com.web.gilproject.controller;
 
 import com.web.gilproject.domain.Post;
 import com.web.gilproject.dto.BoardDTO.BoardPathDTO;
-import com.web.gilproject.dto.BoardDTO.ImageUploadDTO;
-import com.web.gilproject.dto.BoardDTO.TempFileUploadResponseDTO;
+import com.web.gilproject.dto.BoardDTO.ImageUploadRequestDTO;
+import com.web.gilproject.dto.BoardDTO.TempImageResponseDTO;
 import com.web.gilproject.service.AmazonService;
 import com.web.gilproject.service.BoardService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.nio.file.Paths;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -46,18 +47,33 @@ public class BoardController {
     저장한 사진의 주소를 프론트로 반환한다
      */
     @PostMapping("/image")
-    public ResponseEntity<Map<String,String>>saveImage(@RequestBody ImageUploadDTO imageUploadDTO)
-    {
-        String base64Data= imageUploadDTO.base64Data();
-        String tmpFilePath= null;
+    public ResponseEntity<TempImageResponseDTO> saveImage(@RequestBody ImageUploadRequestDTO imageUploadDTO, HttpServletRequest request) {
+        // 클라이언트로부터 받은 Base64 데이터
+        String base64Data = imageUploadDTO.base64Data();
+        String tmpFilePath;
+        String fileName;
+
         try {
+
             tmpFilePath = boardService.saveBase64ToTmp(base64Data);
+            fileName = Paths.get(tmpFilePath).getFileName().toString();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+
+            throw new RuntimeException("Failed to save image", e);
         }
 
-        Map<String,String> response=new HashMap<>();
-        response.put("filePath",tmpFilePath);
+        // 요청의 기본 URL을 기반으로 파일의 URL을 생성
+        String baseUrl = ServletUriComponentsBuilder.fromRequestUri(request)
+                .replacePath(null)
+                .build()
+                .toUriString();
+
+        String tempImageUrl = baseUrl + "/temp-images/" + fileName;
+
+        // 응답 DTO 생성
+        TempImageResponseDTO response = new TempImageResponseDTO(tmpFilePath, tempImageUrl);
+
+        // 응답 반환
         return ResponseEntity.ok(response);
     }
 
@@ -65,13 +81,13 @@ public class BoardController {
     ToDo:마지막에 모든 jpg 삭제하는 기능
      */
     @PostMapping("/image-s3")
-    public ResponseEntity<List<TempFileUploadResponseDTO>> uploadFromTemp(@RequestBody List<String> filePaths)
+    public ResponseEntity<List<TempImageResponseDTO>> uploadFromTemp(@RequestBody List<String> filePaths)
     {
-        List<TempFileUploadResponseDTO> responseList=filePaths.stream()
+        List<TempImageResponseDTO> responseList=filePaths.stream()
                 .map(path->{
                     try{
                         String awsUrl=boardService.uploadFileFromTemp(path);
-                        return new TempFileUploadResponseDTO(path,awsUrl);
+                        return new TempImageResponseDTO(path,awsUrl);
                     }
                     catch (IOException e)
                     {
