@@ -10,6 +10,8 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
@@ -20,7 +22,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
         OAuth2User oAuth2User = super.loadUser(userRequest);
-        System.out.println(oAuth2User);
+        System.out.println("저장된 유저 " + oAuth2User);
 
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         OAuth2Response oAuth2Response = null;
@@ -45,35 +47,40 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         if (existData == null) {
             User userEntity = new User();
 
+            String nickName="";
+            String uuid = UUID.randomUUID().toString().substring(0, 8);
+
             //플랫폼 설정
             switch (registrationId) {
                 case "naver":
                     userEntity.setPlatform(2);
+                    nickName = "N";
                     break;
                 case "google":
                     userEntity.setPlatform(1);
+                    nickName = "G";
                     break;
                 case "kakao":
                     userEntity.setPlatform(3);
+                    nickName = "K";
                     break;
             }
-//            userEntity.setPoint(0);
-//            userEntity.setState(0);
-//            userEntity.setImageUrl("");
-//            userEntity.setImageUrl("");
-//            userEntity
-
+            userEntity.setNickName(nickName + uuid);
             userEntity.setName(oAuth2Response.getName());
             userEntity.setEmail(oAuth2Response.getEmail());
-            userRepository.save(userEntity);
+            userEntity.setImageUrl(oAuth2Response.getProfileUrl());
+
+            userRepository.save(userEntity); //DB 저장
 
             UserDTO userDTO = new UserDTO();
             userDTO.setName(oAuth2Response.getName());
             userDTO.setEmail(oAuth2Response.getEmail());
-            return new CustomOAuth2User(userDTO);
+            
+            return new CustomOAuth2User(userDTO); //이게 왜 필요한지 확인
 
         } else {
             //이미 있을 경우 업데이트하는 코드
+            System.out.println("OAuth - 이미 존재하는 이메일");
         }
 
         return null;

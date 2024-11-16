@@ -17,17 +17,31 @@ public class JWTUtil {
         secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
     }
 
-    //검증할 3개의 메소드
+    /**
+     * 토큰 내 이름 데이터 확인
+     * @param token
+     * @return
+     */
     public String getUsername(String token) {
 
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("username", String.class);
     }
 
+    /**
+     * 토큰 내 이메일 데이터 확인
+     * @param token
+     * @return
+     */
     public String getEmail(String token) {
 
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("email", String.class);
     }
 
+    /**
+     * 토큰이 만료됐는지
+     * @param token
+     * @return
+     */
     public Boolean isExpired(String token) {
 
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
@@ -45,8 +59,8 @@ public class JWTUtil {
         return Jwts.builder()
                 .claim("username",name)
                 .claim("email", email)
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + expiredMs))
+                .issuedAt(new Date(System.currentTimeMillis())) //생성일
+                .expiration(new Date(System.currentTimeMillis() + expiredMs)) //만료일
                 .signWith(secretKey) //시그니처 부분
                 .compact();
     }

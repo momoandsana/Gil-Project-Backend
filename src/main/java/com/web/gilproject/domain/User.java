@@ -1,12 +1,11 @@
 package com.web.gilproject.domain;
 
 import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.*;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -48,8 +47,10 @@ public class User {
     @UpdateTimestamp
     private LocalDateTime updateDate;
 
+    @ColumnDefault("0")
     private Integer point;
 
+    @ColumnDefault("0")
     private Integer state; // 0: 정상 1: 탈퇴
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)

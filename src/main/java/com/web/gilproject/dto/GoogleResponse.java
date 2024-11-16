@@ -7,6 +7,7 @@ public class GoogleResponse implements OAuth2Response {
     private final Map<String, Object> attribute;
 
     public GoogleResponse(Map<String, Object> attribute) {
+        //System.out.println("google에서 보내는 데이터 " + attribute.toString());
         this.attribute = attribute;
     }
 
@@ -31,7 +32,5 @@ public class GoogleResponse implements OAuth2Response {
     }
 
     @Override
-    public String getProfileUrl() {
-        return "프사주소 찾을수있나?";
-    }
+    public String getProfileUrl() { return attribute.get("picture").toString(); }
 }
