@@ -64,4 +64,13 @@ public class GilListController {
         List<PostDTO> listPost = gilListService.findMyFav(authentication);
         return new ResponseEntity<>(listPost, HttpStatus.OK);
     }
+
+    /**
+     * 6. 키워드 검색으로 글목록 조회하기
+     * */
+    @GetMapping("/keyword")
+    public ResponseEntity<?> findByKeyword(@RequestParam String keyword){
+        List<PostDTO> listPost = gilListService.findByKeyword(keyword);
+        return new ResponseEntity<>(listPost, HttpStatus.OK);
+    }
 }

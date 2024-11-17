@@ -30,4 +30,9 @@ public interface GilListService {
      * 5. 내가 찜한 산책길 글목록
      * */
     List<PostDTO> findMyFav(Authentication authentication);
+
+    /**
+     * 6. 키워드 검색으로 글목록 조회하기
+     * */
+    List<PostDTO> findByKeyword(String keyword);
 }

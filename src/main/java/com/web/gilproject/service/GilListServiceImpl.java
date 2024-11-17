@@ -10,7 +10,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -136,6 +138,36 @@ public class GilListServiceImpl implements GilListService {
         }
 
         return myFavList;
+    }
+
+    /**
+     * 6. 키워드 검색으로 글목록 조회하기
+     * */
+    @Transactional(readOnly = true)
+    @Override
+    public List<PostDTO> findByKeyword(String keyword) {
+        //최종 결과물을 담을 Set - 중복을 피하기 위해 Set 사용
+        Set<PostDTO> postByKeyword = new HashSet<>();
+
+        //제목에 따른 검색결과
+        Set<PostDTO> titleKeyword = gilListRepository.findByTitleContaining(keyword);
+        postByKeyword.addAll(titleKeyword);
+
+        //글 내용에 따른 검색결과
+        Set<PostDTO> contentKeyword = gilListRepository.findByContentContaining(keyword);
+        postByKeyword.addAll(contentKeyword);
+
+        //글 작성자 닉네임에 따른 검색결과
+        Set<PostDTO> nickNameKeyword = gilListRepository.findByNickNameContaining(keyword);
+        postByKeyword.addAll(nickNameKeyword);
+
+        List<PostDTO> result = new ArrayList<>();
+        result.addAll(postByKeyword);
+
+        //결과 List를 좋아요 내림차순 순서로 정렬
+        result.sort((p1, p2)->p2.getPostLikesNum().compareTo(p1.getPostLikesNum()));
+
+        return result;
     }
 
     /**
