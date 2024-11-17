@@ -161,6 +161,10 @@ public class GilListServiceImpl implements GilListService {
         Set<PostDTO> nickNameKeyword = gilListRepository.findByNickNameContaining(keyword);
         postByKeyword.addAll(nickNameKeyword);
 
+        //산책길 시작점에 따른 검색결과
+        Set<PostDTO> startAddrKeyword = gilListRepository.findByStartAddrContaining(keyword);
+        postByKeyword.addAll(startAddrKeyword);
+
         List<PostDTO> result = new ArrayList<>();
         result.addAll(postByKeyword);
 

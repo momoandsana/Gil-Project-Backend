@@ -60,5 +60,13 @@ public interface GilListRepository extends JpaRepository<Post, Long> {
     //@Query("select p from Post p where p.user.nickName like %:keyword% and p.state=0")
     //@Query("select p from Post p left join p.postLikes pl where p.user.nickName like %:keyword% and p.state = 0 group by p.id order by count(pl) desc")
     @Query("select p from Post p left join p.postLikes pl left join p.replies r where p.user.nickName like %:keyword% and p.state = 0 and (r is null or r.state = 0) group by p.id order by size(pl) desc")
-    Set<PostDTO> findByNickNameContaining(String keyword);
+    Set<PostDTO> findByNickNameContaining(@Param("keyword") String keyword);
+
+    /**
+     * 글의 산책로 시작점이 키워드와 일치할 때 전체 게시글 조회
+     * */
+    //@Query("select p from Post p where p.path.startAddr like %:keyword% and p.state=0")
+    //@Query("select p from Post p left join p.postLikes pl where p.path.startAddr like %:keyword% and p.state = 0 group by p.id order by count(pl) desc")
+    @Query("select p from Post p left join p.postLikes pl left join p.replies r where p.path.startAddr like %:keyword% and p.state = 0 and (r is null or r.state = 0) group by p.id order by count(pl) desc")
+    Set<PostDTO> findByStartAddrContaining(@Param("keyword") String keyword);
 }
