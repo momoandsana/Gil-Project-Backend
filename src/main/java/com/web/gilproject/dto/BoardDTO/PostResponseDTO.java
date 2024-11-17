@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 public record PostResponseDTO(Long postId, String title, String content, String userName, String tag,
                               LocalDateTime regDate)
 {
-    public static PostResponseDTO from(Post postEntity)
+    public PostResponseDTO from(Post postEntity)
     {
         return new PostResponseDTO(
                 postEntity.getId(),
@@ -21,17 +21,3 @@ public record PostResponseDTO(Long postId, String title, String content, String 
         );
     }
 }
-
-
-//public static Post from(PostEntity postEntity)
-//{
-//    return new Post(
-//            postEntity.getPostId(),
-//            postEntity.getBody(),
-//            postEntity.getRepliesCount(),
-//            postEntity.getLikesCount(),
-//            com.fastcampus.board.model.user.User.from(postEntity.getUser()),// 유저 레코드로 변환
-//            postEntity.getCreatedDateTime(),
-//            postEntity.getUpdatedDateTime(),
-//            postEntity.getDeletedDateTime()
-//    );

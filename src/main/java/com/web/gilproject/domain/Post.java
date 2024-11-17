@@ -34,7 +34,7 @@ public class Post {
     @JoinColumn(name="PATH_ID",nullable=false)
     private Path path;
 
-    private Integer state;
+    private Integer state=0;
 
     private String title;
 
@@ -49,7 +49,7 @@ public class Post {
     @UpdateTimestamp
     private LocalDateTime updateDate;
 
-    private Integer readNum; //조회수
+    private Integer readNum=0; //조회수
 
     @OneToMany(mappedBy = "post",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<PostLike> postLikes; //게시글 좋아요
