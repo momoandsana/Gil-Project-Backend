@@ -3,7 +3,10 @@ package com.web.gilproject.service;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.web.gilproject.domain.Path;
+import com.web.gilproject.domain.Post;
 import com.web.gilproject.dto.BoardDTO.BoardPathResponseDTO;
+import com.web.gilproject.dto.BoardDTO.PostRequestDTO;
+import com.web.gilproject.dto.BoardDTO.PostResponseDTO;
 import com.web.gilproject.repository.BoardRepository;
 import com.web.gilproject.repository.PathRepository;
 import lombok.RequiredArgsConstructor;
@@ -86,6 +89,11 @@ public class BoardService {
         }
 
         return awsUrl;
+    }
+
+    public PostResponseDTO createPost(PostRequestDTO postRequestDTO,Long id) {
+        Post postEntity=boardRepository.save(postRequestDTO.of(postRequestDTO,id));
+        return PostResponseDTO.from(postEntity);
     }
 }
 

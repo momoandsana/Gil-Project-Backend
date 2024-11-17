@@ -1,10 +1,7 @@
 package com.web.gilproject.controller;
 
 import com.web.gilproject.domain.Post;
-import com.web.gilproject.dto.BoardDTO.BoardPathResponseDTO;
-import com.web.gilproject.dto.BoardDTO.ImageUploadRequestDTO;
-import com.web.gilproject.dto.BoardDTO.S3ImageResponseDTO;
-import com.web.gilproject.dto.BoardDTO.TempImageResponseDTO;
+import com.web.gilproject.dto.BoardDTO.*;
 import com.web.gilproject.dto.CustomUserDetails;
 import com.web.gilproject.service.AmazonService;
 import com.web.gilproject.service.BoardService;
@@ -117,22 +114,12 @@ public class BoardController {
 
      */
     @PostMapping
-    public ResponseEntity<Post> createPost(@RequestBody Post post) {
-        //Post createdPost=boardService.createPost(post);
-        //return ResponseEntity.ok(createdPost);
-        return null;
+    public ResponseEntity<PostResponseDTO> createPost(@RequestBody PostRequestDTO postRequestDTO,Authentication authentication) {
+        PostResponseDTO createdPost=boardService.createPost(postRequestDTO,(CustomUserDetails)authentication.getPrincipal().getId());
+        return ResponseEntity.created(createdPost);// 201 created
     }
-//
-//    @GetMapping
-//    public ResponseEntity<List<Post>> getAllPosts(){
-//        List<Post> posts=boardService.getAllPosts();
-//        return ResponseEntity.ok(posts);
-//    }
-//
-//    @GetMapping
-//    public ResponseEntity<Post> getPostById(@RequestParam Long postId){
-//        return
-//    }
+
+
 //
 //    @PatchMapping("/{id}")
 //    public ResponseEntity<Post> updatePost(@PathVariable Long id,@RequestBody Post post){

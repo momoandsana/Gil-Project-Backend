@@ -1,8 +1,9 @@
 package com.web.gilproject.domain;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicUpdate;
@@ -16,6 +17,8 @@ import java.util.Set;
 @DynamicUpdate //수정된 부분만 업데이트 되게하는 어노테이션
 @Getter
 @Setter
+@Builder
+@RequiredArgsConstructor
 public class Post {
 
     @Id
