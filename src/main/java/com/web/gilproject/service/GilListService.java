@@ -1,9 +1,33 @@
 package com.web.gilproject.service;
 
-import com.web.gilproject.domain.Post;
+import com.web.gilproject.dto.PostDTO_YJ.PostDTO;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
 
 public interface GilListService {
-    List<Post> findByMyPosition(double nowY, double nowX);
+    /**
+     * 1. 내 위치 주변 산책길 글목록
+     * */
+    List<PostDTO> findByMyPosition(Double nowY, Double nowX);
+
+    /**
+     * 2. 내 주소 주변 산책길 글목록
+     * */
+    List<PostDTO> findByNearAddr(Authentication authentication);
+
+    /**
+     * 3. (구독기능을 위한) 작성자별 산책길 글목록
+     * */
+    List<PostDTO> findByNickName(String nickName);
+
+    /**
+     * 4. 내가 쓴 산책길 글목록
+     * */
+    List<PostDTO> findMyGilList(Authentication authentication);
+
+    /**
+     * 5. 내가 찜한 산책길 글목록
+     * */
+    List<PostDTO> findMyFav(Authentication authentication);
 }

@@ -25,4 +25,7 @@ public class Reply {
     @OneToMany(mappedBy = "reply",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<ReplyLike> replyLikes;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="USER_ID",nullable = false)
+    private User user;
 }
