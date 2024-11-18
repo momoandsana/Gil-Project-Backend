@@ -117,6 +117,21 @@ public class BoardService {
         Post updatedPost=boardRepository.save(postEntity);
         return PostResponseDTO.from(updatedPost);
     }
+
+    @Transactional
+    public void deletePost(Long postId,Long userId) {
+        Post postEntity=boardRepository
+                .findById(postId)
+                .orElseThrow(()->new RuntimeException("post not found"));// 임시 exception
+
+        if(!postEntity.getUser().getId().equals(userId))
+        {
+            throw new RuntimeException("no user found");
+        }
+
+        postEntity.setState(1);// 삭제한 상태
+        boardRepository.save(postEntity);
+    }
 }
 
 

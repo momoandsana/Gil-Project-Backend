@@ -142,7 +142,9 @@ public class BoardController {
     // 게시글 삭제
     @DeleteMapping("/{postId}")
     public ResponseEntity<PostResponseDTO> deletePost(@PathVariable Long postId, Authentication authentication) {
-
+        Long userId=((CustomUserDetails) authentication.getPrincipal()).getId();
+        boardService.deletePost(postId,userId);
+        return ResponseEntity.noContent().build(); //204 no content
     }
 
     // 경로별
