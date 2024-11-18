@@ -20,7 +20,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/posts")
-public class BoardController {
+public class BoardController
+{
     //    private final PathService pathService;
     private final BoardService boardService;
     private final AmazonService s3Service;
@@ -139,7 +140,15 @@ public class BoardController {
     }
 
 
-    // 게시글 삭제
+    /**
+     * 게시글 삭제
+     * 게시글 삭제한 상태는 1
+     * 게시글 소프트 딜리트
+     *
+     * @param postId
+     * @param authentication
+     * @return
+     */
     @DeleteMapping("/{postId}")
     public ResponseEntity<PostResponseDTO> deletePost(@PathVariable Long postId, Authentication authentication) {
         Long userId=((CustomUserDetails) authentication.getPrincipal()).getId();

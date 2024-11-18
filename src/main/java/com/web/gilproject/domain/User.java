@@ -17,7 +17,8 @@ import java.util.Set;
 @DynamicInsert //회원가입 부분적 insert
 @DynamicUpdate //수정된 부분만 업데이트 되게하는 어노테이션
 @Builder
-@RequiredArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
 
     @Id
