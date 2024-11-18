@@ -69,11 +69,11 @@ public class SecurityConfig {
                         //프론트에서 credential 설정을 할 경우 마찬가지로 true
                         config.setAllowCredentials(true);
                         //허용할 헤더
-                        config.setAllowedHeaders(Collections.singletonList("Authorization"));
+                        config.setAllowedHeaders(Collections.singletonList("*"));
                         config.setMaxAge(3600L);
 
                         //OAuth2
-                        config.setExposedHeaders(Collections.singletonList("Set-Cookie"));
+                        //config.setExposedHeaders(Collections.singletonList("Set-Cookie"));
                         config.setExposedHeaders(Collections.singletonList("Authorization"));
 
                         return config;
