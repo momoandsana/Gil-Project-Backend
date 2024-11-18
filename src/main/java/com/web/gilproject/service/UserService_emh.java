@@ -23,4 +23,13 @@ public interface UserService_emh {
      * 내 프로필 수정
      */
     void updateUserImg(Long id, String fileUrl);
+
+    /**
+     * 내 경로 기록보기
+     */
+
+
+    /**
+     * 내 게시물 보기
+     */
 }
