@@ -107,8 +107,16 @@ public class BoardService {
                 .orElseThrow(
                         ()->new RuntimeException("post id not found")
                 );
-        postEntity.setContent(postPatchRequestDTO.content());
 
+        if(postPatchRequestDTO.content()!=null)
+        {
+            postEntity.setContent(postPatchRequestDTO.content());
+        }
+        if(postPatchRequestDTO.tag()!=null)
+        {
+            postEntity.setTag(postPatchRequestDTO.tag());
+        }
+        
         if(!postEntity.getUser().getId().equals(userId))
         {
             throw new RuntimeException("no user found");// 임시
