@@ -24,10 +24,11 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         String email = obtainUsername(request);
         String password = obtainPassword(request);
-        System.out.println("email = " + email);
+//        System.out.println("email = " + email);
 
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(email, password, null); //세번째 인자는 Role
-        System.out.println("authToken = " + authToken);
+        //스프링 시큐리티의 자체 인증토큰
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(email, password, null);
+//        System.out.println("authToken = " + authToken);
 
         return authenticationManager.authenticate(authToken);
     }
@@ -39,12 +40,12 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         System.out.println("로그인 성공");
 
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-        String email = customUserDetails.getEmail();
-        String username = customUserDetails.getUsername();
+        //String email = customUserDetails.getEmail();
+        //String username = customUserDetails.getUsername();
         //Long id = customUserDetails.getId();
-       // System.out.println("id = " + id);
+        //System.out.println("id = " + id);
 
-        String token = jwtUtil.createJwt(username,email,1000 * 60 * 60 * 24L); //24시간
+        String token = jwtUtil.createJwt(customUserDetails, 1000 * 60 * 5L); //5분
 
         //헤더에 발급된 JWT 실어주기
         response.addHeader("Authorization", "Bearer " + token);

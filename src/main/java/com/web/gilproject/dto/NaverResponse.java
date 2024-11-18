@@ -1,15 +1,15 @@
 package com.web.gilproject.dto;
 
-import lombok.RequiredArgsConstructor;
-
 import java.util.Map;
 
-public class NaverResponse implements OAuth2Response{
+public class NaverResponse implements OAuth2Response {
 
     private final Map<String, Object> attribute;
 
     public NaverResponse(Map<String, Object> attribute) {
+        //System.out.println("naver에서 보내는 데이터 " + attribute.toString());
         this.attribute = (Map<String, Object>) attribute.get("response");
+
     }
 
     @Override
@@ -18,9 +18,7 @@ public class NaverResponse implements OAuth2Response{
     }
 
     @Override
-    public String getProviderId() {
-        return attribute.get("id").toString();
-    }
+    public String getProviderId() { return attribute.get("id").toString();  }
 
     @Override
     public String getName() {
@@ -28,12 +26,8 @@ public class NaverResponse implements OAuth2Response{
     }
 
     @Override
-    public String getEmail() {
-        return attribute.get("email").toString();
-    }
+    public String getEmail() {return attribute.get("email").toString();}
 
     @Override
-    public String getProfileUrl() {
-        return "프사주소 찾을수있나?";
-    }
+    public String getProfileUrl() { return attribute.get("profile_image").toString(); }
 }

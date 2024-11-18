@@ -14,8 +14,18 @@ public class JoinController {
 
     @PostMapping("/join")
     public String joinProcess(UserDTO userDto) {
-        joinService.joinProcess(userDto);
+        int result = joinService.joinProcess(userDto);
+        
+        if(result ==0){
+            System.out.println("이메일 회원가입 실패");
+            //뷰에 실패 메세지 출력
 
+        }else{
+            System.out.println("이메일 회원가입 성공");
+            //뷰에 성공 메세지 출력
+        }
+
+        //로그인 페이지로 리디렉션하게
         return "ok";
     }
 }

@@ -1,5 +1,9 @@
 package com.web.gilproject.jwt;
 
+import com.web.gilproject.dto.CustomOAuth2User;
+import com.web.gilproject.dto.CustomUserDetails;
+import com.web.gilproject.dto.IntergrateUserDetails;
+import com.web.gilproject.dto.UserDTO;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -38,6 +42,15 @@ public class JWTUtil {
     }
 
     /**
+     * 토큰 내 id 데이터 확인
+     * @param token
+     * @return
+     */
+    public Long getUserId(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("id", Long.class);
+    }
+
+    /**
      * 토큰이 만료됐는지
      * @param token
      * @return
@@ -49,20 +62,17 @@ public class JWTUtil {
 
     /**
      * JWT 생성
-     * @param name 이름
-     * @param email 이메일
+     * @param userDetails 데이터를 감싸줄 유저객체
      * @param expiredMs 만료시간(ms)
      * @return
      */
-    public String createJwt(String name, String email, Long expiredMs) {
-
+    public String createJwt(IntergrateUserDetails userDetails, Long expiredMs) {
         return Jwts.builder()
-                .claim("username",name)
-                .claim("email", email)
+                .claim("nickname", userDetails.getNickname())
+                .claim("id",userDetails.getId())
                 .issuedAt(new Date(System.currentTimeMillis())) //생성일
                 .expiration(new Date(System.currentTimeMillis() + expiredMs)) //만료일
                 .signWith(secretKey) //시그니처 부분
                 .compact();
     }
-
 }

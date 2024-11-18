@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.List;
 
 @RequiredArgsConstructor
-public class CustomUserDetails implements UserDetails {
+public class CustomUserDetails extends IntergrateUserDetails implements UserDetails    {
 
     private final User user;
 
@@ -20,14 +20,15 @@ public class CustomUserDetails implements UserDetails {
         return List.of();
     }
 
-    @Override
-    public String getPassword() {
-        return user.getPassword();
-    }
 
     @Override
     public String getUsername() {
         return user.getName();
+    }
+
+    @Override
+    public String getPassword() {
+        return user.getPassword();
     }
 
     public String getEmail() {
@@ -37,6 +38,10 @@ public class CustomUserDetails implements UserDetails {
     public Long getId() {
         return user.getId();
     }
+
+    public String getNickname() {return user.getNickName();}
+
+
 
     @Override
     public boolean isAccountNonExpired() {

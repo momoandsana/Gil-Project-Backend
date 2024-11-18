@@ -37,17 +37,19 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             oAuth2Response = new GoogleResponse(oAuth2User.getAttributes());
 
         } else if (registrationId.equals("kakao")) {
+            oAuth2Response = new KakaoResponse(oAuth2User.getAttributes());
 
         } else {
             return null;
         }
 
-        User existData = userRepository.findUserWithPlatformNotZero(oAuth2Response.getEmail());
+        //DB에서 이메일로 조회
+        User user = userRepository.findUserWithPlatformNotZero(oAuth2Response.getEmail());
 
-        if (existData == null) {
+        if (user == null) {
             User userEntity = new User();
 
-            String nickName="";
+            String nickName = ""; //랜덤한 닉네임 부여
             String uuid = UUID.randomUUID().toString().substring(0, 8);
 
             //플랫폼 설정
@@ -72,17 +74,18 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
             userRepository.save(userEntity); //DB 저장
 
-            UserDTO userDTO = new UserDTO();
-            userDTO.setName(oAuth2Response.getName());
-            userDTO.setEmail(oAuth2Response.getEmail());
-            
-            return new CustomOAuth2User(userDTO); //이게 왜 필요한지 확인
-
         } else {
-            //이미 있을 경우 업데이트하는 코드
-            System.out.println("OAuth - 이미 존재하는 이메일");
+            System.out.println("OAuth - 이메일이 DB에 존재");
+            //이미 있을 경우 내용을 업데이트하는 코드
         }
 
-        return null;
+        UserDTO userDTO = new UserDTO();
+        userDTO.setName(oAuth2Response.getName());
+        userDTO.setEmail(oAuth2Response.getEmail());
+        userDTO.setImageUrl(oAuth2Response.getProfileUrl());
+        Long id = userRepository.findUserWithPlatformNotZero(oAuth2Response.getEmail()).getId();
+        userDTO.setId(id);
+
+        return new CustomOAuth2User(userDTO);  //인증된 사용자 정보 확인
     }
 }

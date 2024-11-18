@@ -72,6 +72,10 @@ public class SecurityConfig {
                         config.setAllowedHeaders(Collections.singletonList("Authorization"));
                         config.setMaxAge(3600L);
 
+                        //OAuth2
+                        config.setExposedHeaders(Collections.singletonList("Set-Cookie"));
+                        config.setExposedHeaders(Collections.singletonList("Authorization"));
+
                         return config;
                     }
                 }));
@@ -97,7 +101,7 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        //.requestMatchers("/login", "/", "/join").permitAll() //모든 권한 허용
+                        //.requestMatchers("/login", "/join").permitAll() //주소 요청 허용
                         //.requestMatchers("/admin").hasRole("ADMIN") //ADMIN 권한 가진사람만 허용
                         //.anyRequest().authenticated()); //모든 로그인한 사용자만 허용
                         .anyRequest().permitAll()); //모든 요청 허용
@@ -109,11 +113,16 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         
         //커스텀 필터 등록
-        http.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration),jwtUtil), UsernamePasswordAuthenticationFilter.class);
+        http
+                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration),jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
         //JWT 필터 추가
+       /* http
+                .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);*/
+
+        //JWT 필터 추가 - 통합
         http
-                .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
+                .addFilterBefore(new JWTFilter(jwtUtil),UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

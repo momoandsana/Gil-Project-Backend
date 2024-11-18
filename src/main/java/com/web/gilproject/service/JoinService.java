@@ -13,19 +13,23 @@ public class JoinService {
     private final UserRepository_JHW userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public void joinProcess(UserDTO userDTO) {
-        //DTO 가져오기(이메일 회원가입 입력필드)
+    public int joinProcess(UserDTO userDTO) {
+        //DTO 가져오기(일반회원가입의 입력필드들)
         String name = userDTO.getName();
         String nickName =userDTO.getNickName();
         String email = userDTO.getEmail();
         String password = userDTO.getPassword();
 
-        Boolean isExist = userRepository.existsByEmail(email);
-
-        if (isExist)
+        //이메일 중복 확인
+        if (userRepository.findByEmail(email) != null)
         {
             System.out.println("DB 내 중복이메일 존재");
-            return;
+            return 0;
+        }
+        //닉네임 중복 확인
+        if(userRepository.findBynickName(nickName) != null){
+            System.out.println("DB 내 중복 닉네임 존재");
+            return 0;
         }
 
         //DTO -> Entity 데이터 주입
@@ -36,12 +40,8 @@ public class JoinService {
         data.setNickName(nickName);
         data.setPassword(bCryptPasswordEncoder.encode(password)); //암호화
         data.setEmail(email);
-        data.setPoint(0);
-        data.setState(0);
-//        data.setImageUrl("");
-//        data.setLongitude(0d);
-//        data.setLatitude(0d);
 
         userRepository.save(data);
+        return 1;
     }
 }

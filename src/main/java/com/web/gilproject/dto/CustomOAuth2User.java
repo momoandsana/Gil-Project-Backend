@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
-public class CustomOAuth2User implements OAuth2User {
+public class CustomOAuth2User extends IntergrateUserDetails implements OAuth2User {
 
     private final UserDTO userDto;
 
@@ -30,4 +30,10 @@ public class CustomOAuth2User implements OAuth2User {
     }
 
     public String getEmail() {return userDto.getEmail();}
+
+    public String getProfileUrl(){return userDto.getImageUrl();}
+
+    public String getNickname() {return userDto.getName(); }
+
+    public Long getId() {return userDto.getId(); }
 }

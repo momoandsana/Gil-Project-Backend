@@ -31,5 +31,4 @@ public interface OAuth2Response {
      * @return
      */
     String getProfileUrl();
-
 }
