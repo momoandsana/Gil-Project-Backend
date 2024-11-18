@@ -26,7 +26,7 @@ public class PostDTO {
     private Integer readNum; //조회수 - 후순위
     private List<Long> postLikesUsers; //좋아요한 유저들의 id List
     private Integer postLikesNum; //좋아요한 유저들의 숫자
-    private List<Long> repliesUsers; //댓글 단 유저들의 id List
+    //private List<Long> repliesUsers; //댓글 단 유저들의 id List
     private Integer repliesNum; //댓글 갯수
     private List<Long> postWishListsUsers; //찜한 유저들의 id List
     private Integer postWishListsNum; //찜한 사람들의 숫자
@@ -46,7 +46,7 @@ public class PostDTO {
         this.readNum = post.getReadNum();
         this.postLikesUsers = post.getPostLikes().stream().map(PostLike -> PostLike.getUser().getId()).collect(Collectors.toList());
         this.postLikesNum = post.getPostLikes().size();
-        this.repliesUsers = post.getReplies().stream().map(Reply -> Reply.getUser().getId()).collect(Collectors.toList());
+        //this.repliesUsers = post.getReplies().stream().map(Reply -> Reply.getUser().getId()).collect(Collectors.toList());
         this.repliesNum = post.getReplies().size();
         this.postWishListsUsers = post.getPostWishLists().stream().map(PostWishlist -> PostWishlist.getUser().getId()).collect(Collectors.toList());
         this.postWishListsNum = post.getPostWishLists().size();
