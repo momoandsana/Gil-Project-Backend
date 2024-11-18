@@ -11,7 +11,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@ToString(of = {"id","name","nickName","password", "email", "comment"})
+@ToString(of = {"id","name","nickName","imageUrl", "password", "email", "comment"})
 public class UserDTO {
 
     private Long id;

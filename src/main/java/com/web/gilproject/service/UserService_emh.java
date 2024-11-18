@@ -22,5 +22,5 @@ public interface UserService_emh {
     /**
      * 내 프로필 수정
      */
-    void updateUserImg(Long id);
+    void updateUserImg(Long id, String fileUrl);
 }

@@ -49,19 +49,17 @@ public class UserController_emh {
     /**
      * 내 프로필 수정 (수정하고 기존꺼 삭제 필요??)
      */
-    @PutMapping("/mypage/profile/{id}")
+    @PostMapping("/mypage/profile/{id}")
     public String updateUserProfile(@PathVariable Long id, @RequestParam("file") MultipartFile file){
-        //업로드 하고 url받아서 db에 넣기
-        //업로드
+        log.info("updateUserProfile : id={} file={} ", id, file);
         try {
-            String fileUrl = s3Service.uploadFile(file);
+            //s3에 파일 업로드하고
+            String fileUrl = s3Service.uploadFileToFolder(file,"profile_images");
+            //업로드된 url받아서 DB에 저장(수정)
+            userService.updateUserImg(id, fileUrl);
         } catch (IOException e) {
-            return "프로필 이미지 파일 업로드 실패하였습니다.";
+            return "파일 업로드 실패";
         }
-
-
-        log.info("updateUserProfile : id={}", id);
-        userService.updateUserImg(id);
         return "redirect:/user/mypage?id="+id;
     }
 
