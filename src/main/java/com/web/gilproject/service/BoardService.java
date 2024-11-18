@@ -5,6 +5,7 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.web.gilproject.domain.Path;
 import com.web.gilproject.domain.Post;
 import com.web.gilproject.dto.BoardDTO.BoardPathResponseDTO;
+import com.web.gilproject.dto.BoardDTO.PostPatchRequestDTO;
 import com.web.gilproject.dto.BoardDTO.PostRequestDTO;
 import com.web.gilproject.dto.BoardDTO.PostResponseDTO;
 import com.web.gilproject.repository.BoardRepository;
@@ -12,6 +13,7 @@ import com.web.gilproject.repository.PathRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -91,9 +93,29 @@ public class BoardService {
         return awsUrl;
     }
 
+    @Transactional
     public PostResponseDTO createPost(PostRequestDTO postRequestDTO,Long id) {
         Post postEntity=boardRepository.save(postRequestDTO.of(postRequestDTO,id));
+        // 사용자 검증하기 나중에 추가 exception
         return PostResponseDTO.from(postEntity);
+    }
+
+    @Transactional
+    public PostResponseDTO updatePost(Long postId,PostPatchRequestDTO postPatchRequestDTO,Long userId) {
+        Post postEntity=boardRepository
+                .findById(postId)
+                .orElseThrow(
+                        ()->new RuntimeException("post id not found")
+                );
+        postEntity.setContent(postPatchRequestDTO.content());
+
+        if(!postEntity.getUser().getId().equals(userId))
+        {
+            throw new RuntimeException("no user found");// 임시
+        }
+
+        Post updatedPost=boardRepository.save(postEntity);
+        return PostResponseDTO.from(updatedPost);
     }
 }
 

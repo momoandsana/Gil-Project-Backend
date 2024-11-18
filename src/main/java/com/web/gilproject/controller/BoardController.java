@@ -29,8 +29,6 @@ public class BoardController {
     /**
      * ToDo:나중에 front 에서 export interface 만들기
      *
-     *
-     *
      * @param authentication
      * @return
      */
@@ -38,8 +36,8 @@ public class BoardController {
     @GetMapping("/paths")
     public ResponseEntity<List<BoardPathResponseDTO>> getAllPaths(Authentication authentication) {
 
-        CustomUserDetails customMemberDetails=(CustomUserDetails)authentication.getPrincipal();
-        Long userId=customMemberDetails.getId();
+        CustomUserDetails customMemberDetails = (CustomUserDetails) authentication.getPrincipal();
+        Long userId = customMemberDetails.getId();
         List<BoardPathResponseDTO> boardPathListDTO = boardService.getAllPathsById(userId);
 //        for (BoardPathDTO boardPathDTO : boardPathListDTO) {
 //            System.out.println(boardPathDTO);
@@ -88,8 +86,12 @@ public class BoardController {
         return ResponseEntity.ok(response);
     }
 
-    /*
-    ToDo:마지막에 모든 jpg 삭제하는 기능
+
+
+    /**
+     * ToDo:마지막에 모든 jpg 삭제하는 기능
+     * @param filePaths
+     * @return
      */
     @PostMapping("/image-s3")
     public ResponseEntity<List<S3ImageResponseDTO>> uploadFromTemp(@RequestBody List<String> filePaths) {
@@ -107,27 +109,41 @@ public class BoardController {
     }
 
 
-    /*
-    선택된 경로,
-    제목,본문, 대표사진을 받아와서 설정한다
-    프론트가 사용자의 선택을 받고 해당 routeId(pathId) 를 들고 있다가 나중에 json 으로 전송할 때 함께 전송
-
+    /**
+     * 선택된 경로,
+     * 제목,본문, 대표사진을 받아와서 설정한다
+     * 프론트가 사용자의 선택을 받고 해당 routeId(pathId) 를 들고 있다가 나중에 json 으로 전송할 때 함께 전송
+     *
+     * @param postRequestDTO
+     * @param authentication
+     * @return
      */
     @PostMapping
-    public ResponseEntity<PostResponseDTO> createPost(@RequestBody PostRequestDTO postRequestDTO,Authentication authentication) {
-        PostResponseDTO createdPost=boardService.createPost(postRequestDTO,(CustomUserDetails)authentication.getPrincipal().getId());
+    public ResponseEntity<PostResponseDTO> createPost(@RequestBody PostRequestDTO postRequestDTO, Authentication authentication) {
+        PostResponseDTO createdPost = boardService.createPost(postRequestDTO, (CustomUserDetails) authentication.getPrincipal().getId());
         return ResponseEntity.created(createdPost);// 201 created
     }
 
 
-//
-//    @PatchMapping("/{id}")
-//    public ResponseEntity<Post> updatePost(@PathVariable Long id,@RequestBody Post post){
-//
-//    }
+    /**
+     * 게시물 수정
+     * @param postId
+     * @param postPatchRequestDTO
+     * @param authentication
+     * @return
+     */
+    @PatchMapping("/{postid}")
+    public ResponseEntity<PostResponseDTO> updatePost(@PathVariable Long postId,@RequestBody PostPatchRequestDTO postPatchRequestDTO, Authentication authentication) {
+        PostResponseDTO updatedPost=boardService.updatePost(postId,postPatchRequestDTO,(CustomUserDetails)authentication.getPrincipal().getId());
+        return ResponseEntity.ok(updatedPost);
+    }
 
 
     // 게시글 삭제
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<PostResponseDTO> deletePost(@PathVariable Long postId, Authentication authentication) {
+
+    }
 
     // 경로별
 

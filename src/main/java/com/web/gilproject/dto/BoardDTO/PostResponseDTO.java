@@ -9,7 +9,13 @@ import java.time.LocalDateTime;
 public record PostResponseDTO(Long postId, String title, String content, String userName, String tag,
                               LocalDateTime regDate)
 {
-    public PostResponseDTO from(Post postEntity)
+    /*
+    from 함수는 엔티티로부터 전송해야 하는 값들을 꺼낼 때 사용
+    다양한 요소들을 조합하는 것이 아니라 엔티티에서
+    클라이언트에 보내야 하는 부분들만 뽑아서 dto 를 만든다
+    static 으로 작성하는 경우가 많음
+     */
+    public static PostResponseDTO from(Post postEntity)
     {
         return new PostResponseDTO(
                 postEntity.getId(),
