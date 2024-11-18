@@ -135,7 +135,9 @@ public class BoardController
      */
     @PatchMapping("/{postid}")
     public ResponseEntity<PostResponseDTO> updatePost(@PathVariable Long postId,@RequestBody PostPatchRequestDTO postPatchRequestDTO, Authentication authentication) {
-        PostResponseDTO updatedPost=boardService.updatePost(postId,postPatchRequestDTO,(CustomUserDetails)authentication.getPrincipal().getId());
+        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+        Long userId = customUserDetails.getId();
+        PostResponseDTO updatedPost=boardService.updatePost(postId,postPatchRequestDTO,userId);
         return ResponseEntity.ok(updatedPost);
     }
 
@@ -156,7 +158,21 @@ public class BoardController
         return ResponseEntity.noContent().build(); //204 no content
     }
 
-    // 경로별
+    /*
+    댓글 기능
+     */
+
+    /*
+    좋아요 기능
+     */
+
+    /*
+    찜 기능?
+     */
+
+    /*
+    글 상세보기
+     */
 
 
 }

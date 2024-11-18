@@ -6,8 +6,8 @@ import com.web.gilproject.domain.Post;
 import java.time.LocalDateTime;
 
 @JsonInclude(JsonInclude.Include.NON_NULL) // 객체를 직렬화할 때 null 인거는 제외
-public record PostResponseDTO(Long postId, String title, String content, String userName, String tag,
-                              LocalDateTime regDate)
+public record PostResponseDTO(Long postId,String nickName,  String title, String content, String tag,BoardPathResponseDTO boardPathResponseDTO,
+                              LocalDateTime createdAt)
 {
     /*
     from 함수는 엔티티로부터 전송해야 하는 값들을 꺼낼 때 사용
@@ -21,8 +21,9 @@ public record PostResponseDTO(Long postId, String title, String content, String 
                 postEntity.getId(),
                 postEntity.getTitle(),
                 postEntity.getContent(),
-                postEntity.getUser().getName(),
+                postEntity.getUser().getNickName(),
                 postEntity.getTag(),
+                BoardPathResponseDTO.from(postEntity.getPath()),
                 postEntity.getWriteDate()
         );
     }

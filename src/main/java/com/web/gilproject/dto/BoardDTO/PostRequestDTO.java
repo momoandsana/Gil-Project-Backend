@@ -3,7 +3,7 @@ package com.web.gilproject.dto.BoardDTO;
 import com.web.gilproject.domain.Post;
 import com.web.gilproject.domain.User;
 
-public record PostRequestDTO(Long pathId, String title, String content, String tag)
+public record PostRequestDTO(String title, String content, String tag,Long routeId)
 {
     /*
     of 함수는 클라이언트로 받은 데이터를 기반으로 조립하거나, 다양한 값들을 사용해서
