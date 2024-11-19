@@ -63,6 +63,8 @@ public class BoardService {
                 .tag(postRequestDTO.tag())
                 .user(user)
                 .path(path)
+                .state(0)
+                .readNum(0)
                 .build();
 
         boardRepository.save(post);// 게시글 저장
