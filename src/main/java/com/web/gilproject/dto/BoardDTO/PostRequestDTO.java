@@ -2,8 +2,11 @@ package com.web.gilproject.dto.BoardDTO;
 
 import com.web.gilproject.domain.Post;
 import com.web.gilproject.domain.User;
+import org.springframework.web.multipart.MultipartFile;
 
-public record PostRequestDTO(String title, String content, String tag,Long routeId)
+import java.util.List;
+
+public record PostRequestDTO(String title, String content, String tag, Long routeId, List<MultipartFile> images)
 {
     /*
     of 함수는 클라이언트로 받은 데이터를 기반으로 조립하거나, 다양한 값들을 사용해서
