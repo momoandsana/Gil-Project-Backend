@@ -2,6 +2,7 @@ package com.web.gilproject.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.awt.print.Pageable;
 
@@ -13,6 +14,7 @@ import java.awt.print.Pageable;
 @Setter
 @Getter
 @ToString(exclude = "path")
+@DynamicUpdate
 public class Pin {
 
     @Id
