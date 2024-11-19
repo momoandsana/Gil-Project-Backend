@@ -26,11 +26,17 @@ public class PostDTO {
     private Integer readNum; //조회수 - 후순위
     private List<Long> postLikesUsers; //좋아요한 유저들의 id List
     private Integer postLikesNum; //좋아요한 유저들의 숫자
-    //private List<Long> repliesUsers; //댓글 단 유저들의 id List
+    private List<Long> repliesUsers; //댓글 단 유저들의 id List
     private Integer repliesNum; //댓글 갯수
     private List<Long> postWishListsUsers; //찜한 유저들의 id List
     private Integer postWishListsNum; //찜한 사람들의 숫자
-
+/*
+    private User user;
+    private Path path;
+    private Set<PostLike> postLikes;
+    private Set<Reply> replies;
+    private Set<PostWishlist> postWishlists;
+*/
     public PostDTO(Post post) {
         this.id = post.getId();
         this.userNickName = post.getUser().getNickName();
@@ -46,9 +52,44 @@ public class PostDTO {
         this.readNum = post.getReadNum();
         this.postLikesUsers = post.getPostLikes().stream().map(PostLike -> PostLike.getUser().getId()).collect(Collectors.toList());
         this.postLikesNum = post.getPostLikes().size();
-        //this.repliesUsers = post.getReplies().stream().map(Reply -> Reply.getUser().getId()).collect(Collectors.toList());
+        this.repliesUsers = post.getReplies().stream().map(Reply -> Reply.getUser().getId()).collect(Collectors.toList());
         this.repliesNum = post.getReplies().size();
         this.postWishListsUsers = post.getPostWishLists().stream().map(PostWishlist -> PostWishlist.getUser().getId()).collect(Collectors.toList());
         this.postWishListsNum = post.getPostWishLists().size();
+/*
+        this.user = post.getUser();
+        this.path = post.getPath();
+        this.postLikes = post.getPostLikes();
+        this.replies = post.getReplies();
+        this.postWishlists = post.getPostWishLists();
+*/
+    }
+
+    public PostDTO(PostDTO postDTO) {
+        this.id = postDTO.id;
+        this.userNickName = postDTO.userNickName;
+        this.pathId = postDTO.pathId;
+        this.startLat = postDTO.startLat;
+        this.startLong = postDTO.startLong;
+        this.state = postDTO.state;
+        this.title = postDTO.title;
+        this.content = postDTO.content;
+        this.tag = postDTO.tag;
+        this.writeDate = postDTO.writeDate;
+        this.updateDate = postDTO.updateDate;
+        this.readNum = postDTO.readNum;
+        this.postLikesUsers = postDTO.postLikesUsers;
+        this.postLikesNum = postDTO.postLikesNum;
+        this.repliesUsers = postDTO.repliesUsers;
+        this.repliesNum = postDTO.repliesNum;
+        this.postWishListsUsers = postDTO.postWishListsUsers;
+        this.postWishListsNum = postDTO.postWishListsNum;
+/*
+        this.user = postDTO.user;
+        this.path = postDTO.path;
+        this.postLikes = postDTO.postLikes;
+        this.replies = postDTO.replies;
+        this.postWishlists = postDTO.postWishlists;
+*/
     }
 }

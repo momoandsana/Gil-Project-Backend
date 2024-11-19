@@ -177,9 +177,9 @@ public class GilListServiceImpl implements GilListService {
     /**
      * 전체 게시글 조회
      * */
-    public List<Post> findAll(){
-        System.out.println("전체게시글 조회하기"+gilListRepository.findAll());
-        return gilListRepository.findAll();
+    public List<PostDTO> findAll(){
+        System.out.println("전체게시글 조회하기"+gilListRepository.findAllPostDTO());
+        return gilListRepository.findAllPostDTO();
     }
 
     /**
