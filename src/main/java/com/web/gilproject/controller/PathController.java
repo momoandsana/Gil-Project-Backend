@@ -7,6 +7,8 @@ import com.web.gilproject.dto.CoordinateDto;
 import com.web.gilproject.dto.PathDTO;
 import com.web.gilproject.dto.PathResDTO;
 import com.web.gilproject.dto.PinResDTO;
+import com.web.gilproject.exception.PathErrorCode;
+import com.web.gilproject.exception.PathPinException;
 import com.web.gilproject.service.AmazonService;
 import com.web.gilproject.service.PathService;
 import com.web.gilproject.service.PinService;
@@ -28,6 +30,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/path")
 public class PathController {
 
     private final PathService pathService;
@@ -63,11 +66,11 @@ public class PathController {
 
             return new MockMultipartFile("file", "image.jpg", "image/jpeg", imageBytes);
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("Failed to convert Base64 to MultipartFile", e);
+            throw new PathPinException(PathErrorCode.IMAGE_TRANS_FAILED);
         }
     }
 
+    //경로(Path)등록
     @PostMapping("/")
     public void insert(@RequestBody PathDTO paramPath) {
         System.out.println(paramPath);
@@ -121,13 +124,12 @@ public class PathController {
 
                 pinService.insert(pin); // Pin을 DB에 저장
             } catch (Exception e) {
-                e.printStackTrace();
-                throw new RuntimeException("Failed to decode Base64 image and upload");
+                throw new PathPinException(PathErrorCode.IMAGE_TRANS_FAILED);
             }
         });
     }
 
-    //프론트에 보내준 userId로 경로+핀 뿌리기
+    //프론트에서 넘겨받은 userId로 경로+핀 뿌리기
     @GetMapping("/{userId}")
     public ResponseEntity<?> getPath(@PathVariable Long userId) {
         List<PathResDTO> pathResDTOList = pathService.findPathByUserIdTransform(userId);
@@ -136,7 +138,7 @@ public class PathController {
     }
 
     //핀 업데이트
-    @PutMapping("/{pinId}")
+    @PutMapping("/pin/{pinId}")
     public void pinUpdate(@PathVariable Long pinId, @RequestBody PinResDTO pinResDTO) {
         try {
             // Base64로 전달된 이미지 처리
@@ -154,15 +156,27 @@ public class PathController {
             // Pin 업데이트
             pinService.update(pinId, pinResDTO);
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("Failed to update pin", e);
+            throw new PathPinException(PathErrorCode.PIN_UPDATE_FAILED);
         }
     }
 
+
     //핀 삭제
-    @DeleteMapping("/{pinId}")
+    @DeleteMapping("/pin/{pinId}")
     public void pinDelete(@PathVariable Long pinId) {
         pinService.delete(pinId);
     }
 
+
+    //경로 state값(1로 들어오면 softDelite)
+    @PatchMapping("/{pathId}")
+    public void updatePath(@PathVariable Long pathId, @RequestBody PathDTO paramPath) {
+
+        int state = paramPath.getState();
+
+        pathService.updateState(pathId, state);
+    }
+
 }
+
+

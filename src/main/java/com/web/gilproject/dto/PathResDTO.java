@@ -6,6 +6,7 @@ import java.util.List;
 
 @Data
 public class PathResDTO {
+    private Long id;
     private UserResDTO user;
     private String content;
     private Integer state;
