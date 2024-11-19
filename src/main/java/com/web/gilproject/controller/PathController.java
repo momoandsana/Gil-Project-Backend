@@ -24,6 +24,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.net.URL;
 import java.util.*;
 import java.util.Base64;
 import java.util.stream.Collectors;
@@ -159,7 +160,6 @@ public class PathController {
             throw new PathPinException(PathErrorCode.PIN_UPDATE_FAILED);
         }
     }*/
-
 
     //핀 삭제
     @DeleteMapping("/pin/{pinId}")
