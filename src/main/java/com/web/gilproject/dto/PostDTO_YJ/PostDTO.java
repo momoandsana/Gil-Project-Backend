@@ -1,6 +1,8 @@
 package com.web.gilproject.dto.PostDTO_YJ;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.web.gilproject.domain.*;
+import com.web.gilproject.dto.UserDTO;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -30,13 +32,10 @@ public class PostDTO {
     private Integer repliesNum; //댓글 갯수
     private List<Long> postWishListsUsers; //찜한 유저들의 id List
     private Integer postWishListsNum; //찜한 사람들의 숫자
-/*
-    private User user;
-    private Path path;
-    private Set<PostLike> postLikes;
-    private Set<Reply> replies;
-    private Set<PostWishlist> postWishlists;
-*/
+
+    private String userImgURL;
+    //private Path path;
+
     public PostDTO(Post post) {
         this.id = post.getId();
         this.userNickName = post.getUser().getNickName();
@@ -56,13 +55,9 @@ public class PostDTO {
         this.repliesNum = post.getReplies().size();
         this.postWishListsUsers = post.getPostWishLists().stream().map(PostWishlist -> PostWishlist.getUser().getId()).collect(Collectors.toList());
         this.postWishListsNum = post.getPostWishLists().size();
-/*
-        this.user = post.getUser();
-        this.path = post.getPath();
-        this.postLikes = post.getPostLikes();
-        this.replies = post.getReplies();
-        this.postWishlists = post.getPostWishLists();
-*/
+
+        this.userImgURL = post.getUser().getImageUrl();
+        //this.path = post.getPath();
     }
 
     public PostDTO(PostDTO postDTO) {
@@ -84,12 +79,8 @@ public class PostDTO {
         this.repliesNum = postDTO.repliesNum;
         this.postWishListsUsers = postDTO.postWishListsUsers;
         this.postWishListsNum = postDTO.postWishListsNum;
-/*
-        this.user = postDTO.user;
-        this.path = postDTO.path;
-        this.postLikes = postDTO.postLikes;
-        this.replies = postDTO.replies;
-        this.postWishlists = postDTO.postWishlists;
-*/
+
+        this.userImgURL = postDTO.userImgURL;
+        //this.path = postDTO.path;
     }
 }

@@ -1,5 +1,6 @@
 package com.web.gilproject.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -26,10 +27,12 @@ public class Post {
 
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="USER_ID",nullable=false)
+    @JsonIgnore
     private User user;
 
     @OneToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="PATH_ID",nullable=false)
+    @JsonIgnore
     private Path path;
 
     private Integer state=0;
@@ -50,12 +53,15 @@ public class Post {
     private Integer readNum=0; //조회수
 
     @OneToMany(mappedBy = "post",cascade = CascadeType.ALL,orphanRemoval = true)
+    @JsonIgnore
     private Set<PostLike> postLikes; //게시글 좋아요
 
     @OneToMany(mappedBy = "post",cascade = CascadeType.ALL,orphanRemoval = true)
+    @JsonIgnore
     private Set<Reply> replies; //댓글
 
     @OneToMany(mappedBy = "post",cascade = CascadeType.ALL,orphanRemoval = true)
+    @JsonIgnore
     private Set<PostWishlist> postWishLists; //게시글 찜
 
 
