@@ -54,6 +54,14 @@ public class BoardController
     /*
     게시글 작성
      */
+    @PostMapping
+    public PostResponseDTO createPost(Authentication authentication,PostRequestDTO postRequestDTO)
+    {
+        CustomUserDetails customMemberDetails = (CustomUserDetails) authentication.getPrincipal();
+        Long userId = customMemberDetails.getId();
+        PostResponseDTO postResponseDTO=boardService.createPost(userId,postRequestDTO);
+        return ResponseEntity.ok(postResponseDTO);
+    }
 
 
 

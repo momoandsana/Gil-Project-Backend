@@ -4,6 +4,8 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.web.gilproject.domain.Path;
 import com.web.gilproject.domain.Post;
 import com.web.gilproject.dto.BoardDTO.BoardPathResponseDTO;
+import com.web.gilproject.dto.BoardDTO.PostRequestDTO;
+import com.web.gilproject.dto.BoardDTO.PostResponseDTO;
 import com.web.gilproject.repository.BoardRepository;
 import com.web.gilproject.repository.PathRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,6 +37,12 @@ public class BoardService {
                 .map(BoardPathResponseDTO::from)
                 .collect(Collectors.toList());
         //return paths;
+    }
+
+
+    public PostResponseDTO createPost(Long userId, PostRequestDTO postRequestDTO) {
+        //Path path=pathRepository.findById(postRequestDTO.routeId());
+
     }
 
 
