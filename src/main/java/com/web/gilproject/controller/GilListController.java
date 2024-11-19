@@ -1,6 +1,7 @@
 package com.web.gilproject.controller;
 
 import com.web.gilproject.dto.PostDTO_YJ.PostDTO;
+import com.web.gilproject.dto.PostDTO_YJ.PostResDTO;
 import com.web.gilproject.service.GilListService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,7 +15,7 @@ import java.util.List;
  * 게시글 목록 조회를 위한 컨트롤러
  * */
 @RestController
-@RequestMapping("/gilList")
+@RequestMapping("/posts")
 @RequiredArgsConstructor
 public class GilListController {
 
@@ -25,7 +26,7 @@ public class GilListController {
      * */
     @GetMapping("/{nowY}/{nowX}")
     public ResponseEntity<?> findByMyPosition(@PathVariable Double nowY, @PathVariable Double nowX){
-        List<PostDTO> listPost = gilListService.findByMyPosition(nowY, nowX);
+        List<PostResDTO> listPost = gilListService.findByMyPosition(nowY, nowX);
         return new ResponseEntity<>(listPost, HttpStatus.OK);
     }
 
@@ -34,7 +35,7 @@ public class GilListController {
      * */
     @GetMapping("/nearAddr")
     public ResponseEntity<?> findByNearAddr(Authentication authentication){
-        List<PostDTO> listPost = gilListService.findByNearAddr(authentication);
+        List<PostResDTO> listPost = gilListService.findByNearAddr(authentication);
         return new ResponseEntity<>(listPost, HttpStatus.OK);
     }
 
@@ -43,7 +44,7 @@ public class GilListController {
      * */
     @GetMapping("/nickName")
     public ResponseEntity<?> findByNickName(@RequestParam String nickName){
-        List<PostDTO> listPost = gilListService.findByNickName(nickName);
+        List<PostResDTO> listPost = gilListService.findByNickName(nickName);
         return new ResponseEntity<>(listPost, HttpStatus.OK);
     }
 
@@ -52,7 +53,7 @@ public class GilListController {
      * */
     @GetMapping("/myGilList")
     public ResponseEntity<?> findMyGilList(Authentication authentication){
-        List<PostDTO> listPost = gilListService.findMyGilList(authentication);
+        List<PostResDTO> listPost = gilListService.findMyGilList(authentication);
         return new ResponseEntity<>(listPost, HttpStatus.OK);
     }
 
@@ -61,7 +62,7 @@ public class GilListController {
      * */
     @GetMapping("/myFav")
     public ResponseEntity<?> findMyFav(Authentication authentication){
-        List<PostDTO> listPost = gilListService.findMyFav(authentication);
+        List<PostResDTO> listPost = gilListService.findMyFav(authentication);
         return new ResponseEntity<>(listPost, HttpStatus.OK);
     }
 
@@ -70,7 +71,7 @@ public class GilListController {
      * */
     @GetMapping("/keyword")
     public ResponseEntity<?> findByKeyword(@RequestParam String keyword){
-        List<PostDTO> listPost = gilListService.findByKeyword(keyword);
+        List<PostResDTO> listPost = gilListService.findByKeyword(keyword);
         return new ResponseEntity<>(listPost, HttpStatus.OK);
     }
 }

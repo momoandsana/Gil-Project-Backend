@@ -1,21 +1,20 @@
 package com.web.gilproject.dto.PostDTO_YJ;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.web.gilproject.domain.*;
+
+import com.web.gilproject.domain.Post;
+
 import com.web.gilproject.dto.PathResDTO;
-import com.web.gilproject.dto.UserDTO;
-import com.web.gilproject.service.PathService;
 import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PostDTO {
+public class PostResDTO {
+
     private Long id; //게시글 id
     private String userNickName; //게시글 작성자 정보
     private Long pathId; //경로 id
@@ -36,9 +35,9 @@ public class PostDTO {
     private Integer postWishListsNum; //찜한 사람들의 숫자
 
     private String userImgURL;
-    private Path path;
+    private PathResDTO pathResDTO;
 
-    public PostDTO(Post post) {
+    public PostResDTO(Post post) {
         this.id = post.getId();
         this.userNickName = post.getUser().getNickName();
         this.pathId = post.getPath().getId();
@@ -59,10 +58,10 @@ public class PostDTO {
         this.postWishListsNum = post.getPostWishLists().size();
 
         this.userImgURL = post.getUser().getImageUrl();
-        this.path = post.getPath();
+        this.pathResDTO = new PathResDTO();
     }
 
-    public PostDTO(PostDTO postDTO) {
+    public PostResDTO(PostResDTO postDTO) {
         this.id = postDTO.id;
         this.userNickName = postDTO.userNickName;
         this.pathId = postDTO.pathId;
@@ -83,6 +82,6 @@ public class PostDTO {
         this.postWishListsNum = postDTO.postWishListsNum;
 
         this.userImgURL = postDTO.userImgURL;
-        this.path = postDTO.path;
+        this.pathResDTO = new PathResDTO();
     }
 }
