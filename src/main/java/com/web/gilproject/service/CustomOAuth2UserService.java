@@ -83,8 +83,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         userDTO.setName(oAuth2Response.getName());
         userDTO.setEmail(oAuth2Response.getEmail());
         userDTO.setImageUrl(oAuth2Response.getProfileUrl());
-        Long id = userRepository.findUserWithPlatformNotZero(oAuth2Response.getEmail()).getId();
-        userDTO.setId(id);
+        user = userRepository.findUserWithPlatformNotZero(oAuth2Response.getEmail());
+        userDTO.setId(user.getId());
+        userDTO.setNickName(user.getNickName());
 
         return new CustomOAuth2User(userDTO);  //인증된 사용자 정보 확인
     }

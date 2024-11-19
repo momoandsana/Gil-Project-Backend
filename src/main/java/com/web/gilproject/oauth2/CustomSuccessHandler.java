@@ -27,7 +27,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         response.addCookie(createCookie("Authorization", token));
         //이 페이지에서 쿠키를 헤더에 담아 재요청을 보내는 axios 구현
-        response.sendRedirect("http://localhost:8080/");
+        response.sendRedirect("http://localhost:3000/main");
     }
 
     private Cookie createCookie(String key, String value) {

@@ -51,6 +51,14 @@ public class JWTUtil {
     }
 
     /**
+     * 토큰 내 nickName 데이터 확인
+     */
+    public String getUserNickname(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("nickname", String.class);
+
+    }
+
+    /**
      * 토큰이 만료됐는지
      * @param token
      * @return
