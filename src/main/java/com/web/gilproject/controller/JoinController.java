@@ -12,8 +12,8 @@ public class JoinController {
 
     private final JoinService joinService;
 
-    @PostMapping("/join")
-    public String joinProcess(UserDTO userDto) {
+    @PostMapping("/api/auth/join")
+    public int joinProcess(UserDTO userDto) {
         int result = joinService.joinProcess(userDto);
         
         if(result ==0){
@@ -26,6 +26,6 @@ public class JoinController {
         }
 
         //로그인 페이지로 리디렉션하게
-        return "ok";
+        return result;
     }
 }
