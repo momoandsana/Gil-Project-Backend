@@ -167,10 +167,6 @@ public class BoardController
      */
 
     /*
-    찜 기능?
-     */
-
-    /*
     글 상세보기
      */
 

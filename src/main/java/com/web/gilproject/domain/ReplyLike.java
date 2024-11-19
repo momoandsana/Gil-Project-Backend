@@ -1,5 +1,6 @@
 package com.web.gilproject.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -14,9 +15,11 @@ public class ReplyLike {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="USER_ID",nullable = false)
+    @JsonIgnore
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "REPLY_ID",nullable = false)
+    @JsonIgnore
     private Reply reply;
 }
