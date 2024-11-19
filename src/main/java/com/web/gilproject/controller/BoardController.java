@@ -1,5 +1,6 @@
 package com.web.gilproject.controller;
 
+import com.web.gilproject.domain.Path;
 import com.web.gilproject.domain.Post;
 import com.web.gilproject.dto.BoardDTO.*;
 import com.web.gilproject.dto.CustomUserDetails;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/posts")
 public class BoardController
 {
-    //    private final PathService pathService;
+    private final PathService pathService;
     private final BoardService boardService;
     private final AmazonService s3Service;
 
@@ -35,11 +36,11 @@ public class BoardController
      */
     //@GetMapping("/{userId}/paths")
     @GetMapping("/paths")
-    public ResponseEntity<List<BoardPathResponseDTO>> getAllPaths(Authentication authentication) {
+    public ResponseEntity<List<PathDTO>> getAllPaths(Authentication authentication) {
 
         CustomUserDetails customMemberDetails = (CustomUserDetails) authentication.getPrincipal();
         Long userId = customMemberDetails.getId();
-        List<BoardPathResponseDTO> boardPathListDTO = boardService.getAllPathsById(userId);
+        List<PathDTO> boardPathListDTO = pathService.findPathByUserIdTransform(userId);
 //        for (BoardPathDTO boardPathDTO : boardPathListDTO) {
 //            System.out.println(boardPathDTO);
 //        }
