@@ -4,10 +4,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.web.gilproject.domain.Post;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @JsonInclude(JsonInclude.Include.NON_NULL) // 객체를 직렬화할 때 null 인거는 제외
-public record PostResponseDTO(Long postId,String nickName,  String title, String content, String tag,BoardPathResponseDTO boardPathResponseDTO,
-                              LocalDateTime createdAt)
+public record PostResponseDTO(Long postId, String nickName, String title, String content, String tag, BoardPathResponseDTO boardPathResponseDTO,
+                              LocalDateTime createdAt, List<String> imageUrls)
 {
     /*
     from 함수는 엔티티로부터 전송해야 하는 값들을 꺼낼 때 사용
@@ -24,7 +26,11 @@ public record PostResponseDTO(Long postId,String nickName,  String title, String
                 postEntity.getUser().getNickName(),
                 postEntity.getTag(),
                 BoardPathResponseDTO.from(postEntity.getPath()),
-                postEntity.getWriteDate()
+                postEntity.getWriteDate(),
+                postEntity.getPostImages()
+                        .stream()
+                        .map(image->image.getImageUrl())
+                        .collect(Collectors.toList())
         );
     }
 }

@@ -3,18 +3,24 @@ package com.web.gilproject.service;
 import com.amazonaws.services.s3.AmazonS3;
 import com.web.gilproject.domain.Path;
 import com.web.gilproject.domain.Post;
+import com.web.gilproject.domain.PostImage;
+import com.web.gilproject.domain.User;
 import com.web.gilproject.dto.BoardDTO.BoardPathResponseDTO;
 import com.web.gilproject.dto.BoardDTO.PostRequestDTO;
 import com.web.gilproject.dto.BoardDTO.PostResponseDTO;
 import com.web.gilproject.repository.BoardRepository;
 import com.web.gilproject.repository.PathRepository;
+import com.web.gilproject.repository.PostImageRepository;
+import com.web.gilproject.repository.UserRepository_JHW;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,6 +29,9 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final PathRepository pathRepository;
     private final AmazonS3 amazonS3;
+    private final UserRepository_JHW userRepository;
+    private final AmazonService amazonService;
+    private final PostImageRepository postImageRepository;
 
     @Value("${aws.s3.bucketName}")
     private String bucketName;
@@ -30,6 +39,7 @@ public class BoardService {
     private static final String TMP_DIR=System.getProperty("java.io.tmpdir");
 
 
+    @Transactional
     public List<BoardPathResponseDTO> getAllPathsById(Long userId) {
         List<Path> paths = pathRepository.findByUserId(userId);
 
@@ -39,11 +49,58 @@ public class BoardService {
         //return paths;
     }
 
+    @Transactional
+    public PostResponseDTO createPost(Long userId, PostRequestDTO postRequestDTO) throws IOException {
+        User user=userRepository.findById(userId)
+                .orElseThrow(()->new RuntimeException("No user found"));
 
-    public PostResponseDTO createPost(Long userId, PostRequestDTO postRequestDTO) {
-        /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 수정*/
-        //Path path=pathRepository.findById(postRequestDTO.routeId());
-        return null;
+        Path path=pathRepository.findById(postRequestDTO.routeId())
+                .orElseThrow(()->new RuntimeException("No path found"));
+
+        Post post=Post.builder()
+                .title(postRequestDTO.title())
+                .content(postRequestDTO.content())
+                .tag(postRequestDTO.tag())
+                .user(user)
+                .path(path)
+                .build();
+
+        boardRepository.save(post);// 게시글 저장
+
+        List<String> imageUrls=new ArrayList<>();
+        List<PostImage>postImages=new ArrayList<>();
+
+        for(MultipartFile image:postRequestDTO.images())
+        {
+            String imageUrl = amazonService.uploadFile(image, "posts/" + post.getId() + "/" + image.getOriginalFilename());
+
+            PostImage postImage = PostImage.builder()
+                    .post(post)
+                    .imageUrl(imageUrl)
+                    .build();
+            post.addPostImage(postImage);
+            postImages.add(postImage);
+            imageUrls.add(imageUrl);
+        }
+
+        postImageRepository.saveAll(post.getPostImages());// 일괄 저장
+
+        return PostResponseDTO.from(post);
+    }
+
+    @Transactional
+    public void deletePost(Long postId,Long userId) {
+        Post postEntity=boardRepository
+                .findById(postId)
+                .orElseThrow(()->new RuntimeException("post not found"));// 임시 exception
+
+        if(!postEntity.getUser().getId().equals(userId))
+        {
+            throw new RuntimeException("No user found");
+        }
+
+        postEntity.setState(1);// 삭제한 상태
+        boardRepository.save(postEntity);
     }
 
 
@@ -129,20 +186,7 @@ public class BoardService {
 //        return PostResponseDTO.from(updatedPost);
 //    }
 
-    @Transactional
-    public void deletePost(Long postId,Long userId) {
-        Post postEntity=boardRepository
-                .findById(postId)
-                .orElseThrow(()->new RuntimeException("post not found"));// 임시 exception
 
-        if(!postEntity.getUser().getId().equals(userId))
-        {
-            throw new RuntimeException("no user found");
-        }
-
-        postEntity.setState(1);// 삭제한 상태
-        boardRepository.save(postEntity);
-    }
 }
 
 

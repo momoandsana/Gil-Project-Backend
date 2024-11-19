@@ -12,6 +12,7 @@ import com.web.gilproject.service.PathService;
 import com.web.gilproject.service.BoardService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.couchbase.CouchbaseProperties;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -55,12 +56,11 @@ public class BoardController
     게시글 작성
      */
     @PostMapping
-    public PostResponseDTO createPost(Authentication authentication,PostRequestDTO postRequestDTO)
+    public PostResponseDTO createPost(Authentication authentication,PostRequestDTO postRequestDTO)throws IOException
     {
-        /*!!!!!!!!!!!!!!!!!!!!!!!!!!!! 수정*/
-//        CustomUserDetails customMemberDetails = (CustomUserDetails) authentication.getPrincipal();
-//        Long userId = customMemberDetails.getId();
-//        PostResponseDTO postResponseDTO=boardService.createPost(userId,postRequestDTO);
+        CustomUserDetails customMemberDetails = (CustomUserDetails) authentication.getPrincipal();
+        Long userId = customMemberDetails.getId();
+        PostResponseDTO postResponseDTO=boardService.createPost(userId,postRequestDTO);
 //        return ResponseEntity.ok(postResponseDTO);
         return  null;
     }
