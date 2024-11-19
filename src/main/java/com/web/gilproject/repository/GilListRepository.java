@@ -69,4 +69,10 @@ public interface GilListRepository extends JpaRepository<Post, Long> {
     //@Query("select p from Post p left join p.postLikes pl where p.path.startAddr like %:keyword% and p.state = 0 group by p.id order by count(pl) desc")
     @Query("select p from Post p left join p.postLikes pl left join p.replies r where p.path.startAddr like %:keyword% and p.state = 0 and (r is null or r.state = 0) group by p.id order by count(pl) desc")
     Set<PostDTO> findByStartAddrContaining(@Param("keyword") String keyword);
+
+    /**
+     * 작성자 id가 일치하는 전체 게시글 조회
+     * */
+    @Query("select p from Post p left join p.postLikes pl left join p.replies r where p.user.id = :userId and p.state=0 and (r is null or r.state=0) group by p.id order by count(pl) desc")
+    List<PostDTO> findByUserId(@Param("userId") Long userId);
 }

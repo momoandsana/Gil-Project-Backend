@@ -1,10 +1,12 @@
 package com.web.gilproject.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import org.hibernate.annotations.CreationTimestamp;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.LineString;
@@ -27,6 +29,7 @@ public class Path {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="USER_ID",nullable = false)
+    @JsonIgnore
     private User user;
 
     private Integer state; //경로 삭제 여부(softDelete)
@@ -54,8 +57,10 @@ public class Path {
     private LineString route;
 
     @OneToMany(mappedBy = "path", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonIgnore
     private Set<Pin> pins;
 
     @OneToOne(mappedBy = "path",cascade = CascadeType.ALL,orphanRemoval = true)
+    @JsonIgnore
     private Post post;
 }

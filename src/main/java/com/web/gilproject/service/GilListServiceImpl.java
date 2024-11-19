@@ -1,6 +1,7 @@
 package com.web.gilproject.service;
 
 import com.web.gilproject.domain.Post;
+import com.web.gilproject.dto.CustomUserDetails;
 import com.web.gilproject.dto.PostDTO_YJ.PostDTO;
 import com.web.gilproject.repository.GilListRepository;
 import com.web.gilproject.repository.UserRepository_YJ;
@@ -56,12 +57,13 @@ public class GilListServiceImpl implements GilListService {
         //최종 결과값을 담을 List
         List<PostDTO> nearHome = new ArrayList<>();
 
-        //현재 로그인 중인 유저의 name을 찾아오기
-        String name = authentication.getName();
+        //현재 로그인 중인 유저의 id를 찾아오기
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        Long userId = userDetails.getId();
 
-        //해당 name인 유저의 집주소 위도와 경도 알아내기
-        Double homeLat = userRepository.findByName(name).getLatitude(); //집주소 위도
-        Double homeLong = userRepository.findByName(name).getLongitude(); //집주소 경도
+        //해당 id인 유저의 집주소 위도와 경도 알아내기
+        Double homeLat = userRepository.findByUserId(userId).getLatitude(); //집주소 위도
+        Double homeLong = userRepository.findByUserId(userId).getLongitude(); //집주소 경도
 
         //전체 게시글 리스트 조회
         List<PostDTO> allListPostDTO = this.findAll().stream().map(PostDTO::new).collect(Collectors.toList());
@@ -103,11 +105,12 @@ public class GilListServiceImpl implements GilListService {
         //최종 결과값을 담을 List
         List<PostDTO> myGilList = new ArrayList<>();
 
-        //현재 로그인 중인 유저의 이름
-        String userName = authentication.getName();
+        //현재 로그인 중인 유저의 id를 찾아오기
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        Long userId = userDetails.getId();
 
-        //유저 이름이 완전히 일치하는 유저가 작성한 산책길 글 목록 불러오기
-        myGilList = gilListRepository.findByName(userName);
+        //유저 id가 완전히 일치하는 유저가 작성한 산책길 글 목록 불러오기
+        myGilList = gilListRepository.findByUserId(userId);
 
         return myGilList;
     }
@@ -121,11 +124,9 @@ public class GilListServiceImpl implements GilListService {
         //최종 결과물 담을 List
         List<PostDTO> myFavList = new ArrayList<>();
 
-        //현재 로그인 중인 유저 이름 가져오기
-        String userName = authentication.getName();
-
-        //유저 이름을 바탕으로 유저 id 가져오기
-        Long userId = userRepository.findByName(userName).getId();
+        //현재 로그인 중인 유저의 Id를 찾아오기
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        Long userId = userDetails.getId();
 
         //전체 게시글 리스트 조회
         List<PostDTO> allListPostDTO = this.findAll().stream().map(PostDTO::new).collect(Collectors.toList());
