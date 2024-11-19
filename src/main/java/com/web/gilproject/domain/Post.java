@@ -1,9 +1,7 @@
 package com.web.gilproject.domain;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -16,6 +14,9 @@ import java.util.Set;
 @DynamicUpdate //수정된 부분만 업데이트 되게하는 어노테이션
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Post {
 
     @Id
@@ -31,7 +32,7 @@ public class Post {
     @JoinColumn(name="PATH_ID",nullable=false)
     private Path path;
 
-    private Integer state;
+    private Integer state=0;
 
     private String title;
 
@@ -46,7 +47,7 @@ public class Post {
     @UpdateTimestamp
     private LocalDateTime updateDate;
 
-    private Integer readNum; //조회수
+    private Integer readNum=0; //조회수
 
     @OneToMany(mappedBy = "post",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<PostLike> postLikes; //게시글 좋아요

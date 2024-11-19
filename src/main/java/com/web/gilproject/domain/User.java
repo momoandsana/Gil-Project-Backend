@@ -1,12 +1,8 @@
 package com.web.gilproject.domain;
 
 import jakarta.persistence.*;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.Setter;
 import org.hibernate.annotations.*;
-
+import lombok.*;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -16,6 +12,9 @@ import java.util.Set;
 @Table(name = "USERS")
 @DynamicInsert //회원가입 부분적 insert
 @DynamicUpdate //수정된 부분만 업데이트 되게하는 어노테이션
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
 
     @Id
