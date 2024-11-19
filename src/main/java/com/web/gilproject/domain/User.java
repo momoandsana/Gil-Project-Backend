@@ -1,6 +1,8 @@
 package com.web.gilproject.domain;
 
 import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Table;
 import org.hibernate.annotations.*;
 import lombok.*;
 import java.time.LocalDateTime;

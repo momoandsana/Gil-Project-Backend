@@ -57,10 +57,12 @@ public class BoardController
     @PostMapping
     public PostResponseDTO createPost(Authentication authentication,PostRequestDTO postRequestDTO)
     {
-        CustomUserDetails customMemberDetails = (CustomUserDetails) authentication.getPrincipal();
-        Long userId = customMemberDetails.getId();
-        PostResponseDTO postResponseDTO=boardService.createPost(userId,postRequestDTO);
-        return ResponseEntity.ok(postResponseDTO);
+        /*!!!!!!!!!!!!!!!!!!!!!!!!!!!! 수정*/
+//        CustomUserDetails customMemberDetails = (CustomUserDetails) authentication.getPrincipal();
+//        Long userId = customMemberDetails.getId();
+//        PostResponseDTO postResponseDTO=boardService.createPost(userId,postRequestDTO);
+//        return ResponseEntity.ok(postResponseDTO);
+        return  null;
     }
 
 

@@ -41,8 +41,9 @@ public class BoardService {
 
 
     public PostResponseDTO createPost(Long userId, PostRequestDTO postRequestDTO) {
+        /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 수정*/
         //Path path=pathRepository.findById(postRequestDTO.routeId());
-
+        return null;
     }
 
 
