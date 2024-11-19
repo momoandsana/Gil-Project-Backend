@@ -40,11 +40,11 @@ public class BoardController
      */
     //@GetMapping("/{userId}/paths")
     @GetMapping("/paths")
-    public ResponseEntity<List<PathResDTO>> getAllPaths(Authentication authentication) {
+    public ResponseEntity<List<BoardPathResponseDTO>> getAllPaths(Authentication authentication) {
 
         CustomUserDetails customMemberDetails = (CustomUserDetails) authentication.getPrincipal();
         Long userId = customMemberDetails.getId();
-        List<PathResDTO> boardPathListDTO = pathService.findPathByUserIdTransform(userId);
+        List<BoardPathResponseDTO> boardPathListDTO = boardService.getAllPathsById(userId);
 //        for (BoardPathDTO boardPathDTO : boardPathListDTO) {
 //            System.out.println(boardPathDTO);
 //        }

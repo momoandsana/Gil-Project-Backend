@@ -2,6 +2,7 @@ package com.web.gilproject.dto.BoardDTO;
 
 import com.web.gilproject.domain.Path;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +16,9 @@ public record BoardPathResponseDTO(
         double distance,
         double startLat,
         double startLong,
+        LocalDateTime createdDate,
+        String startAddr,
+
         List<Map<String, Double>> routeCoordinates,
         List<Map<String, Object>> pins
 ) {
@@ -27,6 +31,9 @@ public record BoardPathResponseDTO(
                 path.getDistance(),
                 path.getStartLat(),
                 path.getStartLong(),
+                path.getCreatedDate(),
+                path.getStartAddr(),
+                //동 추가
                 Arrays.stream(path.getRoute().getCoordinates())
                         .map(coord -> Map.of("lat", coord.y, "lng", coord.x))
                         .toList(),
