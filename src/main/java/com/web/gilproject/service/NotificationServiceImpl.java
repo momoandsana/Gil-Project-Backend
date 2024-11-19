@@ -2,6 +2,7 @@ package com.web.gilproject.service;
 
 import com.web.gilproject.repository.EmitterRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -9,6 +10,7 @@ import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class NotificationServiceImpl implements NotificationService {
 
     //기본 타임아웃 설정
@@ -19,6 +21,7 @@ public class NotificationServiceImpl implements NotificationService {
     //클라이언트가 구독을 위해 호출하는 메소드
     @Override
     public SseEmitter subscribe(Long userId, String lastEventId) {
+        log.info("클라이언트가 구독을 위해 호출하는 메소드");
         SseEmitter emitter = createEmitter(userId);
 
         sendToClient(userId, "EventStream Created. [userId = " + userId + "]");
@@ -29,12 +32,14 @@ public class NotificationServiceImpl implements NotificationService {
     // 다른 서비스 로직에서 이 메소드를 사용해 데이터를 Object event에 넣고 전송하면 된다.
     @Override
     public void notify(Long userId, Object event) {
+        log.info("서버의 이벤트를 클라이언트에게 보내는 메소드");
         sendToClient(userId, event);
     }
 
     //사용자 아이디를 기반으로 이벤트 Emiiter를 생성
     @Override
     public SseEmitter createEmitter(Long userId) {
+        log.info("사용자 아이디를 기반으로 이벤트 Emiiter를 생성");
         SseEmitter emitter = new SseEmitter(DEFAULT_TIMEOUT);
         emitterRepository.save(userId, emitter);
 
@@ -49,6 +54,7 @@ public class NotificationServiceImpl implements NotificationService {
     //클라이언트에게 데이터를 전송
     @Override
     public void sendToClient(Long userId, Object data) {
+        log.info("클라이언트에게 데이터를 전송");
         SseEmitter emitter = emitterRepository.getById(userId);
         if(emitter != null) {
             try {

@@ -3,6 +3,7 @@ package com.web.gilproject.controller;
 import com.web.gilproject.dto.IntergrateUserDetails;
 import com.web.gilproject.service.NotificationService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.Parameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/notifications")
+@Slf4j
 public class NotificationController {
 
     private final NotificationService notificationService;
@@ -35,6 +37,7 @@ public class NotificationController {
             @PathVariable Long id,
             @RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId){
         //return ResponseEntity.ok(notificationService.subscribe(intergrateUserDetails.getId(), lastEventId));
+        log.info("서버 -> 클라이언트로 이벤트를 보낼 수 있게된다");
         return ResponseEntity.ok(notificationService.subscribe(id, lastEventId));
     }
 
@@ -48,6 +51,8 @@ public class NotificationController {
 
     @PostMapping("/send-data/{id}")
     public void sendData(@PathVariable Long id){
+        log.info("이벤트를 구독 중인 클라이언트에게 데이터를 전송한다.");
         notificationService.notify(id,"data");
+
     }
 }
