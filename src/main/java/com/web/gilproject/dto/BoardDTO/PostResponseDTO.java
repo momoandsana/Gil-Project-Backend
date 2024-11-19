@@ -18,12 +18,12 @@ public record PostResponseDTO(Long postId, String nickName, String title, String
     static 으로 작성하는 경우가 많음
      */
     public static PostResponseDTO from(Post postEntity)
-    {
+    {// 위에 record 순서랑 맞게 하기
         return new PostResponseDTO(
                 postEntity.getId(),
+                postEntity.getUser().getNickName(),
                 postEntity.getTitle(),
                 postEntity.getContent(),
-                postEntity.getUser().getNickName(),
                 postEntity.getTag(),
                 BoardPathResponseDTO.from(postEntity.getPath()),
                 postEntity.getWriteDate(),

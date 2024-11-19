@@ -94,7 +94,7 @@ public class BoardService {
     public void deletePost(Long postId,Long userId) {
         Post postEntity=boardRepository
                 .findById(postId)
-                .orElseThrow(()->new RuntimeException("post not found"));// 임시 exception
+                .orElseThrow(()->new RuntimeException("Post not found"));// 임시 exception
 
         if(!postEntity.getUser().getId().equals(userId))
         {

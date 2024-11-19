@@ -6,6 +6,7 @@ import com.web.gilproject.dto.BoardDTO.*;
 import com.web.gilproject.dto.PathDTO;
 import com.web.gilproject.dto.CustomUserDetails;
 import com.web.gilproject.dto.PathResDTO;
+import com.web.gilproject.repository.BoardRepository;
 import com.web.gilproject.service.AmazonService;
 import com.web.gilproject.service.PathService;
 
@@ -31,6 +32,8 @@ public class BoardController
     private final PathService pathService;
     private final BoardService boardService;
     private final AmazonService s3Service;
+
+    private final BoardRepository boardRepository;
 
 
     /**
@@ -81,7 +84,10 @@ public class BoardController
     @DeleteMapping("/{postId}")
     public ResponseEntity<PostResponseDTO> deletePost(@PathVariable Long postId, Authentication authentication) {
         Long userId=((CustomUserDetails) authentication.getPrincipal()).getId();
-        boardService.deletePost(postId,userId);
+
+        Post post=boardRepository.findById(postId).get();
+        boardRepository.delete(post);// 임시
+        //boardService.deletePost(postId,userId);
         return ResponseEntity.noContent().build(); //204 no content
     }
 
