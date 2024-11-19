@@ -3,6 +3,8 @@ package com.web.gilproject.service;
 import com.web.gilproject.domain.Path;
 import com.web.gilproject.domain.Pin;
 import com.web.gilproject.dto.PinResDTO;
+import com.web.gilproject.exception.PathErrorCode;
+import com.web.gilproject.exception.PathPinException;
 import com.web.gilproject.repository.PinRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -22,7 +24,7 @@ public class PinService {
         return savedPin;
     }
 
-    public void update(Long pinId, PinResDTO pinResDTO) {
+    /*public void update(Long pinId, PinResDTO pinResDTO) {
         // Pin 엔티티를 조회
         Optional<Pin> optionalPin = pinRepository.findById(pinId);
 
@@ -44,7 +46,7 @@ public class PinService {
             // Pin ID에 해당하는 엔티티가 없을 경우 예외 처리
             throw new EntityNotFoundException("Pin with ID " + pinId + " not found");
         }
-    }
+    }*/
 
     public void delete(Long pinId) {
         Optional<Pin> optionalPin = pinRepository.findById(pinId);
@@ -53,7 +55,7 @@ public class PinService {
             pinRepository.delete(pin);
         }else {
             // Pin ID에 해당하는 엔티티가 없을 경우 예외 처리
-            throw new EntityNotFoundException("Pin with ID " + pinId + " not found");
+            throw new PathPinException(PathErrorCode.DELETE_FAILED);
         }
     }
 }
