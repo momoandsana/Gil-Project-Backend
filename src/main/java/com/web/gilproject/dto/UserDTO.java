@@ -11,7 +11,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@ToString(of = {"id","name","nickName","imageUrl", "password", "email", "comment"})
+@ToString(of = {"id","name","nickName","imageUrl", "password", "email", "comment", "paths"})
 public class UserDTO {
 
     private Long id;
@@ -51,5 +51,6 @@ public class UserDTO {
         this.updateDate = user.getUpdateDate();
         this.point = user.getPoint();
         this.state = user.getState();
+        this.paths = user.getPaths();
     }
 }

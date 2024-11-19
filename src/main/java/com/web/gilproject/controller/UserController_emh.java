@@ -79,7 +79,7 @@ public class UserController_emh {
     }
 
     /**
-     * 내 게시물 보기
+     * 내 게시물 보기 (염진님이 구현해주실 예정)
      */
 
 }
