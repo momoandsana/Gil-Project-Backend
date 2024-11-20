@@ -40,6 +40,8 @@ public class JWTFilter extends OncePerRequestFilter {
 
             return;
         }
+        System.out.println("token 헤더에 있음!");
+
 
         //Bearer 부분 제거 후 순수 토큰만 획득
         String token = authorization.split(" ")[1];
@@ -52,6 +54,8 @@ public class JWTFilter extends OncePerRequestFilter {
 
             return;
         }
+        System.out.println("token 만료되지 않았음!");
+
 
 
         //userEntity를 생성하여 값 set
