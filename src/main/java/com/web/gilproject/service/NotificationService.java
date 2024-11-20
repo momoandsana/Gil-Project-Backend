@@ -24,14 +24,6 @@ public interface NotificationService {
 
 
     /**
-     * 사용자 아이디를 기반으로 이벤트 Emiiter를 생성
-     *
-     * @param userId - 사용자 아이디
-     * @return createEmitter   - 생성된 이벤트 Emitter
-     */
-    SseEmitter createEmitter(Long userId);
-
-    /**
      * 클라이언트에게 데이터를 전송
      *
      * @param userId - 데이터를 받을 사용자의 아이디

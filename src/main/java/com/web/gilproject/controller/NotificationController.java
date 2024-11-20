@@ -25,20 +25,28 @@ public class NotificationController {
     * TEXT_EVENT_STREAM_VALUE타입으로 설정하면, 서버가 클라이언트에게 이벤트 스트림을 전송한다는것을 명시.
     * 이를통해 서버는 클라이언트와의 연결을 유지하며 실시간으로 데이터를 전송할 수 있다.
     *
-    * 클라이언트는 이 타입의 응답을 통해 서버가 이벤트 스트림을 전송할 준비가 되어있음을 인지하고
-    * 서버로부터 데이터를 전달받을 수 있다.
-    * 서버 -> 클라이언트로 이벤트를 보낼 수 있게된다.
+    * produces = MediaType.TEXT_EVENT_STREAM_VALUE
+    * : 응답의 Context-Type을 text/event-stream으로 설정
+    * : 이 MIME타입은 SSE응답임을 나타내며, 브라우저나 클라이언트는 이 타입을 보고
+    *   서버에서 지속적으로 데이터(이벤트 스트림)를 보낼 수 있음을 알게된다.
+    *
+    * @RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId)
+    * : Last-Event-ID는 헤더에 담겨져 오는 값으로 이전에 받지 못한 이벤트가 존재하는 경우
+    *   (SSE연결에 대한 시간 만료 혹은 종료)나 받은 마지막 이벤트 ID 값을 넘겨
+    *   그 이후의 데이터(받지 못한 데이터)부터 받을 수 있게 할때 필요한 값이다.
+    *
+    * ★★★ 요약 : 서버 -> 클라이언트로 이벤트를 보낼 수 있게된다.
     * */
 
     //Last-Event-ID는 SSE 연결이 끊어졌을 경우, 클라이언트가 수신한 마지막 데이터의 id값을 의미. 항상 존재하는 것이 아니기 때문에 false
-    @GetMapping(value = "/subscribe/{id}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @GetMapping(value = "/subscribe/", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public ResponseEntity<SseEmitter> subscribe(
-            //@Parameter(hidden=true) @AuthenticationPrincipal IntergrateUserDetails intergrateUserDetails,
             @PathVariable Long id,
+            //@AuthenticationPrincipal IntergrateUserDetails intergrateUserDetails,
             @RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId){
-        //return ResponseEntity.ok(notificationService.subscribe(intergrateUserDetails.getId(), lastEventId));
-        log.info("서버 -> 클라이언트로 이벤트를 보낼 수 있게된다");
+        log.info("Sse 세션 연결");
         return ResponseEntity.ok(notificationService.subscribe(id, lastEventId));
+        //return ResponseEntity.ok(notificationService.subscribe(intergrateUserDetails.getId(), lastEventId));
     }
 
     /**

@@ -22,6 +22,7 @@ public class UserDTO {
     private String password;
     private String email;
     private String comment;
+    private String address;
     private Double latitude;
     private Double longitude;
     private LocalDateTime joinDate;
@@ -45,6 +46,7 @@ public class UserDTO {
         this.password = user.getPassword();
         this.email = user.getEmail();
         this.comment = user.getComment();
+        this.address = user.getAddress();
         this.latitude = user.getLatitude();
         this.longitude = user.getLongitude();
         this.joinDate = user.getJoinDate();

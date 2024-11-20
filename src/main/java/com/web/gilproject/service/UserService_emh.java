@@ -24,10 +24,6 @@ public interface UserService_emh {
      */
     void updateUserImg(Long id, String fileUrl);
 
-    /**
-     * 내 경로 기록보기
-     */
-
 
     /**
      * 내 게시물 보기
