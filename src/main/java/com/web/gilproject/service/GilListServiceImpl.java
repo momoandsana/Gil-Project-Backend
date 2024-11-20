@@ -6,6 +6,9 @@ import com.web.gilproject.dto.PostDTO_YJ.PostDTO;
 import com.web.gilproject.dto.PostDTO_YJ.PostResDTO;
 import com.web.gilproject.repository.GilListRepository;
 import com.web.gilproject.repository.UserRepository_YJ;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -32,27 +35,21 @@ public class GilListServiceImpl implements GilListService {
      * */
     @Transactional(readOnly = true)
     @Override
-    public List<PostResDTO> findByMyPosition(Double nowY, Double nowX) {
-        //최종 결과 게시글 리스트
-        List<PostDTO> nearMe = new ArrayList<>();
+    public Page<PostResDTO> findByMyPosition(Double nowY, Double nowX, Pageable pageable) {
+        //전체 조회
+        Page<PostDTO> pagePostDTO = gilListRepository.findAllPostDTO(pageable);
 
-        List<PostDTO> list = this.findAll();
-        System.out.println("list = " + list);
-        //전체 게시글 리스트
-        List<PostDTO> allListPostDTO = list.stream().map(PostDTO::new).collect(Collectors.toList());
+        //내 위치로부터 5km이내의 산책길 글목록만 남기기
+        List<PostDTO> filteredPosts = pagePostDTO.getContent().stream()
+                .filter(post -> {
+                    Double startLat = post.getStartLat();
+                    Double startLong = post.getStartLong();
+                    Double difference = this.distance(nowY, nowX, startLat, startLong);
+                    return difference < 5.0;
+                })
+                .collect(Collectors.toList());
 
-        for(PostDTO post : allListPostDTO) {
-            Double startLat = post.getStartLat(); //시작위도
-            Double startLong = post.getStartLong(); //시작경도
-
-            //현재위치에서 각 게시글의 시작점까지의 거리
-            Double difference = this.distance(nowY, nowX, startLat, startLong);
-            if (difference < 5.0) { //반경 5km이내에 시작점이 있을 경우에만 리턴한다.
-                nearMe.add(post);
-            }
-        }
-
-        return this.changeList(nearMe);
+        return new PageImpl<>(this.changeList(filteredPosts), pageable, filteredPosts.size());
     }
 
     /**
@@ -60,9 +57,7 @@ public class GilListServiceImpl implements GilListService {
      * */
     @Transactional(readOnly = true)
     @Override
-    public List<PostResDTO> findByNearAddr(Authentication authentication) {
-        //최종 결과값을 담을 List
-        List<PostDTO> nearHome = new ArrayList<>();
+    public Page<PostResDTO> findByNearAddr(Authentication authentication, Pageable pageable) {
 
         //현재 로그인 중인 유저의 id를 찾아오기
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
@@ -72,20 +67,24 @@ public class GilListServiceImpl implements GilListService {
         Double homeLat = userRepository.findByUserId(userId).getLatitude(); //집주소 위도
         Double homeLong = userRepository.findByUserId(userId).getLongitude(); //집주소 경도
 
-        //전체 게시글 리스트 조회
-        List<PostDTO> allListPostDTO = this.findAll().stream().map(PostDTO::new).collect(Collectors.toList());
+        //전체조회
+        Page<PostDTO> pagePostDTO = gilListRepository.findAllPostDTO(pageable);
 
-        for(PostDTO post : allListPostDTO){
-            Double startLat = post.getStartLat(); //시작위도
-            Double startLong = post.getStartLong(); //시작경도
+        //내 집주소로부터 반경 5km이내의 산책길 글목록만 남기기
+        List<PostDTO> filteredPosts = pagePostDTO.getContent().stream()
+                .filter(post -> {
+                    Double startLat = post.getStartLat();
+                    Double startLong = post.getStartLong();
+                    Double difference = this.distance(homeLat, homeLong, startLat, startLong);
+                    return difference < 5.0;
+                })
+                .collect(Collectors.toList());
 
-            //집주소에서 각 게시글의 시작점까지의 거리
-            Double difference = this.distance(homeLat, homeLong, startLat, startLong);
-            if (difference<5.0){ //반경 5km이내에 시작점이 있을 경우에만 리턴한다.
-                nearHome.add(post);
-            }
-        }
-        return this.changeList(nearHome);
+        return new PageImpl<>(
+                this.changeList(filteredPosts),
+                pageable,
+                filteredPosts.size()
+        );
     }
 
     /**
@@ -93,14 +92,17 @@ public class GilListServiceImpl implements GilListService {
      * */
     @Transactional(readOnly = true)
     @Override
-    public List<PostResDTO> findByNickName(String nickName) {
-        //최종결과값을 담을 List
-        List<PostDTO> postByNickName = new ArrayList<>();
+    public Page<PostResDTO> findByNickName(String nickName, Pageable pageable) {
 
-        //nickName이 완전히 일치하는 유저가 작성한 산책길 글 목록 불러오기
-        postByNickName = gilListRepository.findByNickName(nickName);
+        //작성자 닉네임에 의한 산책길 글목록 조회
+        Page<PostDTO> pagePostDTO = gilListRepository.findByNickName(nickName, pageable);
+        List<PostDTO> listPostDTO = pagePostDTO.getContent();
 
-        return this.changeList(postByNickName);
+        return new PageImpl<>(
+                this.changeList(listPostDTO),
+                pageable,
+                listPostDTO.size()
+        );
     }
 
     /**
@@ -108,18 +110,22 @@ public class GilListServiceImpl implements GilListService {
      * */
     @Transactional(readOnly = true)
     @Override
-    public List<PostResDTO> findMyGilList(Authentication authentication) {
-        //최종 결과값을 담을 List
-        List<PostDTO> myGilList = new ArrayList<>();
+    public Page<PostResDTO> findMyGilList(Authentication authentication, Pageable pageable) {
 
         //현재 로그인 중인 유저의 id를 찾아오기
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Long userId = userDetails.getId();
 
-        //유저 id가 완전히 일치하는 유저가 작성한 산책길 글 목록 불러오기
-        myGilList = gilListRepository.findByUserId(userId);
+        //글쓴 유저 id에 의한 산책길 글목록 찾기
+        Page<PostDTO> pagePostDTO = gilListRepository.findByUserId(userId, pageable);
 
-        return this.changeList(myGilList);
+        List<PostDTO> listPostDTO = pagePostDTO.getContent();
+
+        return new PageImpl<>(
+                this.changeList(listPostDTO),
+                pageable,
+                listPostDTO.size()
+        );
     }
 
     /**
@@ -127,25 +133,28 @@ public class GilListServiceImpl implements GilListService {
      * */
     @Transactional(readOnly = true)
     @Override
-    public List<PostResDTO> findMyFav(Authentication authentication) {
-        //최종 결과물 담을 List
-        List<PostDTO> myFavList = new ArrayList<>();
+    public Page<PostResDTO> findMyFav(Authentication authentication, Pageable pageable) {
 
         //현재 로그인 중인 유저의 Id를 찾아오기
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Long userId = userDetails.getId();
 
-        //전체 게시글 리스트 조회
-        List<PostDTO> allListPostDTO = this.findAll().stream().map(PostDTO::new).collect(Collectors.toList());
+        //전체 산책길 글목록 조회
+        Page<PostDTO> pagePostDTO = gilListRepository.findAllPostDTO(pageable);
 
-        //게시글을 찜한 유저의 목록을 조회
-        for(PostDTO post : allListPostDTO){
-            if(post.getPostWishListsUsers().contains(userId)){
-                myFavList.add(post);
-            }
-        }
+        //해당 유저id가 찜한 목록만 조회
+        List<PostDTO> listPostDTO = pagePostDTO.getContent().stream()
+                .filter(post -> {
+                    return post.getPostWishListsUsers().contains(userId);
+                })
+                .collect(Collectors.toList());
 
-        return this.changeList(myFavList);
+        return new PageImpl<>(
+                this.changeList(listPostDTO),
+                pageable,
+                listPostDTO.size()
+        );
+
     }
 
     /**
@@ -153,41 +162,34 @@ public class GilListServiceImpl implements GilListService {
      * */
     @Transactional(readOnly = true)
     @Override
-    public List<PostResDTO> findByKeyword(String keyword) {
-        //최종 결과물을 담을 Set - 중복을 피하기 위해 Set 사용
-        Set<PostDTO> postByKeyword = new HashSet<>();
+    public Page<PostResDTO> findByKeyword(String keyword, Pageable pageable) {
 
-        //제목에 따른 검색결과
-        Set<PostDTO> titleKeyword = gilListRepository.findByTitleContaining(keyword);
-        postByKeyword.addAll(titleKeyword);
+        //키워드 검색(제목, 내용, 닉네임, 시작주소)
+        Page<PostDTO> titleKeyword = gilListRepository.findByTitleContaining(keyword, pageable);
+        Page<PostDTO> contentKeyword = gilListRepository.findByContentContaining(keyword, pageable);
+        Page<PostDTO> nickNameKeyword = gilListRepository.findByNickNameContaining(keyword, pageable);
+        Page<PostDTO> startAddrKeyword = gilListRepository.findByStartAddrContaining(keyword, pageable);
 
-        //글 내용에 따른 검색결과
-        Set<PostDTO> contentKeyword = gilListRepository.findByContentContaining(keyword);
-        postByKeyword.addAll(contentKeyword);
+        //중복제거
+        Set<PostDTO> combinedSet = new HashSet<>();
+        combinedSet.addAll(titleKeyword.getContent());
+        combinedSet.addAll(contentKeyword.getContent());
+        combinedSet.addAll(nickNameKeyword.getContent());
+        combinedSet.addAll(startAddrKeyword.getContent());
 
-        //글 작성자 닉네임에 따른 검색결과
-        Set<PostDTO> nickNameKeyword = gilListRepository.findByNickNameContaining(keyword);
-        postByKeyword.addAll(nickNameKeyword);
+        //좋아요 많은 순으로 정렬
+        List<PostDTO> combinedList = new ArrayList<>(combinedSet);
+        combinedList.sort((p1, p2) -> p2.getPostLikesNum().compareTo(p1.getPostLikesNum()));
 
-        //산책길 시작점에 따른 검색결과
-        Set<PostDTO> startAddrKeyword = gilListRepository.findByStartAddrContaining(keyword);
-        postByKeyword.addAll(startAddrKeyword);
+        // 전체 데이터 수 계산
+        long total = combinedSet.size();
 
-        List<PostDTO> result = new ArrayList<>();
-        result.addAll(postByKeyword);
+        // 페이징 처리: 현재 페이지 범위에 해당하는 데이터 슬라이싱
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), combinedList.size());
+        List<PostDTO> pagedResult = combinedList.subList(start, end);
 
-        //결과 List를 좋아요 내림차순 순서로 정렬
-        result.sort((p1, p2)->p2.getPostLikesNum().compareTo(p1.getPostLikesNum()));
-
-        return this.changeList(result);
-    }
-
-    /**
-     * 전체 게시글 조회
-     * */
-    public List<PostDTO> findAll(){
-        //System.out.println("전체게시글 조회하기"+gilListRepository.findAllPostDTO());
-        return gilListRepository.findAllPostDTO();
+        return new PageImpl<>(this.changeList(pagedResult), pageable, total);
     }
 
     /**
