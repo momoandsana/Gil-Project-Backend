@@ -74,7 +74,7 @@ public class BoardService {
 
         for(MultipartFile image:postRequestDTO.images())
         {
-            String imageUrl = amazonService.uploadFile(image, "posts/" + post.getId() + "/" + image.getOriginalFilename());
+            String imageUrl = amazonService.uploadFile(image, "upload_images/" + post.getId() + "/" + image.getOriginalFilename());
 
             PostImage postImage = PostImage.builder()
                     .post(post)

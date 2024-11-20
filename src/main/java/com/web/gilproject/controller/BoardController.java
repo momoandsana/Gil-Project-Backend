@@ -92,10 +92,6 @@ public class BoardController
     }
 
     /*
-    댓글 기능
-     */
-
-    /*
     좋아요 기능
      */
 

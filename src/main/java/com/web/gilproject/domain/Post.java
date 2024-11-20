@@ -48,6 +48,10 @@ public class Post {
     @UpdateTimestamp
     private LocalDateTime updateDate;
 
+    private Long repliesCount=0L;
+
+    private Long likesCount=0L;
+
     private Integer readNum=0; //조회수
 
     @OneToMany(mappedBy = "post",cascade = CascadeType.ALL,orphanRemoval = true)
