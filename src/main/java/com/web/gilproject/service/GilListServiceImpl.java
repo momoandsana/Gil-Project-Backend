@@ -36,8 +36,10 @@ public class GilListServiceImpl implements GilListService {
         //최종 결과 게시글 리스트
         List<PostDTO> nearMe = new ArrayList<>();
 
+        List<PostDTO> list = this.findAll();
+        System.out.println("list = " + list);
         //전체 게시글 리스트
-        List<PostDTO> allListPostDTO = this.findAll().stream().map(PostDTO::new).collect(Collectors.toList());
+        List<PostDTO> allListPostDTO = list.stream().map(PostDTO::new).collect(Collectors.toList());
 
         for(PostDTO post : allListPostDTO) {
             Double startLat = post.getStartLat(); //시작위도

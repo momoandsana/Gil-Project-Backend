@@ -18,8 +18,9 @@ public interface GilListRepository extends JpaRepository<Post, Long> {
      * */
     //@Query("select p from Post p where p.state=0")
     //@Query("select p from Post p left join p.postLikes pl group by p.id order by count(pl) desc")
-    @Query("select p from Post p left join p.postLikes pl left join p.replies r where p.state = 0 and (r is null or r.state = 0) group by p.id order by size(pl) desc")
-    //@Query("select p from Post p left join p.postLikes pl left join (select r from p.replies r where r.state!=1) where p.state=0 group by p.id order by size(pl) desc")
+    @Query("select p  from Post p left join p.postLikes pl left join p.replies r where (p.state = 0 and (r.state is null or r.state != 1)) group by (p.id ) order by size(pl) desc")
+    //@Query("select p  from Post p left join p.postLikes pl left join p.replies r where p.state = 0  group by p.id order by size(pl) desc")
+    //@Query(value = "select * from Post p left join Post_Like pl left join (select * from reply r where r.state!=1) where p.state=0 group by p.id order by size(pl) desc", nativeQuery = true)
     //@Query("select p from Post p left join p.postLikes pl left join p.replies r on r.state!=1 where p.state=0 group by p.id order by count(pl) desc")
     List<PostDTO> findAllPostDTO();
 
@@ -28,7 +29,7 @@ public interface GilListRepository extends JpaRepository<Post, Long> {
      * */
     //@Query("select p from Post p where p.user.nickName = :nickName and p.state=0")
     //@Query("select p from Post p left join p.postLikes pl where p.user.nickName = :nickName and p.state = 0 group by p.id order by count(pl) desc")
-    @Query("select p from Post p left join p.postLikes pl left join p.replies r where p.user.nickName = :nickName and p.state = 0 and (r is null or r.state = 0) group by p.id order by size(pl) desc")
+    @Query("select p from Post p left join p.postLikes pl left join p.replies r where p.user.nickName = :nickName and p.state = 0 group by p.id order by size(pl) desc")
     //@Query("select p from Post p left join p.postLikes pl left join (select r from p.replies r where r.state!=1) where p.user.nickName = :nickName and p.state=0 group by p.id order by size(pl) desc")
     //@Query("select p from Post p left join p.postLikes pl left join p.replies r on r.state!=1 where p.user.nickName = :nickName and p.state=0 group by p.id order by count(pl) desc")
     List<PostDTO> findByNickName(@Param("nickName") String nickName);

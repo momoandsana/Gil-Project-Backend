@@ -53,8 +53,13 @@ public class PostDTO {
         this.readNum = post.getReadNum();
         this.postLikesUsers = post.getPostLikes().stream().map(PostLike -> PostLike.getUser().getId()).collect(Collectors.toList());
         this.postLikesNum = post.getPostLikes().size();
-        this.repliesUsers = post.getReplies().stream().map(Reply -> Reply.getUser().getId()).collect(Collectors.toList());
-        this.repliesNum = post.getReplies().size();
+
+        //this.repliesUsers = post.getReplies().stream().map(Reply -> Reply.getUser().getId()).collect(Collectors.toList());
+        List<Reply> list = post.getReplies().stream().filter(Reply -> Reply.getState()==0).collect(Collectors.toList());
+        this.repliesUsers =list.stream().map(Reply -> Reply.getUser().getId()).collect(Collectors.toList());
+
+        this.repliesNum = this.repliesUsers.size();
+
         this.postWishListsUsers = post.getPostWishLists().stream().map(PostWishlist -> PostWishlist.getUser().getId()).collect(Collectors.toList());
         this.postWishListsNum = post.getPostWishLists().size();
 
