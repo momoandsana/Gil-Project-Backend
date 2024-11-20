@@ -39,7 +39,7 @@ public class NotificationController {
     * */
 
     //Last-Event-ID는 SSE 연결이 끊어졌을 경우, 클라이언트가 수신한 마지막 데이터의 id값을 의미. 항상 존재하는 것이 아니기 때문에 false
-    @GetMapping(value = "/subscribe/", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @GetMapping(value = "/subscribe/{id}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public ResponseEntity<SseEmitter> subscribe(
             @PathVariable Long id,
             //@AuthenticationPrincipal IntergrateUserDetails intergrateUserDetails,

@@ -32,11 +32,4 @@ public interface NotificationService {
     void sendToClient(Long userId, Object data);
 
 
-    //////////////////////////////////////////////
-
-    /**
-     * 이벤트가 구독되어있는 클라이언트에게 데이터를 전송
-     */
-    void broadcast(Long userId, String lastEventId);
-
 }

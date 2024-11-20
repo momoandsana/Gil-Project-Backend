@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +26,7 @@ public class NotificationServiceImpl implements NotificationService {
 
         //데이터가 유실된 시점을 파악하여 유실된 데이터 전송을 다시 해주기 위함
         //만약 id값을 그대로 사용한다면 Last-Event-Id값이 의미 없어짐(유실된 데이터 찾을 방법 없음)
-        String emitterdId = userId + "_" + System.currentTimeMillis();
+        //String emitterdId = userId + "_" + System.currentTimeMillis();
 
         //Emitter생성해서 DB에 저장
         log.info("사용자 아이디를 기반으로 이벤트 Emiiter를 생성");
@@ -41,13 +42,19 @@ public class NotificationServiceImpl implements NotificationService {
         //에러 발생시 Emitter를 삭제한다
         emitter.onError((e)->emitterRepository.deleteById(userId));
         
-        
-        
-        
         // 503 Service Unavailable 방지용 dummy event 전송
-        // :
+        // :sse연결이 이뤄진 후 하나의 데이터도 전송되지 않는다면 SseEmitter의 유효시간이 끝나면 503응답 발생
         sendToClient(userId, "EventStream Created. [userId = " + userId + "]");
         return emitter;
+
+        //client가 미수신한 event 목록이 존재하는 경우
+//        if(!lastEventId.isEmpty()){
+//            Map<String, Object> eventCache = emitterRepository.getById(userId); // id에 해당하는 eventCache 조회
+//            eventCache.entrySet().stream()
+//                    .filter(entry -> lastEventId.compareTo(entry.getKey()) < 0)
+//                    .forEach(entry -> emitEvent);
+//        }
+
     }
 
     //서버의 이벤트를 클라이언트에게 보내는 메소드
@@ -56,6 +63,9 @@ public class NotificationServiceImpl implements NotificationService {
     public void notify(Long userId, Object event) {
         log.info("서버의 이벤트를 클라이언트에게 보내는 메소드");
         sendToClient(userId, event);
+        //emitterRepository.deleteById(userId); //이거 없으면 누적되는건가?(확인 필요)
+
+        //try-catch로 잡아야함?
     }
 
 
@@ -77,11 +87,5 @@ public class NotificationServiceImpl implements NotificationService {
 
     }
 
-    ////////////////////////////////////////////////////////////////////
-    //이벤트가 구독되어있는 클라이언트에게 데이터를 전송
-    @Override
-    public void broadcast(Long userId, String lastEventId) {
-
-    }
 
 }
