@@ -1,17 +1,11 @@
 package com.web.gilproject.service;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.web.gilproject.domain.Path;
-import com.web.gilproject.domain.Post;
-import com.web.gilproject.domain.PostImage;
-import com.web.gilproject.domain.User;
+import com.web.gilproject.domain.*;
 import com.web.gilproject.dto.BoardDTO.BoardPathResponseDTO;
 import com.web.gilproject.dto.BoardDTO.PostRequestDTO;
 import com.web.gilproject.dto.BoardDTO.PostResponseDTO;
-import com.web.gilproject.repository.BoardRepository;
-import com.web.gilproject.repository.PathRepository;
-import com.web.gilproject.repository.PostImageRepository;
-import com.web.gilproject.repository.UserRepository_JHW;
+import com.web.gilproject.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -21,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,6 +27,7 @@ public class BoardService {
     private final UserRepository_JHW userRepository;
     private final AmazonService amazonService;
     private final PostImageRepository postImageRepository;
+    private final PostLikeRepository postLikeRepository;
 
     @Value("${aws.s3.bucketName}")
     private String bucketName;
@@ -103,6 +99,26 @@ public class BoardService {
 
         postEntity.setState(1);// 삭제한 상태
         boardRepository.save(postEntity);
+    }
+
+    @Transactional
+    public void toggleLike(Long postId,Long userId)
+    {
+        Post postEntity=boardRepository.findById(postId).orElseThrow(()->new RuntimeException("Post not found"));
+        User userEntity=userRepository.findById(userId).orElseThrow(()->new RuntimeException("User not found"));
+        Optional<PostLike> postLike=postLikeRepository.findByUserAndPost(userEntity,postEntity);
+
+        if(postLike.isPresent())
+        {
+            postLikeRepository.delete(postLike.get());
+            postEntity.setLikesCount(Math.max(0,postEntity.getLikesCount()-1));
+        }
+        else
+        {
+            PostLike postLikeEntity=PostLike.of(userEntity,postEntity);
+            postLikeRepository.save(postLikeEntity);
+            postEntity.setLikesCount(Math.max(0,postEntity.getLikesCount()+1));
+        }
     }
 
 

@@ -21,15 +21,15 @@ public class ReplyService {
     private final UserRepository_JHW userRepository;
 
     public List<ReplyDTO> getRepliesByPostId(Long postId) {
-        Post post=boardRepository.findById(postId).orElseThrow(()->new RuntimeException("No post has been found"));
+        Post post=boardRepository.findById(postId).orElseThrow(()->new RuntimeException("No post found"));
         List<Reply>replyEntities=replyRepository.findByPost(post);
         return replyEntities.stream().map(ReplyDTO::from).toList();
     }
 
 
     public ReplyDTO createReply(Long postId, ReplyPostRequestDTO replyPostRequestDTO, Long userId) {
-        Post post=boardRepository.findById(postId).orElseThrow(()->new RuntimeException("No post has been found"));
-        User user=userRepository.findById(userId).orElseThrow(()->new RuntimeException("No user has been found"));
+        Post post=boardRepository.findById(postId).orElseThrow(()->new RuntimeException("No post found"));
+        User user=userRepository.findById(userId).orElseThrow(()->new RuntimeException("No user found"));
         Reply reply=replyRepository.save(
                 Reply.of(replyPostRequestDTO.content(),user,post)
         );
@@ -37,4 +37,6 @@ public class ReplyService {
         post.setRepliesCount(post.getRepliesCount()+1);
         return ReplyDTO.from(reply);
     }
+
+
 }

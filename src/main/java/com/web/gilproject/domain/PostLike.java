@@ -23,4 +23,11 @@ public class PostLike {
     @JsonIgnore
     private User user;
 
+    public static PostLike of(User user,Post post) {
+        PostLike like = new PostLike();
+        like.setUser(user);
+        like.setPost(post);
+        return like;
+    }
+
 }

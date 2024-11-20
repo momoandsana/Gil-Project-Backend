@@ -68,10 +68,6 @@ public class BoardController
         //return  null;
     }
 
-
-
-
-
     /**
      * 게시글 삭제
      * 게시글 삭제한 상태는 1
@@ -94,6 +90,14 @@ public class BoardController
     /*
     좋아요 기능
      */
+    @PostMapping("/{postId}/likes")
+    public ResponseEntity<Void> toggleLike(@PathVariable Long postId, Authentication authentication)
+    {
+        Long userId=((CustomUserDetails) authentication.getPrincipal()).getId();
+        boardService.toggleLike(postId,userId);// 만약에 문제가 생긴다면 서비스에서 에러가 난다
+        return ResponseEntity.ok().build();//응답만 오면 되는지
+    }
+
 
     /*
     글 상세보기
