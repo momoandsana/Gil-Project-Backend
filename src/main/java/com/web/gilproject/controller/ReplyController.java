@@ -52,7 +52,14 @@ public class ReplyController {
     /*
     댓글 삭제
      */
-
+    @DeleteMapping("/{replyId}")
+    public ResponseEntity<Void> deleteReply(@PathVariable Long postId, @PathVariable Long replyId, Authentication authentication)
+    {
+        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+        Long userId=customUserDetails.getId();
+        replyService.deleteReply(postId,replyId,userId);
+        return ResponseEntity.ok().build();
+    }
     /*
     댓글 좋아요 기능
      */

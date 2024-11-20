@@ -39,4 +39,20 @@ public class ReplyService {
     }
 
 
+    public void deleteReply(Long postId, Long replyId, Long userId)
+    {
+        Post postEntity=boardRepository.findById(postId).orElseThrow(()->new RuntimeException("No post found"));
+
+        Reply replyEntity=replyRepository.findById(replyId).orElseThrow(()->new RuntimeException("No reply found"));
+
+        if(!replyEntity.getUser().getId().equals(userId)){
+            throw new RuntimeException("Not allowed user");
+        }
+
+        replyRepository.delete(replyEntity);
+
+        postEntity.setRepliesCount(postEntity.getRepliesCount()-1);
+
+        boardRepository.save(postEntity);
+    }
 }
