@@ -3,6 +3,7 @@ package com.web.gilproject.dto.BoardDTO;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.web.gilproject.domain.Post;
+import com.web.gilproject.domain.PostImage;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -37,7 +38,7 @@ public  record PostDetailDTO(
 
                 postEntity.getPostImages()
                         .stream()
-                        .map(image->image.getImageUrl())
+                        .map(PostImage::getImageUrl)
                         .collect(Collectors.toList()),
 
                 postEntity.getLikesCount(),

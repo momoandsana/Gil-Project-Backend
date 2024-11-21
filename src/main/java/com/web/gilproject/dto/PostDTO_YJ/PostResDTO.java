@@ -2,6 +2,7 @@ package com.web.gilproject.dto.PostDTO_YJ;
 
 
 import com.web.gilproject.domain.Post;
+import com.web.gilproject.domain.PostImage;
 import com.web.gilproject.dto.PathResDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -60,7 +61,7 @@ public class PostResDTO {
 
         this.imageUrls = post.getPostImages()
                 .stream()
-                .map(image->image.getImageUrl())
+                .map(PostImage::getImageUrl)
                 .collect(Collectors.toList());
     }
 
@@ -86,7 +87,7 @@ public class PostResDTO {
 
         this.imageUrls = post.get().getPostImages()
                 .stream()
-                .map(image->image.getImageUrl())
+                .map(PostImage::getImageUrl)
                 .collect(Collectors.toList());
 
     }
