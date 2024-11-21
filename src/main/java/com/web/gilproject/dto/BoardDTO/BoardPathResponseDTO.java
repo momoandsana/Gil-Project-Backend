@@ -43,8 +43,8 @@ public record BoardPathResponseDTO(
                             pinData.put("id", pin.getId());
                             pinData.put("imageUrl", pin.getImageUrl());
                             pinData.put("content", pin.getContent());
-                            pinData.put("latitude", pin.getLatitude());
-                            pinData.put("longitude", pin.getLongitude());
+                            pinData.put("lat", pin.getLatitude());
+                            pinData.put("lng", pin.getLongitude());
                             return pinData;
                         })
                         .toList()
