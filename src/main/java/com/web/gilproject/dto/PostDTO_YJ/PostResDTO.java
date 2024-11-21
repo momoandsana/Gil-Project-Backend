@@ -8,7 +8,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
@@ -34,6 +36,8 @@ public class PostResDTO {
     private String userImgUrl;
     private PathResDTO pathResDTO;
 
+    List<String> imageUrls;// 게시글 이미지들
+
     public PostResDTO(Post post) {
         this.postId = post.getId();
         this.nickName = post.getUser().getNickName();
@@ -53,6 +57,11 @@ public class PostResDTO {
 
         this.userImgUrl = post.getUser().getImageUrl();
         this.pathResDTO = new PathResDTO();
+
+        this.imageUrls = post.getPostImages()
+                .stream()
+                .map(image->image.getImageUrl())
+                .collect(Collectors.toList());
     }
 
     public PostResDTO(Optional<Post> post) {
@@ -74,5 +83,11 @@ public class PostResDTO {
 
         this.userImgUrl = post.get().getUser().getImageUrl();
         this.pathResDTO = new PathResDTO();
+
+        this.imageUrls = post.get().getPostImages()
+                .stream()
+                .map(image->image.getImageUrl())
+                .collect(Collectors.toList());
+
     }
 }
