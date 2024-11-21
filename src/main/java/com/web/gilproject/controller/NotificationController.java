@@ -34,11 +34,13 @@ public class NotificationController {
     * : Last-Event-ID는 헤더에 담겨져 오는 값으로 이전에 받지 못한 이벤트가 존재하는 경우
     *   (SSE연결에 대한 시간 만료 혹은 종료)나 받은 마지막 이벤트 ID 값을 넘겨
     *   그 이후의 데이터(받지 못한 데이터)부터 받을 수 있게 할때 필요한 값이다.
-    *
+    * : Last-Event-ID는 SSE 연결이 끊어졌을 경우, 클라이언트가 수신한 마지막 데이터의 id값을 의미.
+    *   항상 존재하는 것이 아니기 때문에 false
+     *
     * ★★★ 요약 : 서버 -> 클라이언트로 이벤트를 보낼 수 있게된다.
     * */
 
-    //Last-Event-ID는 SSE 연결이 끊어졌을 경우, 클라이언트가 수신한 마지막 데이터의 id값을 의미. 항상 존재하는 것이 아니기 때문에 false
+
     @GetMapping(value = "/subscribe/{id}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public ResponseEntity<SseEmitter> subscribe(
             @PathVariable Long id,
@@ -70,4 +72,6 @@ public class NotificationController {
         notificationService.notifyComment(postId); //글 작성자에게 댓글 알림
 
     }
+
+    //알림 삭제?
 }
