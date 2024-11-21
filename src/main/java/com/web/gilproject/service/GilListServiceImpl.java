@@ -1,6 +1,7 @@
 package com.web.gilproject.service;
 
 import com.web.gilproject.domain.Post;
+import com.web.gilproject.domain.PostImage;
 import com.web.gilproject.dto.CustomUserDetails;
 import com.web.gilproject.dto.PathResDTO;
 import com.web.gilproject.dto.PostDTO_YJ.PostResDTO;
@@ -251,9 +252,13 @@ public class GilListServiceImpl implements GilListService {
 
             PathResDTO pathResDTO = pathService.decodingPath(post.getPath()); //path 형식 바꾸기
 
+            List<String> imageUrls = post.getPostImages().stream()
+                    .map(PostImage::getImageUrl)
+                    .collect(Collectors.toList());
+
             result.add(new PostResDTO(id, userNickName, pathId, startLat, startLong, state, title, content, tag,
                     writeDate,updateDate,readNum,postLikesCount, repliesCount,
-                    postWishListsNum, userImgUrl, pathResDTO));
+                    postWishListsNum, userImgUrl, pathResDTO, imageUrls));
         }
         return result;
     }
