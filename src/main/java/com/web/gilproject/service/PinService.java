@@ -1,6 +1,8 @@
 package com.web.gilproject.service;
 
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.web.gilproject.domain.Path;
 import com.web.gilproject.domain.Pin;
 import com.web.gilproject.dto.PinResDTO;
@@ -11,9 +13,6 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
-import software.amazon.awssdk.services.s3.model.DeleteObjectResponse;
 
 import java.net.URL;
 import java.util.Optional;
@@ -23,7 +22,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PinService {
     private final PinRepository pinRepository;
-    private final S3Client s3Client;
+    private final AmazonS3 amazonS3;
     private final AmazonService amazonService;
 
 
@@ -64,7 +63,7 @@ public class PinService {
 
             String url = pin.getImageUrl();
 
-            deleteFileByUrl("my-bucket",url);
+            deleteFileByUrl("aws-gil-project",url);
 
             pinRepository.delete(pin);
         }else {
@@ -78,23 +77,24 @@ public class PinService {
         // Key 추출
         String key = extractKeyFromUrl(s3Url);
 
+        System.out.println("Extracted Key: " + key + "/" + bucketName);
+
         // S3에서 파일 삭제
         deleteFile(bucketName, key);
     }
 
-    public void deleteFile(String bucketName, String fileKey) {
+    public void deleteFile(String bucketName,String fileKey) {
         try {
-            DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
-                    .bucket(bucketName)
-                    .key(fileKey)
-                    .build();
+            // 삭제 요청 생성
+            DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucketName, fileKey);
 
-            s3Client.deleteObject(deleteObjectRequest);
+            // 파일 삭제
+            amazonS3.deleteObject(deleteObjectRequest);
 
-            System.out.println("File deleted successfully from S3: " + fileKey);
+            System.out.println("File deleted successfully: " + fileKey);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("Failed to delete file from S3", e);
+            throw new PathPinException(PathErrorCode.DELETE_FAILED);
         }
     }
 
@@ -108,7 +108,7 @@ public class PinService {
             return path.startsWith("/") ? path.substring(1) : path;
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("Failed to extract key from S3 URL", e);
+            throw new PathPinException(PathErrorCode.DELETE_FAILED);
         }
     }
 }
