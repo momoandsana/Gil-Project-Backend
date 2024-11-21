@@ -6,12 +6,14 @@ import com.web.gilproject.dto.BoardDTO.*;
 import com.web.gilproject.dto.PathDTO;
 import com.web.gilproject.dto.CustomUserDetails;
 import com.web.gilproject.dto.PathResDTO;
+import com.web.gilproject.repository.BoardRepository;
 import com.web.gilproject.service.AmazonService;
 import com.web.gilproject.service.PathService;
 
 import com.web.gilproject.service.BoardService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.couchbase.CouchbaseProperties;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -25,11 +27,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/posts")
-public class BoardController
-{
+public class BoardController {
     private final PathService pathService;
     private final BoardService boardService;
     private final AmazonService s3Service;
+
+    private final BoardRepository boardRepository;
 
 
     /**
@@ -40,34 +43,37 @@ public class BoardController
      */
     //@GetMapping("/{userId}/paths")
     @GetMapping("/paths")
-    public ResponseEntity<List<BoardPathResponseDTO>> getAllPaths(Authentication authentication) {
-
+    public ResponseEntity<List<PathDTO>> getAllPaths(Authentication authentication) {
         CustomUserDetails customMemberDetails = (CustomUserDetails) authentication.getPrincipal();
         Long userId = customMemberDetails.getId();
-        List<BoardPathResponseDTO> boardPathListDTO = boardService.getAllPathsById(userId);
+       // List<BoardPathResponseDTO> boardPathListDTO = boardService.getAllPathsById(userId);
+
+        List<PathDTO> pathListDTO=pathService.findPathByUserId(userId);
 //        for (BoardPathDTO boardPathDTO : boardPathListDTO) {
 //            System.out.println(boardPathDTO);
 //        }
-        return ResponseEntity.ok(boardPathListDTO);
+        return ResponseEntity.ok(PathListDTO);
     }
 
-    /*
-    게시글 작성
+    /**
+     * 게시글 작성
+     *
+     * @param authentication
+     * @param postRequestDTO
+     * @return
+     * @throws IOException
      */
     @PostMapping
-    public PostResponseDTO createPost(Authentication authentication,PostRequestDTO postRequestDTO)
-    {
-        /*!!!!!!!!!!!!!!!!!!!!!!!!!!!! 수정*/
-//        CustomUserDetails customMemberDetails = (CustomUserDetails) authentication.getPrincipal();
-//        Long userId = customMemberDetails.getId();
-//        PostResponseDTO postResponseDTO=boardService.createPost(userId,postRequestDTO);
-//        return ResponseEntity.ok(postResponseDTO);
-        return  null;
+    public ResponseEntity<Void> createPost(Authentication authentication, PostRequestDTO postRequestDTO) throws IOException {
+        CustomUserDetails customMemberDetails = (CustomUserDetails) authentication.getPrincipal();
+        Long userId = customMemberDetails.getId();
+        boardService.createPost(userId, postRequestDTO);
+        return ResponseEntity.ok();
     }
-
-
-
-
+     /*
+     원래는 201 created 응답이 맞지만 프론트에서 생성된 정보가 필요 없다고 해서
+     200으로 성공여부만 전송
+      */
 
     /**
      * 게시글 삭제
@@ -79,58 +85,34 @@ public class BoardController
      * @return
      */
     @DeleteMapping("/{postId}")
-    public ResponseEntity<PostResponseDTO> deletePost(@PathVariable Long postId, Authentication authentication) {
-        Long userId=((CustomUserDetails) authentication.getPrincipal()).getId();
-        boardService.deletePost(postId,userId);
+    public ResponseEntity<Void> deletePost(@PathVariable Long postId, Authentication authentication) {
+        Long userId = ((CustomUserDetails) authentication.getPrincipal()).getId();
+
+        boardService.deletePost(postId, userId);
         return ResponseEntity.noContent().build(); //204 no content
     }
 
-    /*
-    댓글 기능
+    /**
+     * 좋아요 기능
+     *
+     * @param postId
+     * @param authentication
+     * @return
      */
-
-    /*
-    좋아요 기능
-     */
-
-    /*
-    글 상세보기
-     */
+    @PostMapping("/{postId}/likes")
+    public ResponseEntity<Void> toggleLike(@PathVariable Long postId, Authentication authentication) {
+        Long userId = ((CustomUserDetails) authentication.getPrincipal()).getId();
+        boardService.toggleLike(postId, userId);// 만약에 문제가 생긴다면 서비스에서 에러가 난다
+        return ResponseEntity.ok().build();
+    }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    @GetMapping("/{postId}")
+    public ResponseEntity<PostResDTO> postDetails(@PathVariable Long postId)
+    {
+        PostResDTO postResDTO=boardService.postDetails(postId);
+        return ResponseEntity.ok.build(postResDTO);
+    }
 
 
 //    /**
@@ -228,9 +210,4 @@ public class BoardController
 //    }
 
 
-
-
-
-
-
-}
+    }

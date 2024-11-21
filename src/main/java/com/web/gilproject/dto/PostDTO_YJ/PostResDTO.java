@@ -2,11 +2,16 @@ package com.web.gilproject.dto.PostDTO_YJ;
 
 
 import com.web.gilproject.domain.Post;
-
+import com.web.gilproject.domain.PostImage;
 import com.web.gilproject.dto.PathResDTO;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
@@ -32,6 +37,8 @@ public class PostResDTO {
     private String userImgUrl;
     private PathResDTO pathResDTO;
 
+    List<String> imageUrls;// 게시글 이미지들
+
     public PostResDTO(Post post) {
         this.postId = post.getId();
         this.nickName = post.getUser().getNickName();
@@ -51,5 +58,36 @@ public class PostResDTO {
 
         this.userImgUrl = post.getUser().getImageUrl();
         this.pathResDTO = new PathResDTO();
+
+        this.imageUrls = post.getPostImages()
+                .stream()
+                .map(PostImage::getImageUrl)
+                .collect(Collectors.toList());
+    }
+
+    public PostResDTO(Optional<Post> post) {
+        this.postId = post.get().getId();
+        this.nickName = post.get().getUser().getNickName();
+        this.pathId = post.get().getPath().getId();
+        this.startLat = post.get().getPath().getStartLat();
+        this.startLong = post.get().getPath().getStartLong();
+        this.state = post.get().getState();
+        this.title = post.get().getTitle();
+        this.content = post.get().getContent();
+        this.tag = post.get().getTag();
+        this.writeDate = post.get().getWriteDate();
+        this.updateDate = post.get().getUpdateDate();
+        this.readNum = post.get().getReadNum();
+        this.likesCount = post.get().getPostLikes().size();
+        this.repliesCount = post.get().getReplies().size();
+        this.postWishListsNum = post.get().getPostWishLists().size();
+
+        this.userImgUrl = post.get().getUser().getImageUrl();
+        this.pathResDTO = new PathResDTO();
+
+        this.imageUrls = post.get().getPostImages()
+                .stream()
+                .map(PostImage::getImageUrl)
+                .collect(Collectors.toList());
     }
 }

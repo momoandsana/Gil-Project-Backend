@@ -42,6 +42,19 @@ public class AmazonService {
         return amazonS3.getUrl(bucketName, fileName).toString();
     }
 
+    public String uploadFile(MultipartFile file, String uniqueFileName) throws IOException {
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentLength(file.getSize());
+        metadata.setContentType(file.getContentType());
+
+
+        amazonS3.putObject(bucketName, uniqueFileName, file.getInputStream(), metadata);
+
+
+        return amazonS3.getUrl(bucketName, uniqueFileName).toString();
+    }
+
+
     public List<String> listFiles() {
         ObjectListing objectListing = amazonS3.listObjects(bucketName);
         return objectListing.getObjectSummaries().stream()

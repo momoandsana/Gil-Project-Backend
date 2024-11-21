@@ -8,6 +8,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 //@Data
@@ -50,6 +51,12 @@ public class Post {
     @UpdateTimestamp
     private LocalDateTime updateDate;
 
+    @Column(nullable = false,columnDefinition = "int default 0")
+    private Integer repliesCount=0;
+
+    @Column(nullable=false,columnDefinition = "int default 0")
+    private Integer likesCount=0;
+
     private Integer readNum=0; //조회수
 
     @OneToMany(mappedBy = "post",cascade = CascadeType.ALL,orphanRemoval = true)
@@ -64,5 +71,22 @@ public class Post {
     @JsonIgnore
     private Set<PostWishlist> postWishLists; //게시글 찜
 
+    @OneToMany(mappedBy = "post",cascade = CascadeType.ALL,orphanRemoval = true)
+    private Set<PostImage> postImages;
+
+    public void addPostImage(PostImage postImage) {
+        if (this.postImages == null) {
+            this.postImages = new HashSet<>();
+        }
+        this.postImages.add(postImage);
+        postImage.setPost(this);
+    }
+
+    public void removePostImage(PostImage postImage) {
+        if (this.postImages != null) {
+            this.postImages.remove(postImage);
+            postImage.setPost(null);
+        }
+    }
 
 }
