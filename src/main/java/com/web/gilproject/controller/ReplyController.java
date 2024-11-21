@@ -48,6 +48,10 @@ public class ReplyController {
         Long userId=customUserDetails.getId();
         ReplyDTO replyDTO=replyService.createReply(postId,replyPostRequestDTO,userId);
         return ResponseEntity.ok().build();
+        /*
+        원래는 201 created 응답이 맞지만 프론트에서 생성된 정보가 필요 없다고 해서
+        200으로 성공여부만 전송
+         */
     }
 
     /**

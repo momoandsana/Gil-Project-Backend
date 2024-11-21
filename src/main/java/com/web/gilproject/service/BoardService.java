@@ -94,11 +94,14 @@ public class BoardService {
 
         if(!postEntity.getUser().getId().equals(userId))
         {
-            throw new RuntimeException("No user found");
+            throw new RuntimeException("User not allowed");
         }
 
-        postEntity.setState(1);// 삭제한 상태
-        boardRepository.save(postEntity);
+        Post post=boardRepository.findById(postId).get();
+        boardRepository.delete(post);// 임시, 하드 딜리트
+
+//        postEntity.setState(1);// 소프트 딜리트
+//        boardRepository.save(postEntity);
     }
 
     @Transactional

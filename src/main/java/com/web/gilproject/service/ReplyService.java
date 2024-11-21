@@ -68,7 +68,8 @@ public class ReplyService {
         Reply replyEntity=replyRepository.findById(replyId).orElseThrow(()->new RuntimeException("No reply found"));
         Optional<ReplyLike> replyLike=replyLikeRepository.findByUserAndReply(userEntity,replyEntity);
 
-        if(replyLike.isPresent()){
+        if(replyLike.isPresent())
+        {
             replyLikeRepository.delete(replyLike.get());
             replyEntity.setLikesCount(replyEntity.getLikesCount()+1);
         }
