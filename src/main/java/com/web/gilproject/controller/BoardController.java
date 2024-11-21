@@ -45,7 +45,6 @@ public class BoardController
     //@GetMapping("/{userId}/paths")
     @GetMapping("/paths")
     public ResponseEntity<List<BoardPathResponseDTO>> getAllPaths(Authentication authentication) {
-
         CustomUserDetails customMemberDetails = (CustomUserDetails) authentication.getPrincipal();
         Long userId = customMemberDetails.getId();
         List<BoardPathResponseDTO> boardPathListDTO = boardService.getAllPathsById(userId);
@@ -55,8 +54,13 @@ public class BoardController
         return ResponseEntity.ok(boardPathListDTO);
     }
 
-    /*
-    게시글 작성
+    /**
+     * 게시글 작성
+     * 
+     * @param authentication
+     * @param postRequestDTO
+     * @return
+     * @throws IOException
      */
     @PostMapping
     public ResponseEntity<PostResponseDTO> createPost(Authentication authentication,PostRequestDTO postRequestDTO)throws IOException
@@ -82,13 +86,16 @@ public class BoardController
         Long userId=((CustomUserDetails) authentication.getPrincipal()).getId();
 
         Post post=boardRepository.findById(postId).get();
-        boardRepository.delete(post);// 임시
+        boardRepository.delete(post);// 임시, 하드 딜리트
         //boardService.deletePost(postId,userId);
         return ResponseEntity.noContent().build(); //204 no content
     }
 
-    /*
-    좋아요 기능
+    /**
+     * 좋아요 기능
+     * @param postId
+     * @param authentication
+     * @return
      */
     @PostMapping("/{postId}/likes")
     public ResponseEntity<Void> toggleLike(@PathVariable Long postId, Authentication authentication)

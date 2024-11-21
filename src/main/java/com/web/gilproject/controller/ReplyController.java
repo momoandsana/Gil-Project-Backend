@@ -31,7 +31,7 @@ public class ReplyController {
     }
 
     /**
-     * 댓글 달기
+     * 댓글 작성
      * @param postId
      * @param replyPostRequestDTO
      * @param authentication
@@ -50,10 +50,6 @@ public class ReplyController {
         return ResponseEntity.ok().build();
     }
 
-    /*
-    댓글 수정
-     */
-
     /**
      * 댓글 삭제
      * @param postId
@@ -69,7 +65,15 @@ public class ReplyController {
         replyService.deleteReply(postId,replyId,userId);
         return ResponseEntity.ok().build();
     }
+
     /*
     댓글 좋아요 기능
      */
+    @PostMapping("/{replyId}/likes")
+    public ResponseEntity<Void> toggleLike(@PathVariable Long replyId, Authentication authentication)
+    {
+        Long userId=((CustomUserDetails) authentication.getPrincipal()).getId();
+        replyService.toggleLike(replyId,userId);
+        return ResponseEntity.ok().build();
+    }
 }

@@ -28,6 +28,7 @@ public class Reply {
 
     private String content;
 
+    @Column(nullable = false,columnDefinition = "int default 0")
     private Long likesCount=0L;
     
     @OneToMany(mappedBy = "reply",cascade = CascadeType.ALL,orphanRemoval = true)

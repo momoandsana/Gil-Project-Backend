@@ -48,9 +48,11 @@ public class Post {
     @UpdateTimestamp
     private LocalDateTime updateDate;
 
-    private Long repliesCount=0L;
+    @Column(nullable = false,columnDefinition = "int default 0")
+    private Integer repliesCount=0;
 
-    private Long likesCount=0L;
+    @Column(nullable=false,columnDefinition = "int default 0")
+    private Integer likesCount=0;
 
     private Integer readNum=0; //조회수
 
