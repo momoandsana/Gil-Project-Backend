@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Data
@@ -39,7 +38,12 @@ public class PostResDTO {
 
     List<String> imageUrls;// 게시글 이미지들
 
-    public PostResDTO(Post post) {
+    boolean isLiked;// 지금 로그인한 사용자가 해당 글을 좋아요 했는지
+    boolean isWishListed;// "" 찜 목록에 추가했는지
+
+
+    public PostResDTO(Post post)
+    {
         this.postId = post.getId();
         this.nickName = post.getUser().getNickName();
         this.pathId = post.getPath().getId();
@@ -65,29 +69,64 @@ public class PostResDTO {
                 .collect(Collectors.toList());
     }
 
-    public PostResDTO(Optional<Post> post) {
-        this.postId = post.get().getId();
-        this.nickName = post.get().getUser().getNickName();
-        this.pathId = post.get().getPath().getId();
-        this.startLat = post.get().getPath().getStartLat();
-        this.startLong = post.get().getPath().getStartLong();
-        this.state = post.get().getState();
-        this.title = post.get().getTitle();
-        this.content = post.get().getContent();
-        this.tag = post.get().getTag();
-        this.writeDate = post.get().getWriteDate();
-        this.updateDate = post.get().getUpdateDate();
-        this.readNum = post.get().getReadNum();
-        this.likesCount = post.get().getPostLikes().size();
-        this.repliesCount = post.get().getReplies().size();
-        this.postWishListsNum = post.get().getPostWishLists().size();
+    public PostResDTO(Post post,Long userId)
+    {
+        this.postId = post.getId();
+        this.nickName = post.getUser().getNickName();
+        this.pathId = post.getPath().getId();
+        this.startLat = post.getPath().getStartLat();
+        this.startLong = post.getPath().getStartLong();
+        this.state = post.getState();
+        this.title = post.getTitle();
+        this.content = post.getContent();
+        this.tag = post.getTag();
+        this.writeDate = post.getWriteDate();
+        this.updateDate = post.getUpdateDate();
+        this.readNum = post.getReadNum();
+        this.likesCount = post.getPostLikes().size();
+        this.repliesCount = post.getReplies().size();
+        this.postWishListsNum = post.getPostWishLists().size();
 
-        this.userImgUrl = post.get().getUser().getImageUrl();
+        this.userImgUrl = post.getUser().getImageUrl();
         this.pathResDTO = new PathResDTO();
 
-        this.imageUrls = post.get().getPostImages()
+        this.imageUrls = post.getPostImages()
                 .stream()
                 .map(PostImage::getImageUrl)
                 .collect(Collectors.toList());
+
+        this.isLiked=post.getPostLikes()
+                .stream()
+                .anyMatch(like->like.getUser().getId().equals(userId));
+
+        this.isWishListed=post.getPostWishLists()
+                .stream()
+                .anyMatch(postWishList->postWishList.getUser().getId().equals(userId));
     }
+//
+//    public PostResDTO(Optional<Post> post) {
+//        this.postId = post.get().getId();
+//        this.nickName = post.get().getUser().getNickName();
+//        this.pathId = post.get().getPath().getId();
+//        this.startLat = post.get().getPath().getStartLat();
+//        this.startLong = post.get().getPath().getStartLong();
+//        this.state = post.get().getState();
+//        this.title = post.get().getTitle();
+//        this.content = post.get().getContent();
+//        this.tag = post.get().getTag();
+//        this.writeDate = post.get().getWriteDate();
+//        this.updateDate = post.get().getUpdateDate();
+//        this.readNum = post.get().getReadNum();
+//        this.likesCount = post.get().getPostLikes().size();
+//        this.repliesCount = post.get().getReplies().size();
+//        this.postWishListsNum = post.get().getPostWishLists().size();
+//
+//        this.userImgUrl = post.get().getUser().getImageUrl();
+//        this.pathResDTO = new PathResDTO(post.get().getPath());
+//
+//        this.imageUrls = post.get().getPostImages()
+//                .stream()
+//                .map(PostImage::getImageUrl)
+//                .collect(Collectors.toList());
+//    }
 }

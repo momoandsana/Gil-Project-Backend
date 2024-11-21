@@ -2,22 +2,22 @@ package com.web.gilproject.service;
 
 import com.web.gilproject.domain.Path;
 import com.web.gilproject.domain.User;
-import com.web.gilproject.dto.*;
+import com.web.gilproject.dto.CoordinateResDTO;
+import com.web.gilproject.dto.PathResDTO;
+import com.web.gilproject.dto.PinResDTO;
+import com.web.gilproject.dto.UserResDTO;
 import com.web.gilproject.exception.PathErrorCode;
 import com.web.gilproject.exception.PathPinException;
 import com.web.gilproject.repository.PathRepository;
 import com.web.gilproject.repository.UserRepository_jg;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service

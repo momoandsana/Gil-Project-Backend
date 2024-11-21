@@ -29,6 +29,7 @@ public class BoardService {
     private final AmazonService amazonService;
     private final PostImageRepository postImageRepository;
     private final PostLikeRepository postLikeRepository;
+    private final PathService pathService;
 
     @Value("${aws.s3.bucketName}")
     private String bucketName;
@@ -62,7 +63,10 @@ public class BoardService {
                 .path(path)
                 .state(0)
                 .readNum(0)
+                .likesCount(0)
+                .repliesCount(0)
                 .build();
+
 
         boardRepository.save(post);// 게시글 저장
 
@@ -93,10 +97,10 @@ public class BoardService {
                 .findById(postId)
                 .orElseThrow(()->new RuntimeException("Post not found"));// 임시 exception
 
-        if(!postEntity.getUser().getId().equals(userId))
-        {
-            throw new RuntimeException("User not allowed");
-        }
+//        if(!postEntity.getUser().getId().equals(userId))
+//        {
+//            throw new RuntimeException("User not allowed");
+//        }
 
         Post post=boardRepository.findById(postId).get();
         boardRepository.delete(post);// 임시, 하드 딜리트
@@ -126,10 +130,11 @@ public class BoardService {
     }
 
     @Transactional
-    public PostResDTO postDetails(Long postId)
+    public PostResDTO postDetails(Long postId,Long userId)
     {
-        Optional<Post> post=boardRepository.findById(postId);
-        PostResDTO postResDTO=new PostResDTO(post);
+        Post post=boardRepository.findById(postId).orElseThrow(()->new RuntimeException("Post not found"));
+        PostResDTO postResDTO=new PostResDTO(post,userId);
+        postResDTO.setPathResDTO(pathService.decodingPath(post.getPath()));
         return postResDTO;
     }
 
