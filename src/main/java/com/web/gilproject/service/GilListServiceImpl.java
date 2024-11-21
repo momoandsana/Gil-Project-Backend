@@ -228,7 +228,7 @@ public class GilListServiceImpl implements GilListService {
     }
 
     /**
-     * List<Post>를 List<PostResDTO>로 바꾸는 함수
+     * List<PostDTO>를 List<PostResDTO>로 바꾸는 함수
      * */
     private List<PostResDTO> changeList(List<Post> listPostDTO){
         List<PostResDTO> result = new ArrayList<>();
