@@ -38,8 +38,8 @@ public class PostResDTO {
 
     List<String> imageUrls;// 게시글 이미지들
 
-    //boolean isLiked;// 지금 로그인한 사용자가 해당 글을 좋아요 했는지
-    //boolean isWishListed;// "" 찜 목록에 추가했는지
+    boolean isLiked;// 지금 로그인한 사용자가 해당 글을 좋아요 했는지
+    boolean isWishListed;// "" 찜 목록에 추가했는지
 
 
     public PostResDTO(Post post)
@@ -69,40 +69,40 @@ public class PostResDTO {
                 .collect(Collectors.toList());
     }
 
-//    public PostResDTO(Post post,Long userId)
-//    {
-//        this.postId = post.getId();
-//        this.nickName = post.getUser().getNickName();
-//        this.pathId = post.getPath().getId();
-//        this.startLat = post.getPath().getStartLat();
-//        this.startLong = post.getPath().getStartLong();
-//        this.state = post.getState();
-//        this.title = post.getTitle();
-//        this.content = post.getContent();
-//        this.tag = post.getTag();
-//        this.writeDate = post.getWriteDate();
-//        this.updateDate = post.getUpdateDate();
-//        this.readNum = post.getReadNum();
-//        this.likesCount = post.getPostLikes().size();
-//        this.repliesCount = post.getReplies().size();
-//        this.postWishListsNum = post.getPostWishLists().size();
-//
-//        this.userImgUrl = post.getUser().getImageUrl();
-//        this.pathResDTO = new PathResDTO();
-//
-//        this.imageUrls = post.getPostImages()
-//                .stream()
-//                .map(PostImage::getImageUrl)
-//                .collect(Collectors.toList());
-//
-//        this.isLiked=post.getPostLikes()
-//                .stream()
-//                .anyMatch(like->like.getUser().getId().equals(userId));
-//
-//        this.isWishListed=post.getPostWishLists()
-//                .stream()
-//                .anyMatch(postWishList->postWishList.getUser().getId().equals(userId));
-//    }
+    public PostResDTO(Post post,Long userId)
+    {
+        this.postId = post.getId();
+        this.nickName = post.getUser().getNickName();
+        this.pathId = post.getPath().getId();
+        this.startLat = post.getPath().getStartLat();
+        this.startLong = post.getPath().getStartLong();
+        this.state = post.getState();
+        this.title = post.getTitle();
+        this.content = post.getContent();
+        this.tag = post.getTag();
+        this.writeDate = post.getWriteDate();
+        this.updateDate = post.getUpdateDate();
+        this.readNum = post.getReadNum();
+        this.likesCount = post.getPostLikes().size();
+        this.repliesCount = post.getReplies().size();
+        this.postWishListsNum = post.getPostWishLists().size();
+
+        this.userImgUrl = post.getUser().getImageUrl();
+        this.pathResDTO = new PathResDTO();
+
+        this.imageUrls = post.getPostImages()
+                .stream()
+                .map(PostImage::getImageUrl)
+                .collect(Collectors.toList());
+
+        this.isLiked=post.getPostLikes()
+                .stream()
+                .anyMatch(like->like.getUser().getId().equals(userId));
+
+        this.isWishListed=post.getPostWishLists()
+                .stream()
+                .anyMatch(postWishList->postWishList.getUser().getId().equals(userId));
+    }
 //
 //    public PostResDTO(Optional<Post> post) {
 //        this.postId = post.get().getId();

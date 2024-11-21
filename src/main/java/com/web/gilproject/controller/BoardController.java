@@ -114,9 +114,11 @@ public class BoardController {
      * @return
      */
     @GetMapping("/{postId}")
-    public ResponseEntity<PostResDTO> postDetails(@PathVariable Long postId)
+    public ResponseEntity<PostResDTO> postDetails(@PathVariable Long postId,Authentication authentication)
     {
-        PostResDTO postResDTO=boardService.postDetails(postId);
+        Long userId = ((CustomUserDetails) authentication.getPrincipal()).getId();
+        //PostResDTO postResDTO=boardService.postDetails(postId);
+        PostResDTO postResDTO=boardService.postDetails(postId,userId);
         return ResponseEntity.ok(postResDTO);
     }
 

@@ -130,10 +130,10 @@ public class BoardService {
     }
 
     @Transactional
-    public PostResDTO postDetails(Long postId)
+    public PostResDTO postDetails(Long postId,Long userId)
     {
         Post post=boardRepository.findById(postId).orElseThrow(()->new RuntimeException("Post not found"));
-        PostResDTO postResDTO=new PostResDTO(post);
+        PostResDTO postResDTO=new PostResDTO(post,userId);
         postResDTO.setPathResDTO(pathService.decodingPath(post.getPath()));
         return postResDTO;
     }
