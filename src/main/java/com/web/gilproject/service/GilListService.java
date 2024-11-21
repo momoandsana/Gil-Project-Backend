@@ -1,12 +1,9 @@
 package com.web.gilproject.service;
 
-import com.web.gilproject.dto.PostDTO_YJ.PostDTO;
 import com.web.gilproject.dto.PostDTO_YJ.PostResDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
-
-import java.util.List;
 
 public interface GilListService {
     /**

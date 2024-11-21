@@ -1,8 +1,8 @@
 package com.web.gilproject.service;
 
+import com.web.gilproject.domain.Post;
 import com.web.gilproject.dto.CustomUserDetails;
 import com.web.gilproject.dto.PathResDTO;
-import com.web.gilproject.dto.PostDTO_YJ.PostDTO;
 import com.web.gilproject.dto.PostDTO_YJ.PostResDTO;
 import com.web.gilproject.repository.GilListRepository;
 import com.web.gilproject.repository.UserRepository_YJ;
@@ -37,13 +37,13 @@ public class GilListServiceImpl implements GilListService {
     @Override
     public Page<PostResDTO> findByMyPosition(Double nowY, Double nowX, Pageable pageable) {
         //전체 조회
-        Page<PostDTO> pagePostDTO = gilListRepository.findAllPostDTO(pageable);
+        Page<Post> pagePostDTO = gilListRepository.findAllPostDTO(pageable);
 
         //내 위치로부터 5km이내의 산책길 글목록만 남기기
-        List<PostDTO> filteredPosts = pagePostDTO.getContent().stream()
+        List<Post> filteredPosts = pagePostDTO.getContent().stream()
                 .filter(post -> {
-                    Double startLat = post.getStartLat();
-                    Double startLong = post.getStartLong();
+                    Double startLat = post.getPath().getStartLat();
+                    Double startLong = post.getPath().getStartLong();
                     Double difference = this.distance(nowY, nowX, startLat, startLong);
                     return difference < 5.0;
                 })
@@ -68,13 +68,13 @@ public class GilListServiceImpl implements GilListService {
         Double homeLong = userRepository.findByUserId(userId).getLongitude(); //집주소 경도
 
         //전체조회
-        Page<PostDTO> pagePostDTO = gilListRepository.findAllPostDTO(pageable);
+        Page<Post> pagePostDTO = gilListRepository.findAllPostDTO(pageable);
 
         //내 집주소로부터 반경 5km이내의 산책길 글목록만 남기기
-        List<PostDTO> filteredPosts = pagePostDTO.getContent().stream()
+        List<Post> filteredPosts = pagePostDTO.getContent().stream()
                 .filter(post -> {
-                    Double startLat = post.getStartLat();
-                    Double startLong = post.getStartLong();
+                    Double startLat = post.getPath().getStartLat();
+                    Double startLong = post.getPath().getStartLong();
                     Double difference = this.distance(homeLat, homeLong, startLat, startLong);
                     return difference < 5.0;
                 })
@@ -95,8 +95,8 @@ public class GilListServiceImpl implements GilListService {
     public Page<PostResDTO> findByNickName(String nickName, Pageable pageable) {
 
         //작성자 닉네임에 의한 산책길 글목록 조회
-        Page<PostDTO> pagePostDTO = gilListRepository.findByNickName(nickName, pageable);
-        List<PostDTO> listPostDTO = pagePostDTO.getContent();
+        Page<Post> pagePostDTO = gilListRepository.findByNickName(nickName, pageable);
+        List<Post> listPostDTO = pagePostDTO.getContent();
 
         return new PageImpl<>(
                 this.changeList(listPostDTO),
@@ -117,9 +117,9 @@ public class GilListServiceImpl implements GilListService {
         Long userId = userDetails.getId();
 
         //글쓴 유저 id에 의한 산책길 글목록 찾기
-        Page<PostDTO> pagePostDTO = gilListRepository.findByUserId(userId, pageable);
+        Page<Post> pagePostDTO = gilListRepository.findByUserId(userId, pageable);
 
-        List<PostDTO> listPostDTO = pagePostDTO.getContent();
+        List<Post> listPostDTO = pagePostDTO.getContent();
 
         return new PageImpl<>(
                 this.changeList(listPostDTO),
@@ -140,13 +140,12 @@ public class GilListServiceImpl implements GilListService {
         Long userId = userDetails.getId();
 
         //전체 산책길 글목록 조회
-        Page<PostDTO> pagePostDTO = gilListRepository.findAllPostDTO(pageable);
+        Page<Post> pagePostDTO = gilListRepository.findAllPostDTO(pageable);
 
         //해당 유저id가 찜한 목록만 조회
-        List<PostDTO> listPostDTO = pagePostDTO.getContent().stream()
-                .filter(post -> {
-                    return post.getPostWishListsUsers().contains(userId);
-                })
+        List<Post> listPostDTO = pagePostDTO.getContent().stream()
+                .filter(post -> post.getPostWishLists().stream()
+                        .anyMatch(postWishlist -> postWishlist.getUser().getId().equals(userId))) // 유저 ID가 있는지 확인
                 .collect(Collectors.toList());
 
         return new PageImpl<>(
@@ -165,29 +164,28 @@ public class GilListServiceImpl implements GilListService {
     public Page<PostResDTO> findByKeyword(String keyword, Pageable pageable) {
 
         //키워드 검색(제목, 내용, 닉네임, 시작주소)
-        Page<PostDTO> titleKeyword = gilListRepository.findByTitleContaining(keyword, pageable);
-        Page<PostDTO> contentKeyword = gilListRepository.findByContentContaining(keyword, pageable);
-        Page<PostDTO> nickNameKeyword = gilListRepository.findByNickNameContaining(keyword, pageable);
-        Page<PostDTO> startAddrKeyword = gilListRepository.findByStartAddrContaining(keyword, pageable);
+        Page<Post> titleKeyword = gilListRepository.findByTitleContaining(keyword, pageable);
+        Page<Post> contentKeyword = gilListRepository.findByContentContaining(keyword, pageable);
+        Page<Post> nickNameKeyword = gilListRepository.findByNickNameContaining(keyword, pageable);
+        Page<Post> startAddrKeyword = gilListRepository.findByStartAddrContaining(keyword, pageable);
 
         //중복제거
-        Set<PostDTO> combinedSet = new HashSet<>();
+        Set<Post> combinedSet = new HashSet<>();
         combinedSet.addAll(titleKeyword.getContent());
         combinedSet.addAll(contentKeyword.getContent());
         combinedSet.addAll(nickNameKeyword.getContent());
         combinedSet.addAll(startAddrKeyword.getContent());
 
         //좋아요 많은 순으로 정렬
-        List<PostDTO> combinedList = new ArrayList<>(combinedSet);
-        combinedList.sort((p1, p2) -> p2.getPostLikesNum().compareTo(p1.getPostLikesNum()));
-
+        List<Post> combinedList = new ArrayList<>(combinedSet);
+        combinedList.sort((p1, p2) -> Integer.compare(p2.getPostLikes().size(), p1.getPostLikes().size()));
         // 전체 데이터 수 계산
         long total = combinedSet.size();
 
         // 페이징 처리: 현재 페이지 범위에 해당하는 데이터 슬라이싱
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), combinedList.size());
-        List<PostDTO> pagedResult = combinedList.subList(start, end);
+        List<Post> pagedResult = combinedList.subList(start, end);
 
         return new PageImpl<>(this.changeList(pagedResult), pageable, total);
     }
@@ -231,14 +229,14 @@ public class GilListServiceImpl implements GilListService {
     /**
      * List<PostDTO>를 List<PostResDTO>로 바꾸는 함수
      * */
-    private List<PostResDTO> changeList(List<PostDTO> listPostDTO){
+    private List<PostResDTO> changeList(List<Post> listPostDTO){
         List<PostResDTO> result = new ArrayList<>();
-        for(PostDTO post : listPostDTO){
+        for(Post post : listPostDTO){
             Long id = post.getId();
-            String userNickName = post.getUserNickName();
-            Long pathId = post.getPathId();
-            Double startLat = post.getStartLat();
-            Double startLong = post.getStartLong();
+            String userNickName = post.getUser().getNickName();
+            Long pathId = post.getPath().getId();
+            Double startLat = post.getPath().getStartLat();
+            Double startLong = post.getPath().getStartLong();
             Integer state = post.getState();
             String title = post.getTitle();
             String content = post.getContent();
@@ -246,19 +244,16 @@ public class GilListServiceImpl implements GilListService {
             LocalDateTime writeDate = post.getWriteDate();
             LocalDateTime updateDate = post.getUpdateDate();
             Integer readNum = post.getReadNum();
-            List<Long> postLikesUsers = post.getPostLikesUsers();
-            Integer postLikesNum = post.getPostLikesNum();
-            List<Long> repliesUsers = post.getRepliesUsers();
-            Integer repliesNum = post.getRepliesNum();
-            List<Long> postWishListsUsers = post.getPostWishListsUsers();
-            Integer postWishListsNum = post.getPostWishListsNum();
-            String userImgURL = post.getUserImgURL();
+            Integer postLikesCount = post.getPostLikes().size();
+            Integer repliesCount = post.getReplies().size();
+            Integer postWishListsNum = post.getPostWishLists().size();
+            String userImgUrl = post.getUser().getImageUrl();
 
-            PathResDTO pathResDTO = pathService.decodingPath(post.getPath());
+            PathResDTO pathResDTO = pathService.decodingPath(post.getPath()); //path 형식 바꾸기
 
             result.add(new PostResDTO(id, userNickName, pathId, startLat, startLong, state, title, content, tag,
-                    writeDate,updateDate,readNum,postLikesUsers,postLikesNum,repliesUsers,repliesNum,
-                    postWishListsUsers, postWishListsNum, userImgURL, pathResDTO));
+                    writeDate,updateDate,readNum,postLikesCount, repliesCount,
+                    postWishListsNum, userImgUrl, pathResDTO));
         }
         return result;
     }
