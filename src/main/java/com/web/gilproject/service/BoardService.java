@@ -51,7 +51,7 @@ public class BoardService {
         User user=userRepository.findById(userId)
                 .orElseThrow(()->new RuntimeException("No user found"));
 
-        Path path=pathRepository.findById(postRequestDTO.routeId())
+        Path path=pathRepository.findById(postRequestDTO.pathId())
                 .orElseThrow(()->new RuntimeException("No path found"));
 
         Post post=Post.builder()

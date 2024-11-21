@@ -106,12 +106,17 @@ public class BoardController {
         return ResponseEntity.ok().build();
     }
 
-
+    /**
+     * 게시글 상세보기
+     *
+     * @param postId
+     * @return
+     */
     @GetMapping("/{postId}")
     public ResponseEntity<PostResDTO> postDetails(@PathVariable Long postId)
     {
         PostResDTO postResDTO=boardService.postDetails(postId);
-        return ResponseEntity.ok.build(postResDTO);
+        return ResponseEntity.ok(postResDTO);
     }
 
 
