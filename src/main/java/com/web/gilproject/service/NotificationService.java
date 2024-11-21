@@ -31,5 +31,6 @@ public interface NotificationService {
      */
     void sendToClient(Long userId, Object data);
 
+    void notifyComment(Long postId);
 
 }

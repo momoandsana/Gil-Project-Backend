@@ -2,12 +2,15 @@ package com.web.gilproject.domain;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
-@Data
 @Entity
+@Setter
+@Getter
 public class Notification { //알림
 
     @Id

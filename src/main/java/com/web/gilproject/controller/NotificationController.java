@@ -63,4 +63,11 @@ public class NotificationController {
         notificationService.notify(id,"data");
 
     }
+
+    @PostMapping("/send-post/{postId}")
+    public void sendPost(@PathVariable Long postId){
+        log.info("클라이언트에게 글알림");
+        notificationService.notifyComment(postId); //글 작성자에게 댓글 알림
+
+    }
 }
