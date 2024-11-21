@@ -89,6 +89,5 @@ public class PostResDTO {
                 .stream()
                 .map(PostImage::getImageUrl)
                 .collect(Collectors.toList());
-
     }
 }

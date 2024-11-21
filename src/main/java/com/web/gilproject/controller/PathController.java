@@ -138,7 +138,7 @@ public class PathController {
     }
 
     //핀 업데이트
-    @PutMapping("/pin/{pinId}")
+    /*@PutMapping("/pin/{pinId}")
     public void pinUpdate(@PathVariable Long pinId, @RequestBody PinResDTO pinResDTO) {
         try {
             // Base64로 전달된 이미지 처리
@@ -158,7 +158,7 @@ public class PathController {
         } catch (Exception e) {
             throw new PathPinException(PathErrorCode.PIN_UPDATE_FAILED);
         }
-    }
+    }*/
 
 
     //핀 삭제
@@ -176,6 +176,8 @@ public class PathController {
 
         pathService.updateState(pathId, state);
     }
+
+
 
 }
 
