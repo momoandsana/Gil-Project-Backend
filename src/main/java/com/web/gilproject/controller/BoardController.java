@@ -6,6 +6,7 @@ import com.web.gilproject.dto.BoardDTO.*;
 import com.web.gilproject.dto.PathDTO;
 import com.web.gilproject.dto.CustomUserDetails;
 import com.web.gilproject.dto.PathResDTO;
+import com.web.gilproject.dto.PostDTO_YJ.PostResDTO;
 import com.web.gilproject.repository.BoardRepository;
 import com.web.gilproject.service.AmazonService;
 import com.web.gilproject.service.PathService;
@@ -43,16 +44,16 @@ public class BoardController {
      */
     //@GetMapping("/{userId}/paths")
     @GetMapping("/paths")
-    public ResponseEntity<List<PathDTO>> getAllPaths(Authentication authentication) {
+    public ResponseEntity<List<PathResDTO>> getAllPaths(Authentication authentication) {
         CustomUserDetails customMemberDetails = (CustomUserDetails) authentication.getPrincipal();
         Long userId = customMemberDetails.getId();
        // List<BoardPathResponseDTO> boardPathListDTO = boardService.getAllPathsById(userId);
 
-        List<PathDTO> pathListDTO=pathService.findPathByUserId(userId);
+        List<PathResDTO> pathListDTO=pathService.findPathByUserIdTransform(userId);
 //        for (BoardPathDTO boardPathDTO : boardPathListDTO) {
 //            System.out.println(boardPathDTO);
 //        }
-        return ResponseEntity.ok(PathListDTO);
+        return ResponseEntity.ok(pathListDTO);
     }
 
     /**
@@ -68,7 +69,7 @@ public class BoardController {
         CustomUserDetails customMemberDetails = (CustomUserDetails) authentication.getPrincipal();
         Long userId = customMemberDetails.getId();
         boardService.createPost(userId, postRequestDTO);
-        return ResponseEntity.ok();
+        return ResponseEntity.ok().build();
     }
      /*
      원래는 201 created 응답이 맞지만 프론트에서 생성된 정보가 필요 없다고 해서
