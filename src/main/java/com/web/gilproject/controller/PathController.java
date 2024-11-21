@@ -149,6 +149,14 @@ public class PathController {
         return ResponseEntity.ok(pathResDTOList);
     }
 
+    //전체 경로+핀 뿌리기
+    @GetMapping("/")
+    public ResponseEntity<?> getPathAll() {
+        List<PathResDTO> pathResDTOList = pathService.findPathAllTransform();
+
+        return ResponseEntity.ok(pathResDTOList);
+    }
+
     //핀 업데이트
     /*@PutMapping("/pin/{pinId}")
     public void pinUpdate(@PathVariable Long pinId, @RequestBody PinResDTO pinResDTO) {
