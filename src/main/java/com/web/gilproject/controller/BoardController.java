@@ -43,14 +43,16 @@ public class BoardController {
      */
     //@GetMapping("/{userId}/paths")
     @GetMapping("/paths")
-    public ResponseEntity<List<BoardPathResponseDTO>> getAllPaths(Authentication authentication) {
+    public ResponseEntity<List<PathDTO>> getAllPaths(Authentication authentication) {
         CustomUserDetails customMemberDetails = (CustomUserDetails) authentication.getPrincipal();
         Long userId = customMemberDetails.getId();
-        List<BoardPathResponseDTO> boardPathListDTO = boardService.getAllPathsById(userId);
+       // List<BoardPathResponseDTO> boardPathListDTO = boardService.getAllPathsById(userId);
+
+        List<PathDTO> pathListDTO=pathService.findPathByUserId(userId);
 //        for (BoardPathDTO boardPathDTO : boardPathListDTO) {
 //            System.out.println(boardPathDTO);
 //        }
-        return ResponseEntity.ok(boardPathListDTO);
+        return ResponseEntity.ok(PathListDTO);
     }
 
     /**
@@ -62,11 +64,11 @@ public class BoardController {
      * @throws IOException
      */
     @PostMapping
-    public ResponseEntity<PostResponseDTO> createPost(Authentication authentication, PostRequestDTO postRequestDTO) throws IOException {
+    public ResponseEntity<Void> createPost(Authentication authentication, PostRequestDTO postRequestDTO) throws IOException {
         CustomUserDetails customMemberDetails = (CustomUserDetails) authentication.getPrincipal();
         Long userId = customMemberDetails.getId();
-        PostResponseDTO postResponseDTO = boardService.createPost(userId, postRequestDTO);
-        return ResponseEntity.ok(postResponseDTO);
+        boardService.createPost(userId, postRequestDTO);
+        return ResponseEntity.ok();
     }
      /*
      원래는 201 created 응답이 맞지만 프론트에서 생성된 정보가 필요 없다고 해서
@@ -83,7 +85,7 @@ public class BoardController {
      * @return
      */
     @DeleteMapping("/{postId}")
-    public ResponseEntity<PostResponseDTO> deletePost(@PathVariable Long postId, Authentication authentication) {
+    public ResponseEntity<Void> deletePost(@PathVariable Long postId, Authentication authentication) {
         Long userId = ((CustomUserDetails) authentication.getPrincipal()).getId();
 
         boardService.deletePost(postId, userId);
@@ -102,11 +104,15 @@ public class BoardController {
         Long userId = ((CustomUserDetails) authentication.getPrincipal()).getId();
         boardService.toggleLike(postId, userId);// 만약에 문제가 생긴다면 서비스에서 에러가 난다
         return ResponseEntity.ok().build();
+    }
 
 
-    /*
-    글 상세보기
-     */
+    @GetMapping("/{postId}")
+    public ResponseEntity<PostResDTO> postDetails(@PathVariable Long postId)
+    {
+        PostResDTO postResDTO=boardService.postDetails(postId);
+        return ResponseEntity.ok.build(postResDTO);
+    }
 
 
 //    /**

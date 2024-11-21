@@ -5,6 +5,7 @@ import com.web.gilproject.domain.*;
 import com.web.gilproject.dto.BoardDTO.BoardPathResponseDTO;
 import com.web.gilproject.dto.BoardDTO.PostRequestDTO;
 import com.web.gilproject.dto.BoardDTO.PostResponseDTO;
+import com.web.gilproject.dto.PostDTO_YJ.PostResDTO;
 import com.web.gilproject.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -122,6 +123,14 @@ public class BoardService {
             postLikeRepository.save(postLikeEntity);
             postEntity.setLikesCount(Math.max(0,postEntity.getLikesCount()+1));
         }
+    }
+
+    @Transactional
+    public PostResDTO postDetails(Long postId)
+    {
+        Optional<Post> post=boardRepository.findById(postId);
+        PostResDTO postResDTO=new PostResDTO(post);
+        return postResDTO;
     }
 
 

@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public  record PostDetailDTO(
-        Long postId,
+        Long id,
         String nickName,
         String title,
         String content,

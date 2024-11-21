@@ -9,17 +9,17 @@ import java.util.List;
 import java.util.Map;
 
 public record BoardPathResponseDTO(
-        Long routeId,
+        Long pathId,
         String title,
-        String description,
-        Integer recordedTime,
+        String content,
+        Integer time,
         double distance,
         double startLat,
         double startLong,
         LocalDateTime createdDate,
         String startAddr,
 
-        List<Map<String, Double>> routeCoordinates,
+        List<Map<String, Double>> pathCoordinates,
         List<Map<String, Object>> pins
 ) {
     public static BoardPathResponseDTO from(Path path) {
@@ -35,7 +35,7 @@ public record BoardPathResponseDTO(
                 path.getStartAddr(),
                 //동 추가
                 Arrays.stream(path.getRoute().getCoordinates())
-                        .map(coord -> Map.of("lat", coord.y, "lng", coord.x))
+                        .map(coord -> Map.of("latitude", coord.y, "longitude", coord.x))
                         .toList(),
                 path.getPins().stream()
                         .map(pin -> {
@@ -43,8 +43,8 @@ public record BoardPathResponseDTO(
                             pinData.put("id", pin.getId());
                             pinData.put("imageUrl", pin.getImageUrl());
                             pinData.put("content", pin.getContent());
-                            pinData.put("lat", pin.getLatitude());
-                            pinData.put("lng", pin.getLongitude());
+                            pinData.put("latitude", pin.getLatitude());
+                            pinData.put("longitude", pin.getLongitude());
                             return pinData;
                         })
                         .toList()
