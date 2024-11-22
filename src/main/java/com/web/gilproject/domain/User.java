@@ -39,6 +39,8 @@ public class User {
 
     private String comment; //자기소개글
 
+    private String address; //집 주소
+    
     private Double latitude;
 
     private Double longitude;

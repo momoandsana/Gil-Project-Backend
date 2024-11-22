@@ -41,18 +41,18 @@ public class UserController_emh {
     /**
      * 내 정보 수정하기 (수정하기 or 뒤로가기 버튼 누르면)
      * ※구현 내용 : 닉네임, 이메일, 자기소개글
-     * ※확인 필요 : 닉네임, 이메일, 비밀번호, 주소 보류(닉네임-중복 확인 필요, 이메일-검증 필요, 비번-암호화필요, 주소-API연동)
+     * ※확인 필요 : 닉네임, 이메일, 비밀번호(닉네임-중복 확인 필요, 이메일-검증 필요, 비번-암호화필요)
      */
     @PutMapping("/update/{userId}")
     public String updateUser(@PathVariable Long userId, @RequestBody UserDTO userDTO){
         log.info("updateUser 메소드 call.... userId = {}, userDTO = {}",userId ,userDTO);
         userService.updateUserInfo(userId, userDTO);
-        return "redirect:/user/mypage?id="+userId;
+        return "redirect:/user/mypage/"+userId;
     }
     
 
     /**
-     * 내 프로필 수정 (s3에 올라와 있는 파일 삭제도 필요?)
+     * 내 프로필 수정 (s3에 올라와 있는 파일 삭제도 구현 필요 - 추후 진행 예정)
      */
     @PostMapping("/profile/{userId}")
     public String updateUserProfile(@PathVariable Long userId, @RequestParam("file") MultipartFile file){
@@ -66,8 +66,20 @@ public class UserController_emh {
         } catch (IOException e) {
             return "파일 업로드 실패";
         }
-        return "redirect:/user/mypage?id="+userId;
+        return "redirect:/user/mypage/"+userId;
     }
+
+    /**
+     * 내 주소 수정 (주소API로 집 주소, 집 위도, 집 경도 받아서 내용 수정)
+     */
+    @PutMapping("/address/{userId}")
+    public String updateUserAddress(@PathVariable Long userId, @RequestBody UserDTO userDTO){
+        log.info("updateUserAddress : id={} userDTO = {}", userId, userDTO);
+        userService.updateUserInfo(userId, userDTO);
+        return "redirect:/user/mypage/"+userId;
+    }
+
+
     /**
      * 내 경로 기록보기
      */
