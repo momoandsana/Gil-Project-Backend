@@ -22,7 +22,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
         OAuth2User oAuth2User = super.loadUser(userRequest);
-        System.out.println("저장된 유저 " + oAuth2User);
+//        System.out.println("저장된 유저 " + oAuth2User);
 
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         OAuth2Response oAuth2Response = null;
@@ -52,7 +52,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             String nickName = ""; //랜덤한 닉네임 부여
             String uuid = UUID.randomUUID().toString().substring(0, 8);
 
-            //플랫폼 설정
+            //플랫폼 설정, 닉네임 설정
             switch (registrationId) {
                 case "naver":
                     userEntity.setPlatform(2);
@@ -83,8 +83,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         userDTO.setName(oAuth2Response.getName());
         userDTO.setEmail(oAuth2Response.getEmail());
         userDTO.setImageUrl(oAuth2Response.getProfileUrl());
-        Long id = userRepository.findUserWithPlatformNotZero(oAuth2Response.getEmail()).getId();
-        userDTO.setId(id);
+        user = userRepository.findUserWithPlatformNotZero(oAuth2Response.getEmail());
+        userDTO.setId(user.getId());
+        userDTO.setNickName(user.getNickName());
 
         return new CustomOAuth2User(userDTO);  //인증된 사용자 정보 확인
     }

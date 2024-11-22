@@ -39,6 +39,8 @@ public class User {
 
     private String comment; //자기소개글
 
+    private String address; //집 주소
+    
     private Double latitude;
 
     private Double longitude;
@@ -75,5 +77,8 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ReplyLike> replyLikes;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<WalkAlong> walkAlongs;
 
 }

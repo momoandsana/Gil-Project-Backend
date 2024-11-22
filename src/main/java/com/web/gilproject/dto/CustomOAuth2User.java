@@ -33,7 +33,7 @@ public class CustomOAuth2User extends IntergrateUserDetails implements OAuth2Use
 
     public String getProfileUrl(){return userDto.getImageUrl();}
 
-    public String getNickname() {return userDto.getName(); }
+    public String getNickname() {return userDto.getNickName(); }
 
     public Long getId() {return userDto.getId(); }
 }

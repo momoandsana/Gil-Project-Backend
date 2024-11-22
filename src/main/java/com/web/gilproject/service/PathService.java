@@ -117,6 +117,63 @@ public class PathService {
         }
     }
 
+    public List<PathResDTO> findPathAllTransform() {
+
+        List<Path> list = pathRepository.findAllState(); // JPQL에서 JOIN FETCH 사용
+        //System.out.println(list);
+        if(list != null && !list.isEmpty()) {
+            return list.stream()
+                    .map(path -> {
+                        PathResDTO pathDTO = new PathResDTO();
+
+                        UserResDTO userDTO = new UserResDTO();
+                        userDTO.setId(path.getUser().getId());
+                        pathDTO.setUser(userDTO);
+
+                        pathDTO.setId(path.getId());
+                        pathDTO.setContent(path.getContent());
+                        pathDTO.setState(path.getState());
+                        pathDTO.setTitle(path.getTitle());
+                        pathDTO.setTime(path.getTime());
+                        pathDTO.setDistance(path.getDistance());
+                        pathDTO.setStartLat(path.getStartLat());
+                        pathDTO.setStartLong(path.getStartLong());
+                        pathDTO.setStartAddr(path.getStartAddr());
+
+                        pathDTO.setRouteCoordinates(
+                                Arrays.stream(path.getRoute().getCoordinates())
+                                        .map(coordinate -> {
+                                            CoordinateResDTO coordDto = new CoordinateResDTO();
+                                            coordDto.setLatitude(String.valueOf(coordinate.y));
+                                            coordDto.setLongitude(String.valueOf(coordinate.x));
+                                            return coordDto;
+                                        }).collect(Collectors.toList())
+                        );
+                        //System.out.println("path.getPins() = " + path.getPins());
+                        pathDTO.setPins(
+                                path.getPins() != null ?
+                                        path.getPins().stream()
+                                                .map(pin -> {
+                                                    PinResDTO pinDTO = new PinResDTO();
+                                                    pinDTO.setId(pin.getId());
+                                                    pinDTO.setImageUrl(pin.getImageUrl());
+                                                    pinDTO.setContent(pin.getContent());
+                                                    pinDTO.setLatitude(pin.getLatitude());
+                                                    pinDTO.setLongitude(pin.getLongitude());
+                                                    return pinDTO;
+                                                }).collect(Collectors.toList())
+                                        : Collections.emptyList()
+                        );
+
+                        return pathDTO;
+                    })
+                    .collect(Collectors.toList());
+        }
+        else{
+            throw new PathPinException(PathErrorCode.NOTFOUND_PATH);
+        }
+    }
+
     //Path받아서 디코딩 후 PathResDTO로 리턴하는 메소드
     public PathResDTO decodingPath(Path path) {
         if (path == null) {

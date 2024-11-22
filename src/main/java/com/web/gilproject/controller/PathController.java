@@ -24,6 +24,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.net.URL;
 import java.util.*;
 import java.util.Base64;
 import java.util.stream.Collectors;
@@ -110,10 +111,21 @@ public class PathController {
                 String imageUrl = null;
 
                 if (pinDTO.getImageUrl() != null && !pinDTO.getImageUrl().isEmpty()) {
+                    // Base64 이미지를 MultipartFile로 변환
                     MultipartFile imageFile = convertBase64ToMultipartFile(pinDTO.getImageUrl());
-                    imageUrl = s3Service.uploadFile(imageFile);
+
+                    // 고유 파일 이름 생성 (UUID 사용)
+                    String uniqueFileName = UUID.randomUUID().toString() + "-" + imageFile.getOriginalFilename();
+
+                    // 폴더 이름 결합
+                    String folderName = "pin_images";
+                    String filePath = folderName + "/" + uniqueFileName;
+
+                    // S3에 업로드
+                    imageUrl = s3Service.uploadFileToFolder(imageFile, filePath);
                 }
 
+                // Pin 엔티티 생성 및 저장
                 Pin pin = Pin.builder()
                         .path(finalPath)
                         .content(pinDTO.getContent())
@@ -133,6 +145,14 @@ public class PathController {
     @GetMapping("/{userId}")
     public ResponseEntity<?> getPath(@PathVariable Long userId) {
         List<PathResDTO> pathResDTOList = pathService.findPathByUserIdTransform(userId);
+
+        return ResponseEntity.ok(pathResDTOList);
+    }
+
+    //전체 경로+핀 뿌리기
+    @GetMapping("/")
+    public ResponseEntity<?> getPathAll() {
+        List<PathResDTO> pathResDTOList = pathService.findPathAllTransform();
 
         return ResponseEntity.ok(pathResDTOList);
     }
@@ -159,7 +179,6 @@ public class PathController {
             throw new PathPinException(PathErrorCode.PIN_UPDATE_FAILED);
         }
     }*/
-
 
     //핀 삭제
     @DeleteMapping("/pin/{pinId}")

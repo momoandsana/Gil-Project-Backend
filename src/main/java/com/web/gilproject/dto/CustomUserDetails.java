@@ -42,7 +42,6 @@ public class CustomUserDetails extends IntergrateUserDetails implements UserDeta
     public String getNickname() {return user.getNickName();}
 
 
-
     @Override
     public boolean isAccountNonExpired() {
         return true;

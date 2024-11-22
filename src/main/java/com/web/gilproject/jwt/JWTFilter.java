@@ -30,16 +30,18 @@ public class JWTFilter extends OncePerRequestFilter {
         System.out.println("doFilterInternal Call");
 
         //request에서 Authorization 헤더를 찾음
-        String authorization = request.getHeader("Authorization");
+        String authorization = request.getHeader("authorization");
 
         //Authorization 헤더 검증
         if (authorization == null || !authorization.startsWith("Bearer ")) {
 
             System.out.println("token 헤더에 없음");
-            filterChain.doFilter(request, response);
 
+            filterChain.doFilter(request, response);
             return;
         }
+        System.out.println("token 헤더에 있음!");
+
 
         //Bearer 부분 제거 후 순수 토큰만 획득
         String token = authorization.split(" ")[1];
@@ -52,12 +54,14 @@ public class JWTFilter extends OncePerRequestFilter {
 
             return;
         }
+        System.out.println("token 만료되지 않았음!");
 
-        Long userId = jwtUtil.getUserId(token);
+
 
         //userEntity를 생성하여 값 set
         User userEntity = new User();
-        userEntity.setId(userId);
+        userEntity.setId(jwtUtil.getUserId(token));
+        userEntity.setNickName(jwtUtil.getUserNickname(token));
 
         //UserDetails에 회원 정보 객체 담기
         CustomUserDetails customUserDetails = new CustomUserDetails(userEntity);

@@ -19,9 +19,9 @@ public class MailController {
     }
 
     @PostMapping("/send")
-    public ResponseEntity<Integer> mailSend(@RequestBody MailDTO mailDto){
+    public int mailSend(@RequestBody MailDTO mailDto){
         int code = mailService.sendMail(mailDto);
         
-        return ResponseEntity.ok(code);
+        return code;
     }
 }

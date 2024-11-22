@@ -21,13 +21,11 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     public LoginFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
-        setFilterProcessesUrl("/api/auth/login");
+        setFilterProcessesUrl("/auth/login"); //진입경로 변경
     }
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-//        String email = obtainUsername(request);
-//        String password = obtainPassword(request);
         String email = request.getParameter("email");  // form-data에서 email 값 추출
         String password = request.getParameter("password");  // form-data에서 password 값 추출
 //        System.out.println("email = " + email);
@@ -46,15 +44,11 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         System.out.println("로그인 성공");
 
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-        //String email = customUserDetails.getEmail();
-        //String username = customUserDetails.getUsername();
-        //Long id = customUserDetails.getId();
-        //System.out.println("id = " + id);
 
-        String token = jwtUtil.createJwt(customUserDetails, 1000 * 60 * 50L); //5분
+        String token = jwtUtil.createJwt(customUserDetails, 1000 * 60 * 50L); //50분
 
         //헤더에 발급된 JWT 실어주기
-        response.addHeader("Authorization", "Bearer " + token);
+        response.addHeader("authorization", "Bearer " + token);
     }
 
     //로그인 실패시 실행하는 메소드
