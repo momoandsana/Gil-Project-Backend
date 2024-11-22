@@ -6,7 +6,7 @@ import lombok.*;
 
 @Entity
 @Data
-@ToString(exclude = "user")
+@ToString(exclude = {"user","path"})
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,8 +22,9 @@ public class WalkAlong {
     @JsonIgnore
     private User user;
 
-    private Integer time;
-
-    private Double distance;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="PATH_ID",nullable = false)
+    @JsonIgnore
+    private Path path;
 
 }

@@ -79,6 +79,7 @@ public class PathService {
                         pathDTO.setTitle(path.getTitle());
                         pathDTO.setTime(path.getTime());
                         pathDTO.setDistance(path.getDistance());
+                        pathDTO.setCreateDate(path.getCreatedDate());
                         pathDTO.setStartLat(path.getStartLat());
                         pathDTO.setStartLong(path.getStartLong());
                         pathDTO.setStartAddr(path.getStartAddr());

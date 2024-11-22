@@ -62,4 +62,8 @@ public class Path {
     @OneToOne(mappedBy = "path",cascade = CascadeType.ALL,orphanRemoval = true)
     @JsonIgnore
     private Post post;
+
+    @OneToMany(mappedBy = "path",cascade = CascadeType.ALL,orphanRemoval = true)
+    @JsonIgnore
+    private Set<WalkAlong> walkAlongs;
 }
