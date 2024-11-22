@@ -122,6 +122,14 @@ public class BoardController {
         return ResponseEntity.ok(postResDTO);
     }
 
+    @PatchMapping('/{postId}')
+    public ResponseEntity<Void> updatePost(@PathVariable Long postId,PostPatchRequestDTO postPatchRequestDTO,Authentication authentication)
+    {
+        Long userId = ((CustomUserDetails) authentication.getPrincipal()).getId();
+        boardService.updatePost(postId,userId,postPatchRequestDTO);
+        return ResponseEntity.ok().build();
+    }
+
 
 //    /**
 //     * 사진 저장 함수

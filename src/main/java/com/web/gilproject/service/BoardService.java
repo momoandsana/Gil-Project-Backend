@@ -132,10 +132,24 @@ public class BoardService {
     @Transactional
     public PostResDTO postDetails(Long postId,Long userId)
     {
-        Post post=boardRepository.findById(postId).orElseThrow(()->new RuntimeException("Post not found"));
-        PostResDTO postResDTO=new PostResDTO(post,userId);
-        postResDTO.setPathResDTO(pathService.decodingPath(post.getPath()));
+        Post postEntity=boardRepository.findById(postId).orElseThrow(()->new RuntimeException("Post not found"));
+        PostResDTO postResDTO=new PostResDTO(postEntity,userId);
+        postResDTO.setPathResDTO(pathService.decodingPath(postEntity.getPath()));
         return postResDTO;
+    }
+
+    @Transactional
+    public void updatePost(Long postId,Long userId,PostRequestDTO postRequestDTO)
+    {
+        Post posEntity=boardRepository.findById(postId).orElseThrow(()->new RuntimeException("Post not found"));
+        User userEntity=userRepository.findById(userId).orElseThrow(()->new RuntimeException("User not found"));
+
+        if(!userEntity.equals(posEntity.getUser()))
+        {
+            throw new RuntimeException("User not allowed");
+        }
+
+
     }
 
 
