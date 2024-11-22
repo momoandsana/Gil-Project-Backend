@@ -2,6 +2,8 @@ package com.web.gilproject.controller;
 
 import com.web.gilproject.dto.CustomUserDetails;
 import com.web.gilproject.dto.PostDTO_YJ.PostResDTO;
+import com.web.gilproject.exception.GilListErrorCode;
+import com.web.gilproject.exception.GilListException;
 import com.web.gilproject.service.GilListService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,14 +28,19 @@ public class GilListController {
      * */
     @GetMapping("/{nowY}/{nowX}")
     public ResponseEntity<?> findByMyPosition(@PathVariable Double nowY, @PathVariable Double nowX, Integer page, Integer size, Authentication authentication) {
+
         //현재 로그인 중인 유저의 Id를 찾아오기
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Long userId = userDetails.getId();
 
         Page<PostResDTO> listPost = gilListService.findByMyPosition(nowY, nowX, PageRequest.of(page, size), userId);
+
+        if (listPost.getTotalElements() == 0) {
+            throw new GilListException(GilListErrorCode.NOTFOUND_LIST);
+        }
+
         return new ResponseEntity<>(listPost, HttpStatus.OK);
     }
-
     /**
      * 2. 내 주소 주변 산책길 글목록
      * */
@@ -44,6 +51,11 @@ public class GilListController {
         Long userId = userDetails.getId();
 
         Page<PostResDTO> listPost = gilListService.findByNearAddr(PageRequest.of(page, size), userId);
+
+        if (listPost.getTotalElements() == 0) {
+            throw new GilListException(GilListErrorCode.NOTFOUND_LIST);
+        }
+
         return new ResponseEntity<>(listPost, HttpStatus.OK);
     }
 
@@ -58,6 +70,11 @@ public class GilListController {
         Long userId = userDetails.getId();
 
         Page<PostResDTO> listPost = gilListService.findByNickName(nickName, PageRequest.of(page, size), userId);
+
+        if (listPost.getTotalElements() == 0) {
+            throw new GilListException(GilListErrorCode.NOTFOUND_LIST);
+        }
+
         return new ResponseEntity<>(listPost, HttpStatus.OK);
     }
 
@@ -72,6 +89,11 @@ public class GilListController {
         Long userId = userDetails.getId();
 
         Page<PostResDTO> listPost = gilListService.findMyGilList(PageRequest.of(page, size), userId);
+
+        if (listPost.getTotalElements() == 0) {
+            throw new GilListException(GilListErrorCode.NOTFOUND_LIST);
+        }
+
         return new ResponseEntity<>(listPost, HttpStatus.OK);
     }
 
@@ -86,6 +108,11 @@ public class GilListController {
         Long userId = userDetails.getId();
 
         Page<PostResDTO> listPost = gilListService.findMyFav(PageRequest.of(page, size), userId);
+
+        if (listPost.getTotalElements() == 0) {
+            throw new GilListException(GilListErrorCode.NOTFOUND_LIST);
+        }
+
         return new ResponseEntity<>(listPost, HttpStatus.OK);
     }
 
@@ -100,6 +127,11 @@ public class GilListController {
         Long userId = userDetails.getId();
 
         Page<PostResDTO> listPost = gilListService.findByKeyword(keyword, PageRequest.of(page, size), userId);
+
+        if (listPost.getTotalElements() == 0) {
+            throw new GilListException(GilListErrorCode.NOTFOUND_LIST);
+        }
+
         return new ResponseEntity<>(listPost, HttpStatus.OK);
     }
 }
