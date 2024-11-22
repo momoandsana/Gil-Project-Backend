@@ -1,14 +1,11 @@
 package com.web.gilproject.service;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.ListObjectsRequest;
-import com.amazonaws.services.s3.model.ObjectListing;
-import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import com.amazonaws.services.s3.model.S3ObjectSummary;
 
 
 import java.io.IOException;
@@ -87,5 +84,16 @@ public class AmazonService {
         amazonS3.putObject(bucketName, key, file.getInputStream(), metadata);
 
         return amazonS3.getUrl(bucketName, key).toString();
+    }
+
+    public void deleteFile(String fileUrl)
+    {
+        String fileKey=getFileKeyFromUrl(fileUrl);
+        amazonS3.deleteObject(new DeleteObjectRequest(bucketName,fileKey));
+    }
+
+    public String getFileKeyFromUrl(String fileUrl) {
+        int index=fileUrl.indexOf(bucketName)+bucketName.length()+1;
+        return fileUrl.substring(index);
     }
 }
