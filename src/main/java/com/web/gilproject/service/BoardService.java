@@ -3,6 +3,7 @@ package com.web.gilproject.service;
 import com.amazonaws.services.s3.AmazonS3;
 import com.web.gilproject.domain.*;
 import com.web.gilproject.dto.BoardDTO.BoardPathResponseDTO;
+import com.web.gilproject.dto.BoardDTO.PostPatchRequestDTO;
 import com.web.gilproject.dto.BoardDTO.PostRequestDTO;
 import com.web.gilproject.dto.BoardDTO.PostResponseDTO;
 import com.web.gilproject.dto.PostDTO_YJ.PostResDTO;
@@ -139,16 +140,78 @@ public class BoardService {
     }
 
     @Transactional
-    public void updatePost(Long postId,Long userId,PostRequestDTO postRequestDTO)
+    public void updatePost(Long postId, Long userId, PostPatchRequestDTO postPatchRequestDTO)
     {
-        Post posEntity=boardRepository.findById(postId).orElseThrow(()->new RuntimeException("Post not found"));
+        Post postEntity=boardRepository.findById(postId).orElseThrow(()->new RuntimeException("Post not found"));
         User userEntity=userRepository.findById(userId).orElseThrow(()->new RuntimeException("User not found"));
 
-        if(!userEntity.equals(posEntity.getUser()))
+        if(!userEntity.equals(postEntity.getUser()))
         {
             throw new RuntimeException("User not allowed");
         }
 
+        if(postPatchRequestDTO.title()!=null)
+        {
+            postEntity.setTitle(postPatchRequestDTO.title());
+        }
+
+        if(postPatchRequestDTO.content()!=null)
+        {
+            postEntity.setContent(postPatchRequestDTO.content());
+        }
+
+        if(postPatchRequestDTO.tag()!=null)
+        {
+            postEntity.setTag(postPatchRequestDTO.tag());
+        }
+
+        List<String> deleteUrls=postPatchRequestDTO.deleteUrls();
+        if(!deleteUrls.isEmpty())
+        {
+            for(String url:deleteUrls)
+            {
+                try
+                {
+                    amazonService.deleteFile(url);
+                }
+                catch(Exception e)
+                {
+                    throw new RuntimeException(e);
+                }
+
+                PostImage postImage=postImageRepository.findByImageUrl(url)
+                        .orElseThrow(()->new RuntimeException("PostImage not found"));
+                postEntity.removePostImage(postImage);
+                //postImageRepository.delete(postImage); , orphanRemoval=true 이므로
+            }
+        }
+
+        List<MultipartFile> newImages=postPatchRequestDTO.newImages();
+
+        if(!newImages.isEmpty())
+        {
+            for(MultipartFile file:newImages)
+            {
+                String fileName = "upload_images/" + postId + "/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
+                try{
+                    String imageUrl= amazonService.uploadFile(file,fileName);
+                    PostImage postImage=PostImage.builder()
+                            .post(postEntity)
+                            .imageUrl(imageUrl)
+                            .build();
+
+                    postEntity.addPostImage(postImage);
+                }
+                catch(IOException e)
+                {
+                    throw new RuntimeException(e);
+                }
+            }
+
+        }
+
+        // 진행 중...
+        boardRepository.save(postEntity);
 
     }
 

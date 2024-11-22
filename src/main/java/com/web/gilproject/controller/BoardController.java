@@ -122,7 +122,7 @@ public class BoardController {
         return ResponseEntity.ok(postResDTO);
     }
 
-    @PatchMapping('/{postId}')
+    @PatchMapping("/{postId}")
     public ResponseEntity<Void> updatePost(@PathVariable Long postId,PostPatchRequestDTO postPatchRequestDTO,Authentication authentication)
     {
         Long userId = ((CustomUserDetails) authentication.getPrincipal()).getId();
