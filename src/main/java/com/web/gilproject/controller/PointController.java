@@ -33,7 +33,7 @@ public class PointController {
             throw new MemberAuthenticationException(ErrorCode.POINTPLUS_FAILED);
         }
 
-        pointService.pointPlus(userId);
+        pointService.pointPlus(userId,pointConfirmDTO);
 
     }
 }
