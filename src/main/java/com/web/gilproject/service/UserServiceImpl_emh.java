@@ -3,6 +3,7 @@ package com.web.gilproject.service;
 
 import com.web.gilproject.domain.User;
 import com.web.gilproject.dto.UserDTO;
+import com.web.gilproject.dto.UserSimpleResDTO;
 import com.web.gilproject.repository.UserRepository_emh;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,9 +16,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserServiceImpl_emh implements UserService_emh{
 
     private final UserRepository_emh userRepository;
+    private final PathService pathService;
+    private final BoardService boardService;
 
     @Transactional(readOnly = true)
     @Override
+    //내 정보 조회
     public UserDTO findUserById(Long id) {
         log.info("findUserById : id = " +id);
 
@@ -32,6 +36,7 @@ public class UserServiceImpl_emh implements UserService_emh{
 
     @Transactional
     @Override
+    //내 정보 수정
     public void updateUserInfo(Long id, UserDTO userDTO) {
         log.info("updateUserInfo : id = {}, userDTO = {}" ,id ,userDTO);
 
@@ -48,8 +53,29 @@ public class UserServiceImpl_emh implements UserService_emh{
 
     @Transactional
     @Override
+    //내 프로필 이미지 수정
     public void updateUserImg(Long id, String fileUrl) {
         User userEntity = userRepository.findById(id).orElse(null);
         userEntity.setImageUrl(fileUrl);
+    }
+
+    @Transactional
+    @Override
+    //내 정보 조회 (프로필 이미지 눌렀을때 보이는 요약 버전)
+    public UserSimpleResDTO findSimpleInfoById(Long id) {
+        // user 정보 추출
+        User userEntity = userRepository.findById(id).orElse(null);
+        UserSimpleResDTO userSimpleResDTO = new UserSimpleResDTO(userEntity);
+
+        // 내가 쓴 글 개수 추출
+        Integer boardCounts = boardService.getAllPathsById(id).size();
+        userSimpleResDTO.setPostCounts(boardCounts);
+
+        // 따라걷기한 경로 개수 추출 (현재는 path, 나중에 따라걷기로 바꿔야함)
+        Integer pathCounts = pathService.findPathByUserId(id).size();
+        userSimpleResDTO.setPathCounts(pathCounts);
+
+        log.info(userSimpleResDTO.toString());
+        return userSimpleResDTO;
     }
 }
