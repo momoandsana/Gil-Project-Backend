@@ -29,6 +29,7 @@ public class GilListController {
         //현재 로그인 중인 유저의 Id를 찾아오기
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Long userId = userDetails.getId();
+
         Page<PostResDTO> listPost = gilListService.findByMyPosition(nowY, nowX, PageRequest.of(page, size), userId);
         return new ResponseEntity<>(listPost, HttpStatus.OK);
     }
@@ -37,12 +38,12 @@ public class GilListController {
      * 2. 내 주소 주변 산책길 글목록
      * */
     @GetMapping("/nearAddr")
-    public ResponseEntity<?> findByNearAddr(Authentication authentication, Integer page, Integer size) {
+    public ResponseEntity<?> findByNearAddr(Integer page, Integer size, Authentication authentication) {
         //현재 로그인 중인 유저의 Id를 찾아오기
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Long userId = userDetails.getId();
 
-        Page<PostResDTO> listPost = gilListService.findByNearAddr(authentication, PageRequest.of(page, size), userId);
+        Page<PostResDTO> listPost = gilListService.findByNearAddr(PageRequest.of(page, size), userId);
         return new ResponseEntity<>(listPost, HttpStatus.OK);
     }
 
@@ -64,13 +65,13 @@ public class GilListController {
      * 4. 내가 쓴 산책길 글목록
      * */
     @GetMapping("/myGilList")
-    public ResponseEntity<?> findMyGilList(Authentication authentication, Integer page, Integer size){
+    public ResponseEntity<?> findMyGilList(Integer page, Integer size, Authentication authentication){
 
         //현재 로그인 중인 유저의 Id를 찾아오기
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Long userId = userDetails.getId();
 
-        Page<PostResDTO> listPost = gilListService.findMyGilList(authentication, PageRequest.of(page, size), userId);
+        Page<PostResDTO> listPost = gilListService.findMyGilList(PageRequest.of(page, size), userId);
         return new ResponseEntity<>(listPost, HttpStatus.OK);
     }
 
@@ -78,13 +79,13 @@ public class GilListController {
      * 5. 내가 찜한 산책길 글목록
      * */
     @GetMapping("/myFav")
-    public ResponseEntity<?> findMyFav(Authentication authentication, Integer page, Integer size){
+    public ResponseEntity<?> findMyFav(Integer page, Integer size, Authentication authentication){
 
         //현재 로그인 중인 유저의 Id를 찾아오기
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Long userId = userDetails.getId();
 
-        Page<PostResDTO> listPost = gilListService.findMyFav(authentication, PageRequest.of(page, size), userId);
+        Page<PostResDTO> listPost = gilListService.findMyFav(PageRequest.of(page, size), userId);
         return new ResponseEntity<>(listPost, HttpStatus.OK);
     }
 

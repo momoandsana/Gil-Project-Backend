@@ -2,7 +2,6 @@ package com.web.gilproject.service;
 
 import com.web.gilproject.domain.Post;
 import com.web.gilproject.domain.PostImage;
-import com.web.gilproject.dto.CustomUserDetails;
 import com.web.gilproject.dto.PathResDTO;
 import com.web.gilproject.dto.PostDTO_YJ.PostResDTO;
 import com.web.gilproject.repository.GilListRepository;
@@ -10,7 +9,6 @@ import com.web.gilproject.repository.UserRepository_YJ;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -58,7 +56,7 @@ public class GilListServiceImpl implements GilListService {
      * */
     @Transactional(readOnly = true)
     @Override
-    public Page<PostResDTO> findByNearAddr(Authentication authentication, Pageable pageable, Long userId) {
+    public Page<PostResDTO> findByNearAddr(Pageable pageable, Long userId) {
 
         //해당 id인 유저의 집주소 위도와 경도 알아내기
         Double homeLat = userRepository.findByUserId(userId).getLatitude(); //집주소 위도
@@ -107,7 +105,7 @@ public class GilListServiceImpl implements GilListService {
      * */
     @Transactional(readOnly = true)
     @Override
-    public Page<PostResDTO> findMyGilList(Authentication authentication, Pageable pageable, Long userId) {
+    public Page<PostResDTO> findMyGilList(Pageable pageable, Long userId) {
 
         //글쓴 유저 id에 의한 산책길 글목록 찾기
         Page<Post> pagePostDTO = gilListRepository.findByUserId(userId, pageable);
@@ -126,7 +124,7 @@ public class GilListServiceImpl implements GilListService {
      * */
     @Transactional(readOnly = true)
     @Override
-    public Page<PostResDTO> findMyFav(Authentication authentication, Pageable pageable, Long userId) {
+    public Page<PostResDTO> findMyFav(Pageable pageable, Long userId) {
 
         //전체 산책길 글목록 조회
         Page<Post> pagePostDTO = gilListRepository.findAllPostDTO(pageable);
