@@ -36,7 +36,7 @@ public class GilListServiceImpl implements GilListService {
      * */
     @Transactional(readOnly = true)
     @Override
-    public Page<PostResDTO> findByMyPosition(Double nowY, Double nowX, Pageable pageable) {
+    public Page<PostResDTO> findByMyPosition(Double nowY, Double nowX, Pageable pageable, Long userId) {
         //전체 조회
         Page<Post> pagePostDTO = gilListRepository.findAllPostDTO(pageable);
 
@@ -50,7 +50,7 @@ public class GilListServiceImpl implements GilListService {
                 })
                 .collect(Collectors.toList());
 
-        return new PageImpl<>(this.changeList(filteredPosts), pageable, filteredPosts.size());
+        return new PageImpl<>(this.changeList(filteredPosts, userId), pageable, filteredPosts.size());
     }
 
     /**
@@ -58,11 +58,7 @@ public class GilListServiceImpl implements GilListService {
      * */
     @Transactional(readOnly = true)
     @Override
-    public Page<PostResDTO> findByNearAddr(Authentication authentication, Pageable pageable) {
-
-        //현재 로그인 중인 유저의 id를 찾아오기
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        Long userId = userDetails.getId();
+    public Page<PostResDTO> findByNearAddr(Authentication authentication, Pageable pageable, Long userId) {
 
         //해당 id인 유저의 집주소 위도와 경도 알아내기
         Double homeLat = userRepository.findByUserId(userId).getLatitude(); //집주소 위도
@@ -82,7 +78,7 @@ public class GilListServiceImpl implements GilListService {
                 .collect(Collectors.toList());
 
         return new PageImpl<>(
-                this.changeList(filteredPosts),
+                this.changeList(filteredPosts, userId),
                 pageable,
                 filteredPosts.size()
         );
@@ -93,14 +89,14 @@ public class GilListServiceImpl implements GilListService {
      * */
     @Transactional(readOnly = true)
     @Override
-    public Page<PostResDTO> findByNickName(String nickName, Pageable pageable) {
+    public Page<PostResDTO> findByNickName(String nickName, Pageable pageable, Long userId) {
 
         //작성자 닉네임에 의한 산책길 글목록 조회
         Page<Post> pagePostDTO = gilListRepository.findByNickName(nickName, pageable);
         List<Post> listPostDTO = pagePostDTO.getContent();
 
         return new PageImpl<>(
-                this.changeList(listPostDTO),
+                this.changeList(listPostDTO, userId),
                 pageable,
                 listPostDTO.size()
         );
@@ -111,11 +107,7 @@ public class GilListServiceImpl implements GilListService {
      * */
     @Transactional(readOnly = true)
     @Override
-    public Page<PostResDTO> findMyGilList(Authentication authentication, Pageable pageable) {
-
-        //현재 로그인 중인 유저의 id를 찾아오기
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        Long userId = userDetails.getId();
+    public Page<PostResDTO> findMyGilList(Authentication authentication, Pageable pageable, Long userId) {
 
         //글쓴 유저 id에 의한 산책길 글목록 찾기
         Page<Post> pagePostDTO = gilListRepository.findByUserId(userId, pageable);
@@ -123,7 +115,7 @@ public class GilListServiceImpl implements GilListService {
         List<Post> listPostDTO = pagePostDTO.getContent();
 
         return new PageImpl<>(
-                this.changeList(listPostDTO),
+                this.changeList(listPostDTO, userId),
                 pageable,
                 listPostDTO.size()
         );
@@ -134,11 +126,7 @@ public class GilListServiceImpl implements GilListService {
      * */
     @Transactional(readOnly = true)
     @Override
-    public Page<PostResDTO> findMyFav(Authentication authentication, Pageable pageable) {
-
-        //현재 로그인 중인 유저의 Id를 찾아오기
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        Long userId = userDetails.getId();
+    public Page<PostResDTO> findMyFav(Authentication authentication, Pageable pageable, Long userId) {
 
         //전체 산책길 글목록 조회
         Page<Post> pagePostDTO = gilListRepository.findAllPostDTO(pageable);
@@ -150,7 +138,7 @@ public class GilListServiceImpl implements GilListService {
                 .collect(Collectors.toList());
 
         return new PageImpl<>(
-                this.changeList(listPostDTO),
+                this.changeList(listPostDTO, userId),
                 pageable,
                 listPostDTO.size()
         );
@@ -162,7 +150,7 @@ public class GilListServiceImpl implements GilListService {
      * */
     @Transactional(readOnly = true)
     @Override
-    public Page<PostResDTO> findByKeyword(String keyword, Pageable pageable) {
+    public Page<PostResDTO> findByKeyword(String keyword, Pageable pageable, Long userId) {
 
         //키워드 검색(제목, 내용, 닉네임, 시작주소)
         Page<Post> titleKeyword = gilListRepository.findByTitleContaining(keyword, pageable);
@@ -188,7 +176,7 @@ public class GilListServiceImpl implements GilListService {
         int end = Math.min((start + pageable.getPageSize()), combinedList.size());
         List<Post> pagedResult = combinedList.subList(start, end);
 
-        return new PageImpl<>(this.changeList(pagedResult), pageable, total);
+        return new PageImpl<>(this.changeList(pagedResult, userId), pageable, total);
     }
 
     /**
@@ -230,7 +218,7 @@ public class GilListServiceImpl implements GilListService {
     /**
      * List<Post>를 List<PostResDTO>로 바꾸는 함수
      * */
-    private List<PostResDTO> changeList(List<Post> listPostDTO){
+    private List<PostResDTO> changeList(List<Post> listPostDTO, Long userId){
         List<PostResDTO> result = new ArrayList<>();
         for(Post post : listPostDTO){
             Long id = post.getId();
@@ -256,9 +244,17 @@ public class GilListServiceImpl implements GilListService {
                     .map(PostImage::getImageUrl)
                     .collect(Collectors.toList());
 
+            boolean isLiked = post.getPostLikes()
+                    .stream()
+                    .anyMatch(like->like.getUser().getId().equals(userId));
+
+            boolean isWishListed = post.getPostWishLists()
+                    .stream()
+                    .anyMatch(postWishList->postWishList.getUser().getId().equals(userId));
+
             result.add(new PostResDTO(id, userNickName, pathId, startLat, startLong, state, title, content, tag,
                     writeDate,updateDate,readNum,postLikesCount, repliesCount,
-                    postWishListsNum, userImgUrl, pathResDTO, imageUrls));
+                    postWishListsNum, userImgUrl, pathResDTO, imageUrls, isLiked, isWishListed));
         }
         return result;
     }

@@ -1,5 +1,6 @@
 package com.web.gilproject.controller;
 
+import com.web.gilproject.dto.CustomUserDetails;
 import com.web.gilproject.dto.PostDTO_YJ.PostResDTO;
 import com.web.gilproject.service.GilListService;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +25,11 @@ public class GilListController {
      * 1. 내 위치 주변 산책길 글목록
      * */
     @GetMapping("/{nowY}/{nowX}")
-    public ResponseEntity<?> findByMyPosition(@PathVariable Double nowY, @PathVariable Double nowX, Integer page, Integer size){
-        Page<PostResDTO> listPost = gilListService.findByMyPosition(nowY, nowX, PageRequest.of(page, size));
+    public ResponseEntity<?> findByMyPosition(@PathVariable Double nowY, @PathVariable Double nowX, Integer page, Integer size, Authentication authentication) {
+        //현재 로그인 중인 유저의 Id를 찾아오기
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        Long userId = userDetails.getId();
+        Page<PostResDTO> listPost = gilListService.findByMyPosition(nowY, nowX, PageRequest.of(page, size), userId);
         return new ResponseEntity<>(listPost, HttpStatus.OK);
     }
 
@@ -33,8 +37,12 @@ public class GilListController {
      * 2. 내 주소 주변 산책길 글목록
      * */
     @GetMapping("/nearAddr")
-    public ResponseEntity<?> findByNearAddr(Authentication authentication, Integer page, Integer size){
-        Page<PostResDTO> listPost = gilListService.findByNearAddr(authentication, PageRequest.of(page, size));
+    public ResponseEntity<?> findByNearAddr(Authentication authentication, Integer page, Integer size) {
+        //현재 로그인 중인 유저의 Id를 찾아오기
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        Long userId = userDetails.getId();
+
+        Page<PostResDTO> listPost = gilListService.findByNearAddr(authentication, PageRequest.of(page, size), userId);
         return new ResponseEntity<>(listPost, HttpStatus.OK);
     }
 
@@ -42,8 +50,13 @@ public class GilListController {
      * 3. (구독기능을 위한) 작성자별 산책길 글목록
      * */
     @GetMapping("/nickName")
-    public ResponseEntity<?> findByNickName(@RequestParam String nickName, Integer page, Integer size){
-        Page<PostResDTO> listPost = gilListService.findByNickName(nickName, PageRequest.of(page, size));
+    public ResponseEntity<?> findByNickName(@RequestParam String nickName, Integer page, Integer size, Authentication authentication) {
+
+        //현재 로그인 중인 유저의 Id를 찾아오기
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        Long userId = userDetails.getId();
+
+        Page<PostResDTO> listPost = gilListService.findByNickName(nickName, PageRequest.of(page, size), userId);
         return new ResponseEntity<>(listPost, HttpStatus.OK);
     }
 
@@ -52,7 +65,12 @@ public class GilListController {
      * */
     @GetMapping("/myGilList")
     public ResponseEntity<?> findMyGilList(Authentication authentication, Integer page, Integer size){
-        Page<PostResDTO> listPost = gilListService.findMyGilList(authentication, PageRequest.of(page, size));
+
+        //현재 로그인 중인 유저의 Id를 찾아오기
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        Long userId = userDetails.getId();
+
+        Page<PostResDTO> listPost = gilListService.findMyGilList(authentication, PageRequest.of(page, size), userId);
         return new ResponseEntity<>(listPost, HttpStatus.OK);
     }
 
@@ -61,7 +79,12 @@ public class GilListController {
      * */
     @GetMapping("/myFav")
     public ResponseEntity<?> findMyFav(Authentication authentication, Integer page, Integer size){
-        Page<PostResDTO> listPost = gilListService.findMyFav(authentication, PageRequest.of(page, size));
+
+        //현재 로그인 중인 유저의 Id를 찾아오기
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        Long userId = userDetails.getId();
+
+        Page<PostResDTO> listPost = gilListService.findMyFav(authentication, PageRequest.of(page, size), userId);
         return new ResponseEntity<>(listPost, HttpStatus.OK);
     }
 
@@ -69,8 +92,13 @@ public class GilListController {
      * 6. 키워드 검색으로 글목록 조회하기
      * */
     @GetMapping("/keyword")
-    public ResponseEntity<?> findByKeyword(@RequestParam String keyword, Integer page, Integer size){
-        Page<PostResDTO> listPost = gilListService.findByKeyword(keyword, PageRequest.of(page, size));
+    public ResponseEntity<?> findByKeyword(@RequestParam String keyword, Integer page, Integer size, Authentication authentication) {
+
+        //현재 로그인 중인 유저의 Id를 찾아오기
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        Long userId = userDetails.getId();
+
+        Page<PostResDTO> listPost = gilListService.findByKeyword(keyword, PageRequest.of(page, size), userId);
         return new ResponseEntity<>(listPost, HttpStatus.OK);
     }
 }
