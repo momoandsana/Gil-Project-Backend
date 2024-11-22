@@ -30,14 +30,14 @@ public class JWTFilter extends OncePerRequestFilter {
         System.out.println("doFilterInternal Call");
 
         //request에서 Authorization 헤더를 찾음
-        String authorization = request.getHeader("Authorization");
+        String authorization = request.getHeader("authorization");
 
         //Authorization 헤더 검증
         if (authorization == null || !authorization.startsWith("Bearer ")) {
 
             System.out.println("token 헤더에 없음");
-            filterChain.doFilter(request, response);
 
+            filterChain.doFilter(request, response);
             return;
         }
         System.out.println("token 헤더에 있음!");

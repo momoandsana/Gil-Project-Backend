@@ -44,4 +44,25 @@ public class JoinService {
         userRepository.save(data);
         return 1;
     }
+
+    public int checkDuplicateNickname(String nickName) {
+        User user =  userRepository.findBynickName(nickName);
+
+        if(user !=null){
+            return 1;
+        }else{
+            return 0;
+        }
+    }
+
+    public int checkDuplicateEmail(String email) {
+        User user = userRepository.findByEmail(email);
+
+        if(user !=null){
+            return 1;
+        }
+        else{
+            return 0;
+        }
+    }
 }

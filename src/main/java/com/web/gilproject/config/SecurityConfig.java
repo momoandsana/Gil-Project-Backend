@@ -74,7 +74,7 @@ public class SecurityConfig {
 
                         //OAuth2
                         //config.setExposedHeaders(Collections.singletonList("Set-Cookie"));
-                        config.setExposedHeaders(Collections.singletonList("Authorization"));
+                        config.setExposedHeaders(Collections.singletonList("authorization"));
 
                         return config;
                     }
@@ -101,10 +101,9 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        //.requestMatchers("/login", "/join").permitAll() //주소 요청 허용
-                        //.requestMatchers("/admin").hasRole("ADMIN") //ADMIN 권한 가진사람만 허용
-                        //.anyRequest().authenticated()); //모든 로그인한 사용자만 허용
-                        .anyRequest().permitAll()); //모든 요청 허용
+                        .requestMatchers("/auth/**", "/mail/**").permitAll() //로그인 안해도 요청 허용
+                        .anyRequest().authenticated()); //나머지는 로그인한 사용자만 허용
+//                        .anyRequest().permitAll()); //모든 요청 허용
 
 
         //세션 설정 - JWT에서는 항상 세션을 STATELESS 상태로 관리
