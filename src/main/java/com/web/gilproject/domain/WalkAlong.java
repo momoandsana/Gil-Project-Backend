@@ -2,14 +2,14 @@ package com.web.gilproject.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Data;
-import lombok.ToString;
+import lombok.*;
 
 @Entity
 @Data
 @ToString(exclude = "user")
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class WalkAlong {
 
     @Id

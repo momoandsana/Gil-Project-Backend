@@ -8,10 +8,7 @@ import com.web.gilproject.service.PointService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user")
@@ -20,6 +17,7 @@ public class PointController {
 
     private final PointService pointService;
 
+    //따라걷기 끝났을 때 포인트+10,해당 아이디에 대한 따라걷기정보 DB에 저장.
     @PatchMapping("/point")
     public void PointController(@RequestBody PointConfirmDTO pointConfirmDTO, Authentication authentication) {
         CustomUserDetails customMemberDetails = (CustomUserDetails) authentication.getPrincipal();
@@ -35,5 +33,19 @@ public class PointController {
 
         pointService.pointPlus(userId,pointConfirmDTO);
 
+    }
+
+    @GetMapping("/walkAlong")
+    public ResponseEntity<?> getWalkAlongLength(Authentication authentication) {
+        CustomUserDetails customMemberDetails = (CustomUserDetails) authentication.getPrincipal();
+        Long userId = customMemberDetails.getId();
+        if(userId == null)
+        {
+            throw new MemberAuthenticationException(ErrorCode.NOTFOUND_USER);
+        }
+        int walkAlongSize= pointService.getWalkAlongLength();
+
+        return ResponseEntity.ok(walkAlongSize);
+        
     }
 }

@@ -52,7 +52,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         //Long id = customUserDetails.getId();
         //System.out.println("id = " + id);
 
-        String token = jwtUtil.createJwt(customUserDetails, 1000 * 60 * 5L); //5분
+        String token = jwtUtil.createJwt(customUserDetails, 1000 * 60 * 100L); //5분
 
         //헤더에 발급된 JWT 실어주기
         response.addHeader("Authorization", "Bearer " + token);
