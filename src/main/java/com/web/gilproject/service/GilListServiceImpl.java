@@ -38,13 +38,13 @@ public class GilListServiceImpl implements GilListService {
         //전체 조회
         Page<Post> pagePostDTO = gilListRepository.findAllPostDTO(pageable);
 
-        //내 위치로부터 5km이내의 산책길 글목록만 남기기
+        //내 위치로부터 1km이내의 산책길 글목록만 남기기
         List<Post> filteredPosts = pagePostDTO.getContent().stream()
                 .filter(post -> {
                     Double startLat = post.getPath().getStartLat();
                     Double startLong = post.getPath().getStartLong();
                     Double difference = this.distance(nowY, nowX, startLat, startLong);
-                    return difference < 5.0;
+                    return difference < 1.0;
                 })
                 .collect(Collectors.toList());
 
@@ -65,13 +65,13 @@ public class GilListServiceImpl implements GilListService {
         //전체조회
         Page<Post> pagePostDTO = gilListRepository.findAllPostDTO(pageable);
 
-        //내 집주소로부터 반경 5km이내의 산책길 글목록만 남기기
+        //내 집주소로부터 반경 1km이내의 산책길 글목록만 남기기
         List<Post> filteredPosts = pagePostDTO.getContent().stream()
                 .filter(post -> {
                     Double startLat = post.getPath().getStartLat();
                     Double startLong = post.getPath().getStartLong();
                     Double difference = this.distance(homeLat, homeLong, startLat, startLong);
-                    return difference < 5.0;
+                    return difference < 1.0;
                 })
                 .collect(Collectors.toList());
 
