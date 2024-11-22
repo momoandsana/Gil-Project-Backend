@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserRepository_jg extends JpaRepository<User, Long> {
+
 }

@@ -38,7 +38,6 @@ public class Path {
 
     private String content;
 
-    @CreationTimestamp
     private LocalDateTime createdDate;
 
     private Integer time; //소요시간(sec)

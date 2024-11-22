@@ -19,4 +19,7 @@ public interface PathRepository extends JpaRepository<Path, Long>{
     List<Path> findPathByRoute(@Param("route") LineString route);
 
      List<Path> findByUserId(Long userId);
+
+    @Query("SELECT  p FROM Path p LEFT JOIN FETCH p.pins WHERE p.state = 0")
+     List<Path> findAllState();
 }
