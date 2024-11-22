@@ -67,7 +67,7 @@ public class ReplyController {
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         Long userId=customUserDetails.getId();
         replyService.deleteReply(postId,replyId,userId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();//204 응답 
     }
 
     /*
