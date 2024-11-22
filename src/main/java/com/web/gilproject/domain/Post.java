@@ -1,5 +1,6 @@
 package com.web.gilproject.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -7,6 +8,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 //@Data
@@ -26,10 +28,12 @@ public class Post {
 
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="USER_ID",nullable=false)
+    @JsonIgnore
     private User user;
 
     @OneToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="PATH_ID",nullable=false)
+    @JsonIgnore
     private Path path;
 
     private Integer state=0;
@@ -47,16 +51,42 @@ public class Post {
     @UpdateTimestamp
     private LocalDateTime updateDate;
 
+    @Column(nullable = false,columnDefinition = "int default 0")
+    private Integer repliesCount=0;
+
+    @Column(nullable=false,columnDefinition = "int default 0")
+    private Integer likesCount=0;
+
     private Integer readNum=0; //조회수
 
     @OneToMany(mappedBy = "post",cascade = CascadeType.ALL,orphanRemoval = true)
+    @JsonIgnore
     private Set<PostLike> postLikes; //게시글 좋아요
 
     @OneToMany(mappedBy = "post",cascade = CascadeType.ALL,orphanRemoval = true)
+    @JsonIgnore
     private Set<Reply> replies; //댓글
 
     @OneToMany(mappedBy = "post",cascade = CascadeType.ALL,orphanRemoval = true)
+    @JsonIgnore
     private Set<PostWishlist> postWishLists; //게시글 찜
 
+    @OneToMany(mappedBy = "post",cascade = CascadeType.ALL,orphanRemoval = true)
+    private Set<PostImage> postImages;
+
+    public void addPostImage(PostImage postImage) {
+        if (this.postImages == null) {
+            this.postImages = new HashSet<>();
+        }
+        this.postImages.add(postImage);
+        postImage.setPost(this);
+    }
+
+    public void removePostImage(PostImage postImage) {
+        if (this.postImages != null) {
+            this.postImages.remove(postImage);
+            postImage.setPost(null);
+        }
+    }
 
 }

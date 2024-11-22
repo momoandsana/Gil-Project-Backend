@@ -12,7 +12,7 @@ import java.util.List;
 @Repository
 public interface PathRepository extends JpaRepository<Path, Long>{
 
-    @Query("SELECT  p FROM Path p LEFT JOIN FETCH p.pins WHERE p.user.id = :userId AND p.state = 1")
+    @Query("SELECT  p FROM Path p LEFT JOIN FETCH p.pins WHERE p.user.id = :userId AND p.state = 0")
     List<Path> findPathByUserId(Long userId);
 
     @Query("SELECT p FROM Path p WHERE p.route = :route")

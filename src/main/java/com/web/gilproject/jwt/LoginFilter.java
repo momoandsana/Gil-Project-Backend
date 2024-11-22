@@ -4,7 +4,6 @@ import com.web.gilproject.dto.CustomUserDetails;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -46,7 +45,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
 
-        String token = jwtUtil.createJwt(customUserDetails, 1000 * 60 * 15L); //15분
+        String token = jwtUtil.createJwt(customUserDetails, 1000 * 60 * 50L); //50분
 
         //헤더에 발급된 JWT 실어주기
         response.addHeader("authorization", "Bearer " + token);
