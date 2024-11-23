@@ -73,7 +73,7 @@ public class ReplyService {
         if(replyLike.isPresent())
         {
             replyLikeRepository.delete(replyLike.get());
-            replyEntity.setLikesCount(replyEntity.getLikesCount()+1);
+            replyEntity.setLikesCount(replyEntity.getLikesCount()-1);
         }
         else
         {

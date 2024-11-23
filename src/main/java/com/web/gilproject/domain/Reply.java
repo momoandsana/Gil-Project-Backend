@@ -7,6 +7,7 @@ import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -32,7 +33,7 @@ public class Reply {
     private Long likesCount=0L;
     
     @OneToMany(mappedBy = "reply",cascade = CascadeType.ALL,orphanRemoval = true)
-    private Set<ReplyLike> replyLikes;
+    private Set<ReplyLike> replyLikes=new HashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="USER_ID",nullable = false)
