@@ -172,7 +172,7 @@ public class BoardService {
         }
 
         List<String> deleteUrls=postPatchRequestDTO.deleteUrls();
-        if(!deleteUrls.isEmpty())
+        if(deleteUrls!=null && !deleteUrls.isEmpty())
         {
             for(String url:deleteUrls)
             {
@@ -194,11 +194,11 @@ public class BoardService {
 
         List<MultipartFile> newImages=postPatchRequestDTO.newImages();
 
-        if(!newImages.isEmpty())
+        if(newImages!=null && !newImages.isEmpty())
         {
             for(MultipartFile file:newImages)
             {
-                String fileName = "upload_images/" + postId + "/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
+                String fileName = "upload_images/" + postId + "/" + file.getOriginalFilename();
                 try{
                     String imageUrl= amazonService.uploadFile(file,fileName);
                     PostImage postImage=PostImage.builder()
