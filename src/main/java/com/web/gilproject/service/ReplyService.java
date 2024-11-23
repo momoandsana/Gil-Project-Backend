@@ -26,10 +26,12 @@ public class ReplyService {
     private final ReplyLikeRepository replyLikeRepository;
 
     @Transactional(readOnly = true)
-    public List<ReplyDTO> getRepliesByPostId(Long postId) {
+    public List<ReplyDTO> getRepliesByPostId(Long postId,Long userId) {
         Post post=boardRepository.findById(postId).orElseThrow(()->new RuntimeException("No post found"));
         List<Reply>replyEntities=replyRepository.findByPost(post);
-        return replyEntities.stream().map(ReplyDTO::from).toList();
+        return replyEntities.stream()
+                .map(reply->ReplyDTO.from(reply,userId))
+                .toList();
     }
 
     @Transactional
@@ -41,7 +43,7 @@ public class ReplyService {
         );
 
         post.setRepliesCount(post.getRepliesCount()+1);
-        return ReplyDTO.from(reply);
+        return ReplyDTO.from(reply,userId);
     }
 
     @Transactional

@@ -47,6 +47,7 @@ public class Reply {
         reply.setUser(user);
         reply.setPost(post);
         reply.setState(0);
+        reply.setLikesCount(0L);
         return reply;
     }
 
