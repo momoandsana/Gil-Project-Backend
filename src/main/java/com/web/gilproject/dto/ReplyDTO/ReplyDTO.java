@@ -10,6 +10,7 @@ public record ReplyDTO(
     Long replyId,
     String content,
     String nickName,
+    String userImageUrl,
     LocalDateTime replyDate,
     Long likesCount,
     Boolean isLiked
@@ -23,6 +24,7 @@ public record ReplyDTO(
                 reply.getId(),
                 reply.getContent(),
                 reply.getUser().getNickName(),
+                reply.getUser().getImageUrl(),
                 reply.getWriteDate(),
                 reply.getLikesCount(),
                 isLiked
