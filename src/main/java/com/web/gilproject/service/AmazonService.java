@@ -94,7 +94,7 @@ public class AmazonService {
 
     public String getFileKeyFromUrl(String fileUrl) {
         try {
-            // URL에서 버킷 이름과 영역을 제거하고 키만 추출
+            // url 에서 버킷 이름과 영역을 제거하고 키만 추출
             String prefix = "https://" + bucketName + ".s3.ap-northeast-2.amazonaws.com/";
             if (fileUrl.startsWith(prefix)) {
                 return fileUrl.substring(prefix.length());

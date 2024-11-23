@@ -57,9 +57,9 @@ public class BoardService {
                 .orElseThrow(()->new RuntimeException("No path found"));
 
         Post post=Post.builder()
-                .title(postRequestDTO.title())
-                .content(postRequestDTO.content())
-                .tag(postRequestDTO.tag())
+                .title(postRequestDTO.title()!=null?postRequestDTO.title():"")// null 값이 들어가면 안 되기 때문에 아무것도 내용이 없다면 빈 문자열이 들어간다
+                .content(postRequestDTO.content()!=null?postRequestDTO.content():"")
+                .tag(postRequestDTO.tag()!=null?postRequestDTO.tag():"")
                 .user(user)
                 .path(path)
                 .state(0)
