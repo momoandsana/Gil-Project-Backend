@@ -134,6 +134,12 @@ public class BoardService {
     public PostResDTO postDetails(Long postId,Long userId)
     {
         Post postEntity=boardRepository.findById(postId).orElseThrow(()->new RuntimeException("Post not found"));
+
+        if(!postEntity.getUser().getId().equals(userId))
+        {
+            postEntity.setReadNum(postEntity.getReadNum()+1);
+        }
+
         PostResDTO postResDTO=new PostResDTO(postEntity,userId);
         postResDTO.setPathResDTO(pathService.decodingPath(postEntity.getPath()));
         return postResDTO;
