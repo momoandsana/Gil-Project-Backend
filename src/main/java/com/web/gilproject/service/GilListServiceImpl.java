@@ -181,6 +181,7 @@ public class GilListServiceImpl implements GilListService {
     /**
      * 7. 태그 검색으로 글목록 조회하기
      * */
+    @Transactional(readOnly = true)
     @Override
     public Page<PostResDTO> findByTag(String tag, Pageable pageable, Long userId) {
 
