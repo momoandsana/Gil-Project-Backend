@@ -53,7 +53,9 @@ public class ReplyService {
 
         Reply replyEntity=replyRepository.findById(replyId).orElseThrow(()->new RuntimeException("No reply found"));
 
-        if(!replyEntity.getUser().getId().equals(userId)){
+        // 본인이 작성한 댓글 아니면 삭제 불가능
+        if(!replyEntity.getUser().getId().equals(userId))
+        {
             throw new RuntimeException("Not allowed user");
         }
 

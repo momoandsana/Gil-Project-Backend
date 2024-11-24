@@ -98,10 +98,11 @@ public class BoardService {
                 .findById(postId)
                 .orElseThrow(()->new RuntimeException("Post not found"));// 임시 exception
 
-//        if(!postEntity.getUser().getId().equals(userId))
-//        {
-//            throw new RuntimeException("User not allowed");
-//        }
+        // 본인이 작성한 글만 삭제 가능
+        if(!postEntity.getUser().getId().equals(userId))
+        {
+            throw new RuntimeException("User not allowed");
+        }
 
         Post post=boardRepository.findById(postId).get();
         boardRepository.delete(post);// 임시, 하드 딜리트
