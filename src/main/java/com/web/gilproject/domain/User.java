@@ -66,8 +66,13 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<PostLike> postLikes;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    //내가 구독한 회원들(Subscribe 엔티티와 연결)
+    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true) //Subscribe 클래스의 userId 필드가 나를 참조
     private Set<Subscribe> subscriptions;
+
+    // 나를 구독한 회원들(Subscribe 엔티티와 연결)
+    @OneToMany(mappedBy = "subscribeUserId", cascade = CascadeType.ALL, orphanRemoval = true) //Subscribe 클래스의 subscribeUserId 필드가 나를 참조
+    private Set<Subscribe> subscribeBy;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Notification> notifications;

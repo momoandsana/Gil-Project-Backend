@@ -33,6 +33,7 @@ public class UserDTO {
     private Set<Path> paths;
     private Set<PostLike> postLikes;
     private Set<Subscribe> subscriptions;
+    private Set<Subscribe> subscribeBy;
     private Set<Notification> notifications;
     private Set<PostWishlist> postWishLists;
     private Set<ReplyLike> replyLikes;
@@ -53,6 +54,5 @@ public class UserDTO {
         this.updateDate = user.getUpdateDate();
         this.point = user.getPoint();
         this.state = user.getState();
-        //this.paths = user.getPaths();
     }
 }

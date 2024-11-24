@@ -18,6 +18,7 @@ public class UserServiceImpl_emh implements UserService_emh{
     private final UserRepository_emh userRepository;
     private final PathService pathService;
     private final BoardService boardService;
+    private final SubscribeService subscribeService;
 
     @Transactional(readOnly = true)
     @Override
@@ -63,6 +64,7 @@ public class UserServiceImpl_emh implements UserService_emh{
     @Override
     //내 정보 조회 (프로필 이미지 눌렀을때 보이는 요약 버전)
     public UserSimpleResDTO findSimpleInfoById(Long id) {
+        log.info("findSimpleInfoById : id = " + id);
         // user 정보 추출
         User userEntity = userRepository.findById(id).orElse(null);
         UserSimpleResDTO userSimpleResDTO = new UserSimpleResDTO(userEntity);
@@ -74,6 +76,11 @@ public class UserServiceImpl_emh implements UserService_emh{
         // 따라걷기한 경로 개수 추출 (현재는 path, 나중에 따라걷기로 바꿔야함)
         Integer pathCounts = pathService.findPathByUserId(id).size();
         userSimpleResDTO.setPathCounts(pathCounts);
+
+        //내가 구독한 유저 수 추출
+        Integer subscribesCounts = subscribeService.findAllByUserId(id).size();
+        userSimpleResDTO.setSubscriptionCounts(subscribesCounts);
+
 
         log.info(userSimpleResDTO.toString());
         return userSimpleResDTO;
