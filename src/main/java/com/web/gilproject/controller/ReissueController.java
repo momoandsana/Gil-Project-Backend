@@ -1,6 +1,7 @@
 package com.web.gilproject.controller;
 
 import com.web.gilproject.jwt.JWTUtil;
+import com.web.gilproject.repository.RefreshRepository;
 import com.web.gilproject.service.ReissueService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

@@ -1,6 +1,8 @@
 package com.web.gilproject.jwt;
 
+import com.web.gilproject.domain.Refresh;
 import com.web.gilproject.dto.IntergrateUserDetails;
+import com.web.gilproject.repository.RefreshRepository;
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.Cookie;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,6 +11,8 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 @Component
@@ -104,5 +108,23 @@ public class JWTUtil {
         cookie.setPath("/");
 
         return cookie;
+    }
+
+    /**
+     * refresh 토큰을 DB에 저장
+     * @param userId
+     * @param refresh
+     * @param expiredMs
+     */
+    public static void addRefreshEntity(RefreshRepository refreshRepository , Long userId, String refresh, Long expiredMs) {
+
+        LocalDateTime expirationTime = LocalDateTime.now().plus(expiredMs, ChronoUnit.MILLIS);
+
+        Refresh refreshEntity = new Refresh();
+        refreshEntity.setUserId(userId);
+        refreshEntity.setRefreshToken(refresh);
+        refreshEntity.setExpiration(expirationTime);
+
+        refreshRepository.save(refreshEntity);
     }
 }

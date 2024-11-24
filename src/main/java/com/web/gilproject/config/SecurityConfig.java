@@ -4,6 +4,7 @@ import com.web.gilproject.jwt.JWTFilter;
 import com.web.gilproject.jwt.JWTUtil;
 import com.web.gilproject.jwt.LoginFilter;
 import com.web.gilproject.oauth2.CustomSuccessHandler;
+import com.web.gilproject.repository.RefreshRepository;
 import com.web.gilproject.service.CustomOAuth2UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ public class SecurityConfig {
 
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JWTUtil jwtUtil;
+    private final RefreshRepository refreshRepository;
 
     //OAuth
     private final CustomOAuth2UserService customOAuth2UserService;
@@ -113,7 +115,7 @@ public class SecurityConfig {
         
         //커스텀 필터 등록
         http
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration),jwtUtil), UsernamePasswordAuthenticationFilter.class);
+                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration),jwtUtil,refreshRepository), UsernamePasswordAuthenticationFilter.class);
 
         //JWT 필터 추가
        /* http

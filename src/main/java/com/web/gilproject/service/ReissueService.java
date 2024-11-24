@@ -4,6 +4,7 @@ package com.web.gilproject.service;
 import com.web.gilproject.domain.User;
 import com.web.gilproject.dto.CustomUserDetails;
 import com.web.gilproject.jwt.JWTUtil;
+import com.web.gilproject.repository.RefreshRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,12 +12,17 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@EnableScheduling
 public class ReissueService {
+
     private final JWTUtil jwtUtil;
+    private final RefreshRepository refreshRepository;
 
     public ResponseEntity<String> reissue(HttpServletRequest request, HttpServletResponse response) {
         //get refresh token
@@ -52,6 +58,11 @@ public class ReissueService {
             return new ResponseEntity<>("invalid refresh token", HttpStatus.BAD_REQUEST);
         }
 //        System.out.println("category가 refresh가 맞습니다");
+        
+        Boolean isExist = refreshRepository.existsByRefreshToken(refresh);
+        if (!isExist) {
+            return new ResponseEntity<>("DB에 없는 refresh토큰입니다", HttpStatus.BAD_REQUEST);
+        }
 
         Long id = jwtUtil.getUserId(refresh);
         String nickName = jwtUtil.getUserNickname(refresh);
@@ -63,11 +74,24 @@ public class ReissueService {
         //새로운 refresh 토큰 발급해주기
         String newRefreshToken = jwtUtil.createJwt("refresh", customUserDetails, 1000 * 60 * 60 * 24 * 90L); //90일
 
+        refreshRepository.deleteByRefreshToken(refresh);
+
+
         response.setHeader("access", newAccessToken);
-        System.out.println("새로운 access 토큰이 헤더를 통해 발급되었습니다");
+        System.out.println("새로운 access 토큰이 헤더를 통해 재발급되었습니다");
         response.addCookie(JWTUtil.createCookie("refresh", newRefreshToken));
-        System.out.println("새로운 refresh 토큰이 쿠키를 통해 발급되었습니다");
+        System.out.println("새로운 refresh 토큰이 쿠키를 통해 재발급되었습니다");
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
+    @Scheduled(fixedRate = 3600000) // 1시간마다 실행
+    /**
+     * 기한만료된 토큰삭제 스케쥴러
+     */
+    public void cleanUpExpiredTokens() {
+        System.out.println("기한만료 토큰 삭제 스케쥴러 실행");
+        refreshRepository.deleteExpiredTokens();
     }
 }
