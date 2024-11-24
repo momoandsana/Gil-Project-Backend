@@ -9,6 +9,7 @@ import com.web.gilproject.repository.UserRepository_YJ;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.parameters.P;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -175,6 +176,22 @@ public class GilListServiceImpl implements GilListService {
         List<Post> pagedResult = combinedList.subList(start, end);
 
         return new PageImpl<>(this.changeList(pagedResult, userId), pageable, total);
+    }
+
+    /**
+     * 7. 태그 검색으로 글목록 조회하기
+     * */
+    @Override
+    public Page<PostResDTO> findByTag(String tag, Pageable pageable, Long userId) {
+
+        Page<Post> pagePostDTO = gilListRepository.findByTag(tag, pageable);
+        List<Post> listPostDTO = pagePostDTO.getContent();
+
+        return new PageImpl<>(
+                this.changeList(listPostDTO, userId),
+                pageable,
+                listPostDTO.size()
+        );
     }
 
     /**
