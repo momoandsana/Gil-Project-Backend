@@ -63,6 +63,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         //헤더에 발급된 JWT 실어주기
         response.setHeader("authorization", "Bearer " + accessToken);
+        //리프레시 토큰은 쿠키에
         response.addCookie(JWTUtil.createCookie("refresh", refreshToken));
         response.setStatus(HttpStatus.OK.value());
     }

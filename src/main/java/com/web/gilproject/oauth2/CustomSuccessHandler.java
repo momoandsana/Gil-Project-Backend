@@ -22,11 +22,13 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         System.out.println("소셜 로그인 성공");
         CustomOAuth2User customUserDetails = (CustomOAuth2User) authentication.getPrincipal();
 
-        String token = jwtUtil.createJwt("access", customUserDetails, 1000 * 60 * 15L); //15분
+        String accessToken = jwtUtil.createJwt("access", customUserDetails, 1000 * 60 * 15L); //15분
+        String refreshToken = jwtUtil.createJwt("refresh", customUserDetails, 1000 * 60 * 60 * 24 * 90L); //90일
 
-        response.addCookie(JWTUtil.createCookie("authorization", token));
-
-        ////////////URL 파라미터로 전달하기로 변경하기
+        //프론트 : 쿠키로 들어온 토큰 -> localstorage에 저장
+        response.addCookie(JWTUtil.createCookie("authorization", accessToken));
+        //리프레시 토큰 쿠키로 저장
+        response.addCookie(JWTUtil.createCookie("refresh", refreshToken));
 
         //이 페이지에서 쿠키를 헤더에 담아 재요청을 보내는 axios 구현
         response.sendRedirect("http://localhost:3000/main");
