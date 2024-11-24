@@ -2,8 +2,10 @@ package com.web.gilproject.jwt;
 
 import com.web.gilproject.dto.CustomUserDetails;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -44,11 +46,16 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         System.out.println("로그인 성공");
 
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+//        System.out.println("@@" + authentication.getName());
+//        System.out.println("!!" +customUserDetails.getUsername());
 
-        String token = jwtUtil.createJwt(customUserDetails, 1000 * 60 * 50L); //50분
+        String accessToken = jwtUtil.createJwt("access", customUserDetails, 1000 * 60 * 15L); //15분
+        String refreshToken = jwtUtil.createJwt("refresh", customUserDetails, 1000 * 60 * 60 * 24 * 90L); //90일
 
         //헤더에 발급된 JWT 실어주기
-        response.addHeader("authorization", "Bearer " + token);
+        response.setHeader("authorization", "Bearer " + accessToken);
+        response.addCookie(JWTUtil.createCookie("refresh", refreshToken));
+        response.setStatus(HttpStatus.OK.value());
     }
 
     //로그인 실패시 실행하는 메소드

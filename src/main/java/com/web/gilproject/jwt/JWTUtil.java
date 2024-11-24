@@ -1,10 +1,8 @@
 package com.web.gilproject.jwt;
 
-import com.web.gilproject.dto.CustomOAuth2User;
-import com.web.gilproject.dto.CustomUserDetails;
 import com.web.gilproject.dto.IntergrateUserDetails;
-import com.web.gilproject.dto.UserDTO;
 import io.jsonwebtoken.Jwts;
+import jakarta.servlet.http.Cookie;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -58,6 +56,10 @@ public class JWTUtil {
 
     }
 
+    public String getCategory(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("category", String.class);
+    }
+
     /**
      * 토큰이 만료됐는지
      * @param token
@@ -70,17 +72,37 @@ public class JWTUtil {
 
     /**
      * JWT 생성
+     *
+     * @param category
      * @param userDetails 데이터를 감싸줄 유저객체
-     * @param expiredMs 만료시간(ms)
+     * @param expiredMs   만료시간(ms)
      * @return
      */
-    public String createJwt(IntergrateUserDetails userDetails, Long expiredMs) {
+    public String createJwt(String category, IntergrateUserDetails userDetails, Long expiredMs) {
         return Jwts.builder()
+                .claim("category", category)
                 .claim("nickname", userDetails.getNickname())
                 .claim("id",userDetails.getId())
                 .issuedAt(new Date(System.currentTimeMillis())) //생성일
                 .expiration(new Date(System.currentTimeMillis() + expiredMs)) //만료일
                 .signWith(secretKey) //시그니처 부분
                 .compact();
+    }
+
+    /**
+     * 쿠키 생성
+     * @param key
+     * @param value
+     * @return
+     */
+    public static Cookie createCookie(String key, String value) {
+
+        Cookie cookie = new Cookie(key, value);
+        cookie.setMaxAge(60 * 60 * 24 * 90); //90일
+//        cookie.setSecure(true); //https에서만 사용가능하도록 -> 배포하면 켜야하는지?
+        cookie.setHttpOnly(true); //자바스크립트가 가져가지못하도록 설정
+        cookie.setPath("/");
+
+        return cookie;
     }
 }
