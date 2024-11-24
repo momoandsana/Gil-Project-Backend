@@ -135,6 +135,7 @@ public class BoardService {
     {
         Post postEntity=boardRepository.findById(postId).orElseThrow(()->new RuntimeException("Post not found"));
 
+        // 본인이 작성한 글 조회하면 조회수 오르지 않는다
         if(!postEntity.getUser().getId().equals(userId))
         {
             postEntity.setReadNum(postEntity.getReadNum()+1);
