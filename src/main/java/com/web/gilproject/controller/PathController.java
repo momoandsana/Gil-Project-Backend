@@ -43,13 +43,15 @@ public class PathController {
     GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
 
     //넘어오는 위도경도 list를 LineString으로 묶기.
-    private LineString getLineString(List<CoordinateDto> coordinateDtos){
+    private LineString getLineString(List<CoordinateDto> coordinateDtos) {
         Coordinate[] coordinates = new Coordinate[coordinateDtos.size()];
-        for(int i = 0; i < coordinateDtos.size(); i++){
-            coordinates[i] = new Coordinate(Double.parseDouble(coordinateDtos.get(i).getLatitude()), Double.parseDouble(coordinateDtos.get(i).getLongitude()));
+        for (int i = 0; i < coordinateDtos.size(); i++) {
+            coordinates[i] = new Coordinate(
+                    Double.parseDouble(coordinateDtos.get(i).getLongitude()), // x = 경도
+                    Double.parseDouble(coordinateDtos.get(i).getLatitude())   // y = 위도
+            );
         }
-        LineString lineString = geometryFactory.createLineString(coordinates);
-        return lineString;
+        return geometryFactory.createLineString(coordinates);
     }
 
     /*//LineString의 시작점 구하기
@@ -95,7 +97,7 @@ public class PathController {
             path = Path.builder()
                     .user(pathService.findUserById(userId))
                     .content(paramPath.getContent())
-                    .state(paramPath.getState())
+                    .state(paramPath.getState() != null ? paramPath.getState() : 0)
                     .title(paramPath.getTitle())
                     .time(paramPath.getTime())
                     .distance(paramPath.getDistance())
