@@ -29,6 +29,7 @@ public class GilListServiceImpl implements GilListService {
     private final UserRepository_YJ userRepository;
 
     private final PathService pathService;
+    private final ElasticsearchService elasticsearchService;
 
     /**
      * 1. 내 위치 주변 산책길 글목록
@@ -150,7 +151,7 @@ public class GilListServiceImpl implements GilListService {
     @Transactional(readOnly = true)
     @Override
     public Page<PostResDTO> findByKeyword(String keyword, Pageable pageable, Long userId) {
-
+        /*
         //키워드 검색(제목, 내용, 닉네임, 시작주소)
         Page<Post> titleKeyword = gilListRepository.findByTitleContaining(keyword, pageable);
         Page<Post> contentKeyword = gilListRepository.findByContentContaining(keyword, pageable);
@@ -163,6 +164,14 @@ public class GilListServiceImpl implements GilListService {
         combinedSet.addAll(contentKeyword.getContent());
         combinedSet.addAll(nickNameKeyword.getContent());
         combinedSet.addAll(startAddrKeyword.getContent());
+        */
+
+        Set<Post> combinedSet = new HashSet<>();
+
+        List<String> esRe = elasticsearchService.multiFieldSearch("post-index", keyword, List.of("title", "content", "startAddr", "nickName"));
+        for(String postId:esRe){
+            combinedSet.addAll(gilListRepository.findById(Long.parseLong(postId), pageable).getContent());
+        }
 
         //좋아요 많은 순으로 정렬
         List<Post> combinedList = new ArrayList<>(combinedSet);

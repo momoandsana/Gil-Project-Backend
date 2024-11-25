@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -31,6 +32,7 @@ public class BoardService {
     private final PostImageRepository postImageRepository;
     private final PostLikeRepository postLikeRepository;
     private final PathService pathService;
+    private final ElasticsearchService elasticsearchService;
 
     @Value("${aws.s3.bucketName}")
     private String bucketName;
@@ -89,6 +91,11 @@ public class BoardService {
 
         postImageRepository.saveAll(post.getPostImages());// 일괄 저장
 
+        String re = elasticsearchService.indexDocument(
+                "post-index", ""+post.getId(), Map.of("title", post.getTitle(), "content", post.getContent(), "startAddr", post.getPath().getStartAddr(), "nickName", post.getUser().getNickName())
+        );
+        System.out.println("re = " + re);
+
         return PostResponseDTO.from(post);
     }
 
@@ -109,6 +116,9 @@ public class BoardService {
 
 //        postEntity.setState(1);// 소프트 딜리트
 //        boardRepository.save(postEntity);
+
+        String re = elasticsearchService.deleteDocument("post-index", ""+post.getId());
+        System.out.println("re = " + re);
     }
 
     @Transactional

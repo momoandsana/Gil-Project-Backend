@@ -72,4 +72,10 @@ public interface GilListRepository extends JpaRepository<Post, Long> {
      * */
     @Query("select p from Post p left join p.postLikes pl left join p.replies r where p.tag = :tag and p.state=0 group by p.id order by size(pl) desc")
     Page<Post> findByTag(@Param("tag") String tag, Pageable pageable);
+
+    /**
+     * postId가 일치하는 게시글 조회
+     * */
+    @Query("select p from Post p left join p.postLikes pl left join p.replies r where p.id = :postId and p.state=0 group by p.id order by size(pl) desc")
+    Page<Post> findById(@Param("postId") Long postId, Pageable pageable);
 }
