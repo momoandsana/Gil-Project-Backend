@@ -11,6 +11,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,6 +31,8 @@ public class JWTFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         System.out.println("doFilterInternal Call");
+        response.setContentType("text/plain; charset=UTF-8");
+        response.setCharacterEncoding("UTF-8");
 
         //request에서 Authorization 헤더를 찾음
         String accessToken = request.getHeader("authorization");
@@ -45,27 +48,21 @@ public class JWTFilter extends OncePerRequestFilter {
         System.out.println("token 헤더에 있음!");
 
         //Bearer 부분 제거 후 순수 토큰만 획득
-//        String token = accessToken.split(" ")[1];
+        accessToken = accessToken.split(" ")[1];
 
         //토큰 소멸 시간 검증
         try {
             jwtUtil.isExpired(accessToken);
         } catch (ExpiredJwtException e) {
+
             PrintWriter writer = response.getWriter();
             writer.println("token 기한만료");
 
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); //401
+//            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); //401
+            response.setStatus(900);
             return;
         }
         System.out.println("token 만료되지 않았음!");
-
-//        if (jwtUtil.isExpired(token)) {
-//            System.out.println("token 기한만료");
-//            filterChain.doFilter(request, response);
-//
-//            return;
-//        }
-//        System.out.println("token 만료되지 않았음!");
 
         //토큰이 access 토큰인지 확인
         String category = jwtUtil.getCategory(accessToken);
@@ -74,9 +71,13 @@ public class JWTFilter extends OncePerRequestFilter {
             PrintWriter writer = response.getWriter();
             writer.println("access 토큰이 아님");
 
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); //401
+//            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); //401
+            response.setStatus(900);
             return;
+
         }
+        
+        //토큰 검증 끝 -> 데이터를 가져와도 됨
 
         //userEntity를 생성하여 값 set
         User userEntity = new User();
@@ -93,7 +94,7 @@ public class JWTFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private void doFilterInternalOAuth2(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    /*private void doFilterInternalOAuth2(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         System.out.println("doFilterInternalOAuth2 Call");
 
         String authorization = null;
@@ -133,5 +134,5 @@ public class JWTFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
         filterChain.doFilter(request, response);
-    }
+    }*/
 }

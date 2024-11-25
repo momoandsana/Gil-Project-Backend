@@ -33,6 +33,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+        System.out.println("attemptAuthentication call");
         String email = request.getParameter("email");  // form-data에서 email 값 추출
         String password = request.getParameter("password");  // form-data에서 password 값 추출
 //        System.out.println("email = " + email);
@@ -56,15 +57,16 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         //토큰 생성
         String accessToken = jwtUtil.createJwt("access", customUserDetails, 1000 * 60 * 15L); //15분
+//        String accessToken = jwtUtil.createJwt("access", customUserDetails, 1000 * 5L); //5초
         String refreshToken = jwtUtil.createJwt("refresh", customUserDetails, 1000 * 60 * 60 * 24 * 90L); //90일
 
-        //토큰 DB에 저장
+        //리프레시 토큰 DB에 저장
         JWTUtil.addRefreshEntity(refreshRepository,customUserDetails.getId(),refreshToken,1000 * 60 * 60 * 24 * 90L); //90일
 
         //헤더에 발급된 JWT 실어주기
         response.setHeader("authorization", "Bearer " + accessToken);
         //리프레시 토큰은 쿠키에
-        response.addCookie(JWTUtil.createCookie("refresh", refreshToken));
+        response.addCookie(JWTUtil.createCookie("refresh", refreshToken,true));
         response.setStatus(HttpStatus.OK.value());
     }
 

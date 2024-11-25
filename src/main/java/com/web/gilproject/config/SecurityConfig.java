@@ -23,6 +23,7 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 @Configuration
@@ -77,7 +78,10 @@ public class SecurityConfig {
 
                         //OAuth2
                         //config.setExposedHeaders(Collections.singletonList("Set-Cookie"));
-                        config.setExposedHeaders(Collections.singletonList("authorization"));
+
+                        //응답시 노출할 헤더
+                        config.setExposedHeaders(Arrays.asList("authorization", "newaccess"));
+
 
                         return config;
                     }

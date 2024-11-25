@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -25,16 +26,21 @@ public class ReissueService {
     private final RefreshRepository refreshRepository;
 
     public ResponseEntity<String> reissue(HttpServletRequest request, HttpServletResponse response) {
+        System.out.println("reissue Call");
+
         //get refresh token
         String refresh = null;
 
         //쿠키에서 refresh 토큰 찾기
         Cookie[] cookies = request.getCookies();
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals("refresh")) {
-                refresh = cookie.getValue();
+        if (cookies != null) {  // 쿠키가 null이 아닌지 확인
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("refresh")) {
+                    refresh = cookie.getValue();
+                }
             }
         }
+
         //refresh 토큰 있는지 검사
         if (refresh == null) {
             System.out.println("쿠키에 refresh 토큰이 없습니다");
@@ -58,7 +64,8 @@ public class ReissueService {
             return new ResponseEntity<>("invalid refresh token", HttpStatus.BAD_REQUEST);
         }
 //        System.out.println("category가 refresh가 맞습니다");
-        
+
+        // DB에 있는지 확인
         Boolean isExist = refreshRepository.existsByRefreshToken(refresh);
         if (!isExist) {
             return new ResponseEntity<>("DB에 없는 refresh토큰입니다", HttpStatus.BAD_REQUEST);
@@ -74,22 +81,23 @@ public class ReissueService {
         //새로운 refresh 토큰 발급해주기
         String newRefreshToken = jwtUtil.createJwt("refresh", customUserDetails, 1000 * 60 * 60 * 24 * 90L); //90일
 
+        //기존 refresh DB에서 삭제
         refreshRepository.deleteByRefreshToken(refresh);
+        //새 refresh DB에 넣기
+        JWTUtil.addRefreshEntity(refreshRepository, id,newRefreshToken,1000 * 60 * 60 * 24 * 90L);
 
-
-        response.setHeader("access", newAccessToken);
-        System.out.println("새로운 access 토큰이 헤더를 통해 재발급되었습니다");
-        response.addCookie(JWTUtil.createCookie("refresh", newRefreshToken));
-        System.out.println("새로운 refresh 토큰이 쿠키를 통해 재발급되었습니다");
+        response.setHeader("newaccess", "Bearer " + newAccessToken);
+        response.addCookie(JWTUtil.createCookie("refresh", newRefreshToken,true));
+        System.out.println("새로운 access 토큰이 헤더를 통해, refresh 토큰은 쿠키를 통해 재발급되었습니다");
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
 
-    @Scheduled(fixedRate = 3600000) // 1시간마다 실행
     /**
      * 기한만료된 토큰삭제 스케쥴러
      */
+    @Scheduled(fixedRate = 3600000) // 1시간마다 실행
     public void cleanUpExpiredTokens() {
         System.out.println("기한만료 토큰 삭제 스케쥴러 실행");
         refreshRepository.deleteExpiredTokens();

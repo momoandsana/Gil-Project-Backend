@@ -26,11 +26,10 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String refreshToken = jwtUtil.createJwt("refresh", customUserDetails, 1000 * 60 * 60 * 24 * 90L); //90일
 
         //프론트 : 쿠키로 들어온 토큰 -> localstorage에 저장
-        response.addCookie(JWTUtil.createCookie("authorization", accessToken));
+        response.addCookie(JWTUtil.createCookie("authorization", accessToken,false));
         //리프레시 토큰 쿠키로 저장
-        response.addCookie(JWTUtil.createCookie("refresh", refreshToken));
+        response.addCookie(JWTUtil.createCookie("refresh", refreshToken,true));
 
-        //이 페이지에서 쿠키를 헤더에 담아 재요청을 보내는 axios 구현
         response.sendRedirect("http://localhost:3000/main");
     }
 
