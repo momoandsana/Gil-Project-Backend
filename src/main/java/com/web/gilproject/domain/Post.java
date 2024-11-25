@@ -72,7 +72,7 @@ public class Post {
     private Set<PostWishlist> postWishLists; //게시글 찜
 
     @OneToMany(mappedBy = "post",cascade = CascadeType.ALL,orphanRemoval = true)
-    private Set<PostImage> postImages;
+    private Set<PostImage> postImages=new HashSet<>();
 
     public void addPostImage(PostImage postImage) {
         if (this.postImages == null) {

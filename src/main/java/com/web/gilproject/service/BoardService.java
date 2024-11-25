@@ -72,22 +72,41 @@ public class BoardService {
         boardRepository.save(post);// 게시글 저장
 
         List<String> imageUrls=new ArrayList<>();
-        List<PostImage>postImages=new ArrayList<>();
+        //List<PostImage>postImages=new ArrayList<>();
 
-        for(MultipartFile image:postRequestDTO.images())
-        {
-            String imageUrl = amazonService.uploadFile(image, "upload_images/" + post.getId() + "/" + image.getOriginalFilename());
+        List<MultipartFile> images = postRequestDTO.images() != null ? postRequestDTO.images() : new ArrayList<>();
 
-            PostImage postImage = PostImage.builder()
-                    .post(post)
-                    .imageUrl(imageUrl)
-                    .build();
-            post.addPostImage(postImage);
-            postImages.add(postImage);
-            imageUrls.add(imageUrl);
+//        for(MultipartFile image:images)
+//        {
+//            String imageUrl = amazonService.uploadFile(image, "upload_images/" + post.getId() + "/" + image.getOriginalFilename());
+//
+//            PostImage postImage = PostImage.builder()
+//                    .post(post)
+//                    .imageUrl(imageUrl)
+//                    .build();
+//            post.addPostImage(postImage);
+//            postImages.add(postImage);
+//            imageUrls.add(imageUrl);
+//        }
+        if (!images.isEmpty()) {
+            List<PostImage> postImages = new ArrayList<>();
+            for (MultipartFile image : images) {
+                String imageUrl = amazonService.uploadFile(image, "upload_images/" + post.getId() + "/" + image.getOriginalFilename());
+                PostImage postImage = PostImage.builder()
+                        .post(post)
+                        .imageUrl(imageUrl)
+                        .build();
+                postImages.add(postImage);
+                post.addPostImage(postImage);
+            }
+
+            // 빈 리스트가 아닌 경우에만 저장
+            if (!postImages.isEmpty()) {
+                postImageRepository.saveAll(postImages);
+            }
         }
 
-        postImageRepository.saveAll(post.getPostImages());// 일괄 저장
+        //postImageRepository.saveAll(post.getPostImages());// 일괄 저장
 
         return PostResponseDTO.from(post);
     }
@@ -99,10 +118,10 @@ public class BoardService {
                 .orElseThrow(()->new RuntimeException("Post not found"));// 임시 exception
 
         // 본인이 작성한 글만 삭제 가능
-        if(!postEntity.getUser().getId().equals(userId))
-        {
-            throw new RuntimeException("User not allowed");
-        }
+//        if(!postEntity.getUser().getId().equals(userId))
+//        {
+//            throw new RuntimeException("User not allowed");
+//        }
 
         Post post=boardRepository.findById(postId).get();
         boardRepository.delete(post);// 임시, 하드 딜리트
