@@ -57,9 +57,9 @@ public class BoardService {
                 .orElseThrow(()->new RuntimeException("No path found"));
 
         Post post=Post.builder()
-                .title(postRequestDTO.title())
-                .content(postRequestDTO.content())
-                .tag(postRequestDTO.tag())
+                .title(postRequestDTO.title()!=null?postRequestDTO.title():"")// null 값이 들어가면 안 되기 때문에 아무것도 내용이 없다면 빈 문자열이 들어간다
+                .content(postRequestDTO.content()!=null?postRequestDTO.content():"")
+                .tag(postRequestDTO.tag()!=null?postRequestDTO.tag():"")
                 .user(user)
                 .path(path)
                 .state(0)
@@ -98,10 +98,11 @@ public class BoardService {
                 .findById(postId)
                 .orElseThrow(()->new RuntimeException("Post not found"));// 임시 exception
 
-//        if(!postEntity.getUser().getId().equals(userId))
-//        {
-//            throw new RuntimeException("User not allowed");
-//        }
+        // 본인이 작성한 글만 삭제 가능
+        if(!postEntity.getUser().getId().equals(userId))
+        {
+            throw new RuntimeException("User not allowed");
+        }
 
         Post post=boardRepository.findById(postId).get();
         boardRepository.delete(post);// 임시, 하드 딜리트
@@ -134,6 +135,13 @@ public class BoardService {
     public PostResDTO postDetails(Long postId,Long userId)
     {
         Post postEntity=boardRepository.findById(postId).orElseThrow(()->new RuntimeException("Post not found"));
+
+        // 본인이 작성한 글 조회하면 조회수 오르지 않는다
+        if(!postEntity.getUser().getId().equals(userId))
+        {
+            postEntity.setReadNum(postEntity.getReadNum()+1);
+        }
+
         PostResDTO postResDTO=new PostResDTO(postEntity,userId);
         postResDTO.setPathResDTO(pathService.decodingPath(postEntity.getPath()));
         return postResDTO;
@@ -166,7 +174,7 @@ public class BoardService {
         }
 
         List<String> deleteUrls=postPatchRequestDTO.deleteUrls();
-        if(!deleteUrls.isEmpty())
+        if(deleteUrls!=null && !deleteUrls.isEmpty())
         {
             for(String url:deleteUrls)
             {
@@ -188,11 +196,11 @@ public class BoardService {
 
         List<MultipartFile> newImages=postPatchRequestDTO.newImages();
 
-        if(!newImages.isEmpty())
+        if(newImages!=null && !newImages.isEmpty())
         {
             for(MultipartFile file:newImages)
             {
-                String fileName = "upload_images/" + postId + "/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
+                String fileName = "upload_images/" + postId + "/" + file.getOriginalFilename();
                 try{
                     String imageUrl= amazonService.uploadFile(file,fileName);
                     PostImage postImage=PostImage.builder()

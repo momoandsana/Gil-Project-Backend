@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 public class PostResDTO {
 
     private Long postId; //게시글 id
+    private Long postUserId;
     private String nickName; //게시글 작성자 정보
     private Long pathId; //경로 id
     private Double startLat; //시작위도
@@ -44,6 +45,7 @@ public class PostResDTO {
     public PostResDTO(Post post,Long userId)
     {
         this.postId = post.getId();
+        this.postUserId=post.getUser().getId();
         this.nickName = post.getUser().getNickName();
         this.pathId = post.getPath().getId();
         this.startLat = post.getPath().getStartLat();
