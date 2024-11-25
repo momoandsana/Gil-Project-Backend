@@ -8,11 +8,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import org.hibernate.annotations.CreationTimestamp;
-import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.LineString;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Set;
 
 @Data
@@ -38,6 +36,7 @@ public class Path {
 
     private String content;
 
+    @CreationTimestamp
     private LocalDateTime createdDate;
 
     private Integer time; //소요시간(sec)
@@ -65,5 +64,5 @@ public class Path {
 
     @OneToMany(mappedBy = "path",cascade = CascadeType.ALL,orphanRemoval = true)
     @JsonIgnore
-    private Set<WalkAlong> walkAlongs;
+    private Set<WalkAlongs> walkAlongs;
 }

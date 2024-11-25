@@ -3,10 +3,9 @@ package com.web.gilproject.controller;
 import com.web.gilproject.domain.Path;
 import com.web.gilproject.domain.Pin;
 import com.web.gilproject.domain.User;
-import com.web.gilproject.dto.CoordinateDto;
-import com.web.gilproject.dto.PathDTO;
-import com.web.gilproject.dto.PathResDTO;
-import com.web.gilproject.dto.PinResDTO;
+import com.web.gilproject.dto.*;
+import com.web.gilproject.exception.ErrorCode;
+import com.web.gilproject.exception.MemberAuthenticationException;
 import com.web.gilproject.exception.PathErrorCode;
 import com.web.gilproject.exception.PathPinException;
 import com.web.gilproject.service.AmazonService;
@@ -21,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -73,7 +73,7 @@ public class PathController {
 
     //경로(Path)등록
     @PostMapping("/")
-    public void insert(@RequestBody PathDTO paramPath) {
+    public void insert(@RequestBody PathDTO paramPath, Authentication authentication) {
         System.out.println(paramPath);
 
         // LineString 생성
@@ -84,9 +84,16 @@ public class PathController {
 
         Path path;
         if (pathList == null || pathList.isEmpty()) {
+
+            CustomUserDetails customMemberDetails = (CustomUserDetails) authentication.getPrincipal();
+            Long userId = customMemberDetails.getId();
+            if(userId == null)
+            {
+                throw new MemberAuthenticationException(ErrorCode.NOTFOUND_USER);
+            }
             // 기존 경로가 없으면 새로 생성
             path = Path.builder()
-                    .user(pathService.findById(paramPath.getUser()))
+                    .user(pathService.findUserById(userId))
                     .content(paramPath.getContent())
                     .state(paramPath.getState())
                     .title(paramPath.getTitle())

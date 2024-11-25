@@ -6,15 +6,16 @@ import lombok.*;
 
 @Entity
 @Data
+@Table(name = "walk_alongs")
 @ToString(exclude = {"user","path"})
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class WalkAlong {
+public class WalkAlongs {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "walk_along_id")
-    @SequenceGenerator(name="walk_along_id",sequenceName = "walk_along_id_seq",allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "walk_alongs_id")
+    @SequenceGenerator(name="walk_alongs_id",sequenceName = "walk_alongs_id_seq",allocationSize = 1)
     private long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

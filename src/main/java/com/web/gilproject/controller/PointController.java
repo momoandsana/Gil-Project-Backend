@@ -31,7 +31,7 @@ public class PointController {
 
     }
 
-    @GetMapping("/walkAlong")
+    @GetMapping("/walkAlongs")
     public ResponseEntity<?> getWalkAlongLength(Authentication authentication) {
         CustomUserDetails customMemberDetails = (CustomUserDetails) authentication.getPrincipal();
         Long userId = customMemberDetails.getId();
@@ -39,7 +39,7 @@ public class PointController {
         {
             throw new MemberAuthenticationException(ErrorCode.NOTFOUND_USER);
         }
-        int walkAlongSize= pointService.getWalkAlongLength();
+        int walkAlongSize= pointService.getWalkAlongLength(userId);
 
         return ResponseEntity.ok(walkAlongSize);
         
