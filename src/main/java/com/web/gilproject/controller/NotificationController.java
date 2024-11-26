@@ -1,5 +1,6 @@
 package com.web.gilproject.controller;
 
+import com.web.gilproject.dto.CustomUserDetails;
 import com.web.gilproject.dto.IntergrateUserDetails;
 import com.web.gilproject.service.NotificationService;
 import lombok.RequiredArgsConstructor;
@@ -7,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.Parameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -41,14 +43,14 @@ public class NotificationController {
     * */
 
 
-    @GetMapping(value = "/subscribe/{id}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @GetMapping(value = "/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public ResponseEntity<SseEmitter> subscribe(
-            @PathVariable Long id,
-            //@AuthenticationPrincipal IntergrateUserDetails intergrateUserDetails,
+            Authentication authentication,
             @RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId){
         log.info("Sse 세션 연결");
-        return ResponseEntity.ok(notificationService.subscribe(id, lastEventId));
-        //return ResponseEntity.ok(notificationService.subscribe(intergrateUserDetails.getId(), lastEventId));
+        CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
+        Long userId = customUserDetails.getId();
+        return ResponseEntity.ok(notificationService.subscribe(userId, lastEventId));
     }
 
     /**
@@ -59,19 +61,22 @@ public class NotificationController {
 //        notificationService.broadcast(userId, eventPayload);
 //    }
 
-    @PostMapping("/send-data/{id}")
-    public void sendData(@PathVariable Long id){
+    @PostMapping("/send-data")
+    public void sendData(Authentication authentication){
         log.info("이벤트를 구독 중인 클라이언트에게 데이터를 전송한다.");
-        notificationService.notify(id,"data");
+        CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
+        Long userId = customUserDetails.getId();
+        notificationService.notify(userId,"data");
 
     }
 
-    @PostMapping("/send-post/{postId}")
-    public void sendPost(@PathVariable Long postId){
-        log.info("클라이언트에게 글알림");
-        notificationService.notifyComment(postId); //글 작성자에게 댓글 알림
-
-    }
+      //테스트용
+//    @PostMapping("/send-post/{postId}")
+//    public void sendPost(@PathVariable Long postId){
+//        log.info("클라이언트에게 글알림");
+//        notificationService.notifyComment(postId); //글 작성자에게 댓글 알림
+//
+//    }
 
     //알림 삭제?
 }

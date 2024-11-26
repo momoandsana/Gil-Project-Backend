@@ -9,6 +9,7 @@ import com.web.gilproject.repository.UserRepository_YJ;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.parameters.P;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ public class GilListServiceImpl implements GilListService {
     private final UserRepository_YJ userRepository;
 
     private final PathService pathService;
+    private final ElasticsearchService elasticsearchService;
 
     /**
      * 1. 내 위치 주변 산책길 글목록
@@ -149,7 +151,7 @@ public class GilListServiceImpl implements GilListService {
     @Transactional(readOnly = true)
     @Override
     public Page<PostResDTO> findByKeyword(String keyword, Pageable pageable, Long userId) {
-
+        /*
         //키워드 검색(제목, 내용, 닉네임, 시작주소)
         Page<Post> titleKeyword = gilListRepository.findByTitleContaining(keyword, pageable);
         Page<Post> contentKeyword = gilListRepository.findByContentContaining(keyword, pageable);
@@ -162,6 +164,14 @@ public class GilListServiceImpl implements GilListService {
         combinedSet.addAll(contentKeyword.getContent());
         combinedSet.addAll(nickNameKeyword.getContent());
         combinedSet.addAll(startAddrKeyword.getContent());
+        */
+
+        Set<Post> combinedSet = new HashSet<>();
+
+        List<String> esRe = elasticsearchService.multiFieldSearch("post-index", keyword, List.of("title", "content", "startAddr", "nickName"));
+        for(String postId:esRe){
+            combinedSet.addAll(gilListRepository.findById(Long.parseLong(postId), pageable).getContent());
+        }
 
         //좋아요 많은 순으로 정렬
         List<Post> combinedList = new ArrayList<>(combinedSet);
@@ -175,6 +185,23 @@ public class GilListServiceImpl implements GilListService {
         List<Post> pagedResult = combinedList.subList(start, end);
 
         return new PageImpl<>(this.changeList(pagedResult, userId), pageable, total);
+    }
+
+    /**
+     * 7. 태그 검색으로 글목록 조회하기
+     * */
+    @Transactional(readOnly = true)
+    @Override
+    public Page<PostResDTO> findByTag(String tag, Pageable pageable, Long userId) {
+
+        Page<Post> pagePostDTO = gilListRepository.findByTag(tag, pageable);
+        List<Post> listPostDTO = pagePostDTO.getContent();
+
+        return new PageImpl<>(
+                this.changeList(listPostDTO, userId),
+                pageable,
+                listPostDTO.size()
+        );
     }
 
     /**
@@ -220,6 +247,7 @@ public class GilListServiceImpl implements GilListService {
         List<PostResDTO> result = new ArrayList<>();
         for(Post post : listPostDTO){
             Long id = post.getId();
+            Long postUserId=post.getUser().getId();
             String userNickName = post.getUser().getNickName();
             Long pathId = post.getPath().getId();
             Double startLat = post.getPath().getStartLat();
@@ -250,7 +278,7 @@ public class GilListServiceImpl implements GilListService {
                     .stream()
                     .anyMatch(postWishList->postWishList.getUser().getId().equals(userId));
 
-            result.add(new PostResDTO(id, userNickName, pathId, startLat, startLong, state, title, content, tag,
+            result.add(new PostResDTO(id,postUserId, userNickName, pathId, startLat, startLong, state, title, content, tag,
                     writeDate,updateDate,readNum,postLikesCount, repliesCount,
                     postWishListsNum, userImgUrl, pathResDTO, imageUrls, isLiked, isWishListed));
         }
