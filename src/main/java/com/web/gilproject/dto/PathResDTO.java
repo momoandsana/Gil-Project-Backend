@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -16,6 +17,7 @@ public class PathResDTO {
     private Integer state;
     private String title;
     private int time;
+    private LocalDateTime createDate;
     private double distance;
     private double startLat;
     private double startLong;

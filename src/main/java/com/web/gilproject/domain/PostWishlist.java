@@ -1,10 +1,14 @@
 package com.web.gilproject.domain;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
-@Data
 @Entity
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class PostWishlist {
 
     @Id

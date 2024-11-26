@@ -2,16 +2,20 @@ package com.web.gilproject.controller;
 
 import com.web.gilproject.domain.Path;
 import com.web.gilproject.domain.Post;
+import com.web.gilproject.domain.PostWishlist;
+import com.web.gilproject.domain.User;
 import com.web.gilproject.dto.BoardDTO.*;
 import com.web.gilproject.dto.PathDTO;
 import com.web.gilproject.dto.CustomUserDetails;
 import com.web.gilproject.dto.PathResDTO;
 import com.web.gilproject.dto.PostDTO_YJ.PostResDTO;
 import com.web.gilproject.repository.BoardRepository;
+import com.web.gilproject.repository.UserRepository_emh;
 import com.web.gilproject.service.AmazonService;
 import com.web.gilproject.service.PathService;
 
 import com.web.gilproject.service.BoardService;
+import com.web.gilproject.service.PostWishlistService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.couchbase.CouchbaseProperties;
@@ -34,6 +38,7 @@ public class BoardController {
     private final AmazonService s3Service;
 
     private final BoardRepository boardRepository;
+    private final PostWishlistService postWishlistService;
 
 
     /**
@@ -233,6 +238,14 @@ public class BoardController {
 //        PostResponseDTO updatedPost=boardService.updatePost(postId,postPatchRequestDTO,userId);
 //        return ResponseEntity.ok(updatedPost);
 //    }
+
+    @PostMapping("/wishlist/{postId}")
+    public ResponseEntity<?> toggleWishlist(@PathVariable Long postId,Authentication authentication){
+        Long userId = ((CustomUserDetails) authentication.getPrincipal()).getId();
+        postWishlistService.togglePostWishlist(userId,postId);
+        return ResponseEntity.ok().build();
+    }
+
 
 
     }
