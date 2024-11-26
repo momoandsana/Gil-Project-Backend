@@ -94,15 +94,23 @@ public class BoardService {
         // 사용자가 게시글에 사진을 첨부하지 않는 경우
         if (!images.isEmpty()) {
             List<PostImage> postImages = new ArrayList<>();
-            for (MultipartFile image : images) {
-                String imageUrl = amazonService.uploadFile(image, "upload_images/" + post.getId() + "/" + image.getOriginalFilename());
-                PostImage postImage = PostImage.builder()
-                        .post(post)
-                        .imageUrl(imageUrl)
-                        .build();
-                postImages.add(postImage);
-                post.addPostImage(postImage);
+            try{
+                for (MultipartFile image : images)
+                {
+                    String imageUrl = amazonService.uploadFile(image, "upload_images/" + post.getId() + "/" + image.getOriginalFilename());
+                    PostImage postImage = PostImage.builder()
+                            .post(post)
+                            .imageUrl(imageUrl)
+                            .build();
+                    postImages.add(postImage);
+                    post.addPostImage(postImage);
+                }
             }
+            catch(IOException e)
+            {
+                throw new BoardException()
+            }
+
 
             // 빈 리스트가 아닌 경우에만 저장
             if (!postImages.isEmpty()) {

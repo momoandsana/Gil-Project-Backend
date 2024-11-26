@@ -8,14 +8,11 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum BoardErrorCode {
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "Post Not Found", "요청한 게시글을 찾을 수 없습니다."),
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER Not Found", "요청한 회원을 찾을 수 없습니다."),
     USER_NOT_ALLOWED(HttpStatus.FORBIDDEN, "User Not Allowed", "해당 작업에 대한 권한이 없습니다."),
     PATH_NOT_FOUND(HttpStatus.NOT_FOUND, "Path Not Found", "요청한 경로를 찾을 수 없습니다."),
     IMAGE_UPLOAD_FAILED(HttpStatus.BAD_REQUEST, "Image Upload Failed", "이미지 업로드 중 오류가 발생했습니다."),
-    IMAGE_DELETE_FAILED(HttpStatus.BAD_REQUEST, "Image Delete Failed", "이미지 삭제 중 오류가 발생했습니다."),
-    POST_CREATION_FAILED(HttpStatus.BAD_REQUEST, "Post Creation Failed", "게시글 생성 중 오류가 발생했습니다."),
-    POST_UPDATE_FAILED(HttpStatus.BAD_REQUEST, "Post Update Failed", "게시글 수정 중 오류가 발생했습니다."),
-    POST_DELETE_FAILED(HttpStatus.BAD_REQUEST, "Post Delete Failed", "게시글 삭제 중 오류가 발생했습니다."),
-    LIKE_TOGGLE_FAILED(HttpStatus.BAD_REQUEST, "Like Toggle Failed", "좋아요 토글 중 오류가 발생했습니다.");
+    IMAGE_DELETE_FAILED(HttpStatus.BAD_REQUEST, "Image Delete Failed", "이미지 삭제 중 오류가 발생했습니다.");
 
     private final HttpStatus httpStatus;
     private final String title;
