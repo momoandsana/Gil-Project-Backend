@@ -53,7 +53,7 @@ public class PathService {
         List<Path> pathList = pathRepository.findPathByUserId(userId);
 
         if (pathList == null || pathList.isEmpty()) {
-            throw new PathPinException(PathErrorCode.NOTFOUND_PATH);
+            return Collections.emptyList();
         }
 
         return pathList;
@@ -179,7 +179,7 @@ public class PathService {
                     .collect(Collectors.toList());
         }
         else{
-            throw new PathPinException(PathErrorCode.NOTFOUND_PATH);
+            return Collections.emptyList();
         }
     }
 
