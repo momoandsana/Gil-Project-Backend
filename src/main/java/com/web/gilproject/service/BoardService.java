@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -31,6 +32,7 @@ public class BoardService {
     private final PostImageRepository postImageRepository;
     private final PostLikeRepository postLikeRepository;
     private final PathService pathService;
+    private final ElasticsearchService elasticsearchService;
 
     @Value("${aws.s3.bucketName}")
     private String bucketName;
@@ -57,9 +59,9 @@ public class BoardService {
                 .orElseThrow(()->new RuntimeException("No path found"));
 
         Post post=Post.builder()
-                .title(postRequestDTO.title())
-                .content(postRequestDTO.content())
-                .tag(postRequestDTO.tag())
+                .title(postRequestDTO.title()!=null?postRequestDTO.title():"")// null 값이 들어가면 안 되기 때문에 아무것도 내용이 없다면 빈 문자열이 들어간다
+                .content(postRequestDTO.content()!=null?postRequestDTO.content():"")
+                .tag(postRequestDTO.tag()!=null?postRequestDTO.tag():"")
                 .user(user)
                 .path(path)
                 .state(0)
@@ -89,6 +91,12 @@ public class BoardService {
 
         postImageRepository.saveAll(post.getPostImages());// 일괄 저장
 
+        //엘라스틱서치 인덱싱 추가
+        String re = elasticsearchService.indexDocument(
+                "post-index", ""+post.getId(), Map.of("title", post.getTitle(), "content", post.getContent(), "startAddr", post.getPath().getStartAddr(), "nickName", post.getUser().getNickName())
+        );
+        System.out.println("re = " + re);
+
         return PostResponseDTO.from(post);
     }
 
@@ -98,16 +106,21 @@ public class BoardService {
                 .findById(postId)
                 .orElseThrow(()->new RuntimeException("Post not found"));// 임시 exception
 
-//        if(!postEntity.getUser().getId().equals(userId))
-//        {
-//            throw new RuntimeException("User not allowed");
-//        }
+        // 본인이 작성한 글만 삭제 가능
+        if(!postEntity.getUser().getId().equals(userId))
+        {
+            throw new RuntimeException("User not allowed");
+        }
 
         Post post=boardRepository.findById(postId).get();
         boardRepository.delete(post);// 임시, 하드 딜리트
 
 //        postEntity.setState(1);// 소프트 딜리트
 //        boardRepository.save(postEntity);
+
+        //엘라스틱서치 인덱싱 제거
+        String re = elasticsearchService.deleteDocument("post-index", ""+post.getId());
+        System.out.println("re = " + re);
     }
 
     @Transactional
@@ -134,6 +147,13 @@ public class BoardService {
     public PostResDTO postDetails(Long postId,Long userId)
     {
         Post postEntity=boardRepository.findById(postId).orElseThrow(()->new RuntimeException("Post not found"));
+
+        // 본인이 작성한 글 조회하면 조회수 오르지 않는다
+        if(!postEntity.getUser().getId().equals(userId))
+        {
+            postEntity.setReadNum(postEntity.getReadNum()+1);
+        }
+
         PostResDTO postResDTO=new PostResDTO(postEntity,userId);
         postResDTO.setPathResDTO(pathService.decodingPath(postEntity.getPath()));
         return postResDTO;
@@ -166,7 +186,7 @@ public class BoardService {
         }
 
         List<String> deleteUrls=postPatchRequestDTO.deleteUrls();
-        if(!deleteUrls.isEmpty())
+        if(deleteUrls!=null && !deleteUrls.isEmpty())
         {
             for(String url:deleteUrls)
             {
@@ -188,11 +208,11 @@ public class BoardService {
 
         List<MultipartFile> newImages=postPatchRequestDTO.newImages();
 
-        if(!newImages.isEmpty())
+        if(newImages!=null && !newImages.isEmpty())
         {
             for(MultipartFile file:newImages)
             {
-                String fileName = "upload_images/" + postId + "/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
+                String fileName = "upload_images/" + postId + "/" + file.getOriginalFilename();
                 try{
                     String imageUrl= amazonService.uploadFile(file,fileName);
                     PostImage postImage=PostImage.builder()

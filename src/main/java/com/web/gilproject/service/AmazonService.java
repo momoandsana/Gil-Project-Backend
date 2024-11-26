@@ -93,7 +93,17 @@ public class AmazonService {
     }
 
     public String getFileKeyFromUrl(String fileUrl) {
-        int index=fileUrl.indexOf(bucketName)+bucketName.length()+1;
-        return fileUrl.substring(index);
+        try {
+            // url 에서 버킷 이름과 영역을 제거하고 키만 추출
+            String prefix = "https://" + bucketName + ".s3.ap-northeast-2.amazonaws.com/";
+            if (fileUrl.startsWith(prefix)) {
+                return fileUrl.substring(prefix.length());
+            } else {
+                throw new IllegalArgumentException("Invalid S3 URL format: " + fileUrl);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to extract file key from URL: " + fileUrl, e);
+        }
     }
+
 }

@@ -116,6 +116,7 @@ public class BoardController {
      * 게시글 상세보기
      *
      * @param postId
+     * @param authentication
      * @return
      */
     @GetMapping("/{postId}")
@@ -127,8 +128,16 @@ public class BoardController {
         return ResponseEntity.ok(postResDTO);
     }
 
+    /**
+     * 게시글 수정하기
+     *
+     * @param postId
+     * @param postPatchRequestDTO
+     * @param authentication
+     * @return
+     */
     @PatchMapping("/{postId}")
-    public ResponseEntity<Void> updatePost(@PathVariable Long postId,PostPatchRequestDTO postPatchRequestDTO,Authentication authentication)
+    public ResponseEntity<Void> updatePost(@PathVariable Long postId,@ModelAttribute PostPatchRequestDTO postPatchRequestDTO,Authentication authentication)
     {
         Long userId = ((CustomUserDetails) authentication.getPrincipal()).getId();
         boardService.updatePost(postId,userId,postPatchRequestDTO);

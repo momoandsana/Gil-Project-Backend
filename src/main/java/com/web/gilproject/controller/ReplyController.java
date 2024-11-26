@@ -27,8 +27,10 @@ public class ReplyController {
      * @return
      */
     @GetMapping
-    public ResponseEntity<List<ReplyDTO>> getRepliesByPostId(@PathVariable Long postId) {
-        List<ReplyDTO> replies=replyService.getRepliesByPostId(postId);
+    public ResponseEntity<List<ReplyDTO>> getRepliesByPostId(@PathVariable Long postId,Authentication authentication) {
+        CustomUserDetails customUserDetails=(CustomUserDetails)authentication.getPrincipal();
+        Long userId=customUserDetails.getId();
+        List<ReplyDTO> replies=replyService.getRepliesByPostId(postId,userId);
         return ResponseEntity.ok(replies);
     }
 
