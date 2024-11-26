@@ -42,6 +42,12 @@ public class PathService {
                 .orElseThrow(() -> new PathPinException(PathErrorCode.NOTFOUND_USERID));
     }
 
+    //유저 아이디로 유저찾기
+    public User findUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new PathPinException(PathErrorCode.NOTFOUND_USERID));
+    }
+
     //LineString변환없이 해당유저가 있는지 확인하려고 만든 메소드
     public List<Path> findPathByUserId(Long userId) {
         List<Path> pathList = pathRepository.findPathByUserId(userId);
@@ -79,6 +85,7 @@ public class PathService {
                         pathDTO.setTitle(path.getTitle());
                         pathDTO.setTime(path.getTime());
                         pathDTO.setDistance(path.getDistance());
+                        pathDTO.setCreateDate(path.getCreatedDate());
                         pathDTO.setStartLat(path.getStartLat());
                         pathDTO.setStartLong(path.getStartLong());
                         pathDTO.setStartAddr(path.getStartAddr());
@@ -87,8 +94,8 @@ public class PathService {
                                 Arrays.stream(path.getRoute().getCoordinates())
                                         .map(coordinate -> {
                                             CoordinateResDTO coordDto = new CoordinateResDTO();
-                                            coordDto.setLatitude(String.valueOf(coordinate.y));
-                                            coordDto.setLongitude(String.valueOf(coordinate.x));
+                                            coordDto.setLatitude(String.valueOf(coordinate.x)); // 현재 y를 latitude로 설정
+                                            coordDto.setLongitude(String.valueOf(coordinate.y)); // 현재 x를 longitude로 설정
                                             return coordDto;
                                         }).collect(Collectors.toList())
                         );
@@ -113,10 +120,11 @@ public class PathService {
                     .collect(Collectors.toList());
         }
         else{
-            throw new PathPinException(PathErrorCode.NOTFOUND_PATH);
+            return Collections.emptyList();
         }
     }
 
+    //전체경로 내뱉기
     public List<PathResDTO> findPathAllTransform() {
 
         List<Path> list = pathRepository.findAllState(); // JPQL에서 JOIN FETCH 사용
@@ -136,6 +144,7 @@ public class PathService {
                         pathDTO.setTitle(path.getTitle());
                         pathDTO.setTime(path.getTime());
                         pathDTO.setDistance(path.getDistance());
+                        pathDTO.setCreateDate(path.getCreatedDate());
                         pathDTO.setStartLat(path.getStartLat());
                         pathDTO.setStartLong(path.getStartLong());
                         pathDTO.setStartAddr(path.getStartAddr());
@@ -144,8 +153,8 @@ public class PathService {
                                 Arrays.stream(path.getRoute().getCoordinates())
                                         .map(coordinate -> {
                                             CoordinateResDTO coordDto = new CoordinateResDTO();
-                                            coordDto.setLatitude(String.valueOf(coordinate.y));
-                                            coordDto.setLongitude(String.valueOf(coordinate.x));
+                                            coordDto.setLatitude(String.valueOf(coordinate.x));
+                                            coordDto.setLongitude(String.valueOf(coordinate.y));
                                             return coordDto;
                                         }).collect(Collectors.toList())
                         );
@@ -192,6 +201,7 @@ public class PathService {
         pathDTO.setTitle(path.getTitle());
         pathDTO.setTime(path.getTime());
         pathDTO.setDistance(path.getDistance());
+        pathDTO.setCreateDate(path.getCreatedDate());
         pathDTO.setStartLat(path.getStartLat());
         pathDTO.setStartLong(path.getStartLong());
         pathDTO.setStartAddr(path.getStartAddr());
@@ -200,8 +210,8 @@ public class PathService {
                 Arrays.stream(path.getRoute().getCoordinates())
                         .map(coordinate -> {
                             CoordinateResDTO coordDto = new CoordinateResDTO();
-                            coordDto.setLatitude(String.valueOf(coordinate.y)); // 위도
-                            coordDto.setLongitude(String.valueOf(coordinate.x)); // 경도
+                            coordDto.setLatitude(String.valueOf(coordinate.x)); // 위도
+                            coordDto.setLongitude(String.valueOf(coordinate.y)); // 경도
                             return coordDto;
                         }).collect(Collectors.toList())
         );

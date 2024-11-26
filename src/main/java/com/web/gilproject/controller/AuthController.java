@@ -2,8 +2,14 @@ package com.web.gilproject.controller;
 
 import com.web.gilproject.dto.UserDTO;
 import com.web.gilproject.service.JoinService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor

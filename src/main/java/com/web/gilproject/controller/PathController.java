@@ -3,10 +3,9 @@ package com.web.gilproject.controller;
 import com.web.gilproject.domain.Path;
 import com.web.gilproject.domain.Pin;
 import com.web.gilproject.domain.User;
-import com.web.gilproject.dto.CoordinateDto;
-import com.web.gilproject.dto.PathDTO;
-import com.web.gilproject.dto.PathResDTO;
-import com.web.gilproject.dto.PinResDTO;
+import com.web.gilproject.dto.*;
+import com.web.gilproject.exception.ErrorCode;
+import com.web.gilproject.exception.MemberAuthenticationException;
 import com.web.gilproject.exception.PathErrorCode;
 import com.web.gilproject.exception.PathPinException;
 import com.web.gilproject.service.AmazonService;
@@ -21,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -43,13 +43,15 @@ public class PathController {
     GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
 
     //넘어오는 위도경도 list를 LineString으로 묶기.
-    private LineString getLineString(List<CoordinateDto> coordinateDtos){
+    private LineString getLineString(List<CoordinateDto> coordinateDtos) {
         Coordinate[] coordinates = new Coordinate[coordinateDtos.size()];
-        for(int i = 0; i < coordinateDtos.size(); i++){
-            coordinates[i] = new Coordinate(Double.parseDouble(coordinateDtos.get(i).getLatitude()), Double.parseDouble(coordinateDtos.get(i).getLongitude()));
+        for (int i = 0; i < coordinateDtos.size(); i++) {
+            coordinates[i] = new Coordinate(
+                    Double.parseDouble(coordinateDtos.get(i).getLongitude()), // x = 경도
+                    Double.parseDouble(coordinateDtos.get(i).getLatitude())   // y = 위도
+            );
         }
-        LineString lineString = geometryFactory.createLineString(coordinates);
-        return lineString;
+        return geometryFactory.createLineString(coordinates);
     }
 
     /*//LineString의 시작점 구하기
@@ -73,7 +75,7 @@ public class PathController {
 
     //경로(Path)등록
     @PostMapping("/")
-    public void insert(@RequestBody PathDTO paramPath) {
+    public void insert(@RequestBody PathDTO paramPath, Authentication authentication) {
         System.out.println(paramPath);
 
         // LineString 생성
@@ -84,11 +86,18 @@ public class PathController {
 
         Path path;
         if (pathList == null || pathList.isEmpty()) {
+
+            CustomUserDetails customMemberDetails = (CustomUserDetails) authentication.getPrincipal();
+            Long userId = customMemberDetails.getId();
+            if(userId == null)
+            {
+                throw new MemberAuthenticationException(ErrorCode.NOTFOUND_USER);
+            }
             // 기존 경로가 없으면 새로 생성
             path = Path.builder()
-                    .user(pathService.findById(paramPath.getUser()))
+                    .user(pathService.findUserById(userId))
                     .content(paramPath.getContent())
-                    .state(paramPath.getState())
+                    .state(paramPath.getState() != null ? paramPath.getState() : 0)
                     .title(paramPath.getTitle())
                     .time(paramPath.getTime())
                     .distance(paramPath.getDistance())

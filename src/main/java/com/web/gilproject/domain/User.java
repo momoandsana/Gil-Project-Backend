@@ -1,6 +1,5 @@
 package com.web.gilproject.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Table;
@@ -84,6 +83,6 @@ public class User {
     private Set<ReplyLike> replyLikes;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<WalkAlong> walkAlongs;
+    private Set<WalkAlongs> walkAlongs;
 
 }

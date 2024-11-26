@@ -1,9 +1,11 @@
 package com.web.gilproject.jwt;
 
 import com.web.gilproject.dto.CustomUserDetails;
+import com.web.gilproject.repository.RefreshRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -17,15 +19,18 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
     private final JWTUtil jwtUtil;
+    private RefreshRepository refreshRepository;
 
-    public LoginFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil) {
+    public LoginFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil, RefreshRepository refreshRepository) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
+        this.refreshRepository = refreshRepository;
         setFilterProcessesUrl("/auth/login"); //진입경로 변경
     }
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+        System.out.println("attemptAuthentication call");
         String email = request.getParameter("email");  // form-data에서 email 값 추출
         String password = request.getParameter("password");  // form-data에서 password 값 추출
 //        System.out.println("email = " + email);
@@ -44,11 +49,26 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         System.out.println("로그인 성공");
 
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+//        System.out.println("@@" + authentication.getName());
+//        System.out.println("!!" +customUserDetails.getUsername());
 
-        String token = jwtUtil.createJwt(customUserDetails, 1000 * 60 * 50L); //50분
+        //토큰 생성
+        String accessToken = jwtUtil.createJwt("access", customUserDetails, 1000 * 60 * 15L); //15분
+//        String accessToken = jwtUtil.createJwt("access", customUserDetails, 1000 * 5L); //5초
+        String refreshToken = jwtUtil.createJwt("refresh", customUserDetails, 1000 * 60 * 60 * 24 * 90L); //90일
+
+        Boolean isExist = refreshRepository.existsByRefreshToken(refreshToken);
+        //리프레시 토큰이 DB에 없을경우 리프레시 토큰 DB에 저장
+        if (!isExist)
+        {
+            JWTUtil.addRefreshEntity(refreshRepository, customUserDetails.getId(), refreshToken, 1000 * 60 * 60 * 24 * 90L); //90일
+        }
 
         //헤더에 발급된 JWT 실어주기
-        response.addHeader("authorization", "Bearer " + token);
+        response.setHeader("authorization", "Bearer " + accessToken);
+        //리프레시 토큰은 쿠키에
+        response.addCookie(JWTUtil.createCookie("refresh", refreshToken));
+        response.setStatus(HttpStatus.OK.value());
     }
 
     //로그인 실패시 실행하는 메소드
@@ -58,4 +78,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         response.setStatus(401);
     }
+
+
 }

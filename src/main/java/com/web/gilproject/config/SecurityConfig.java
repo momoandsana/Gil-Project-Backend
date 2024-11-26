@@ -1,16 +1,17 @@
 package com.web.gilproject.config;
 
+import com.web.gilproject.jwt.CustomLogoutFilter;
 import com.web.gilproject.jwt.JWTFilter;
 import com.web.gilproject.jwt.JWTUtil;
 import com.web.gilproject.jwt.LoginFilter;
 import com.web.gilproject.oauth2.CustomSuccessHandler;
+import com.web.gilproject.repository.RefreshRepository;
 import com.web.gilproject.service.CustomOAuth2UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -22,6 +23,7 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 @Configuration
@@ -31,6 +33,7 @@ public class SecurityConfig {
 
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JWTUtil jwtUtil;
+    private final RefreshRepository refreshRepository;
 
     //OAuth
     private final CustomOAuth2UserService customOAuth2UserService;
@@ -45,6 +48,7 @@ public class SecurityConfig {
 
     /**
      * 비밀번호 해시 암호화
+     *
      * @return
      */
     @Bean
@@ -57,7 +61,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         //CORS 설정
         http
-                .cors((cors)->cors.configurationSource(new CorsConfigurationSource() {
+                .cors((cors) -> cors.configurationSource(new CorsConfigurationSource() {
                     @Override
                     public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
                         CorsConfiguration config = new CorsConfiguration();
@@ -74,7 +78,10 @@ public class SecurityConfig {
 
                         //OAuth2
                         //config.setExposedHeaders(Collections.singletonList("Set-Cookie"));
-                        config.setExposedHeaders(Collections.singletonList("authorization"));
+
+                        //응답시 노출할 헤더
+                        config.setExposedHeaders(Arrays.asList("authorization", "newaccess","abc"));
+
 
                         return config;
                     }
@@ -101,7 +108,7 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/auth/**", "/mail/**").permitAll() //로그인 안해도 요청 허용
+                        .requestMatchers("/auth/**", "/mail/**", "/reissue").permitAll() //로그인 안해도 요청 허용
                         .anyRequest().authenticated()); //나머지는 로그인한 사용자만 허용
 //                        .anyRequest().permitAll()); //모든 요청 허용
 
@@ -110,18 +117,18 @@ public class SecurityConfig {
         http
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-        
+
         //커스텀 필터 등록
         http
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration),jwtUtil), UsernamePasswordAuthenticationFilter.class);
+                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, refreshRepository), UsernamePasswordAuthenticationFilter.class);
 
-        //JWT 필터 추가
-       /* http
-                .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);*/
+        //로그아웃 필터 등록
+        http
+                .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshRepository), LogoutFilter.class);
 
         //JWT 필터 추가 - 통합
         http
-                .addFilterBefore(new JWTFilter(jwtUtil),UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
