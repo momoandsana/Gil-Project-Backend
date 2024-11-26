@@ -141,7 +141,7 @@ public class BoardService {
         // 본인이 작성한 글만 삭제 가능
 //        if(!postEntity.getUser().getId().equals(userId))
 //        {
-//            throw new RuntimeException("User not allowed");
+//            throw new BoardException(BoardErrorCode.USER_NOT_ALLOWED);
 //        }
 
         Post post=boardRepository.findById(postId).get();
@@ -259,7 +259,7 @@ public class BoardService {
                 }
                 catch(IOException e)
                 {
-                    throw new RuntimeException(e);
+                    throw new BoardException(BoardErrorCode.FILE_WRITE_FAILED);
                 }
             }
 
