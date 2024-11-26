@@ -2,6 +2,7 @@ package com.web.gilproject.service;
 
 import com.web.gilproject.dto.PostDTO_YJ.PostResDTO;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 public interface GilListService {
@@ -34,4 +35,9 @@ public interface GilListService {
      * 6. 키워드 검색으로 글목록 조회하기
      * */
     Page<PostResDTO> findByKeyword(String keyword, Pageable pageable, Long userId);
+
+    /**
+     * 7. 태그 검색으로 글목록 조회하기
+     * */
+    Page<PostResDTO> findByTag(String tag, Pageable pageable, Long userId);
 }
