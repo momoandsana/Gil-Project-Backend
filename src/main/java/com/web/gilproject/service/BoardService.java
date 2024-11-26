@@ -72,8 +72,8 @@ public class BoardService {
         boardRepository.save(post);// 게시글 저장
 
         List<String> imageUrls=new ArrayList<>();
-        //List<PostImage>postImages=new ArrayList<>();
 
+        // 사용자가 사진을 보내면 postRequestDTO.images()를 리스트에 넣고, 사진을 보내지 않은 상태라면 빈 리스트를 만들어서 리스트에 넣는다
         List<MultipartFile> images = postRequestDTO.images() != null ? postRequestDTO.images() : new ArrayList<>();
 
 //        for(MultipartFile image:images)
@@ -195,6 +195,8 @@ public class BoardService {
         }
 
         List<String> deleteUrls=postPatchRequestDTO.deleteUrls();
+
+        // 사용자가 사진을 삭제하는 경우
         if(deleteUrls!=null && !deleteUrls.isEmpty())
         {
             for(String url:deleteUrls)
@@ -217,7 +219,7 @@ public class BoardService {
 
         List<MultipartFile> newImages=postPatchRequestDTO.newImages();
 
-        // 사용자가 사진을 추가하지 않는 경우
+        // 사용자가 사진을 추가한 경우
         if(newImages!=null && !newImages.isEmpty())
         {
             for(MultipartFile file:newImages)
