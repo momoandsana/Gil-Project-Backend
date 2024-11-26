@@ -52,7 +52,7 @@ public class TokenController {
         String newRefreshToken = jwtUtil.createJwt("refresh", customUserDetails, 1000 * 60 * 60 * 24 * 90L); //90일
         
         //DB 저장
-        JWTUtil.addRefreshEntity(refreshRepository, id,newRefreshToken,1000 * 60 * 60 * 24 * 90L);
+//        JWTUtil.addRefreshEntity(refreshRepository, id,newRefreshToken,1000 * 60 * 60 * 24 * 90L);
 
         response.setHeader("abc", "Bearer " + accessToken);
         response.addCookie(JWTUtil.createCookie("refresh", newRefreshToken));
