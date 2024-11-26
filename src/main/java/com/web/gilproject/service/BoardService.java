@@ -91,6 +91,7 @@ public class BoardService {
 
         postImageRepository.saveAll(post.getPostImages());// 일괄 저장
 
+        //엘라스틱서치 인덱싱 추가
         String re = elasticsearchService.indexDocument(
                 "post-index", ""+post.getId(), Map.of("title", post.getTitle(), "content", post.getContent(), "startAddr", post.getPath().getStartAddr(), "nickName", post.getUser().getNickName())
         );
@@ -117,6 +118,7 @@ public class BoardService {
 //        postEntity.setState(1);// 소프트 딜리트
 //        boardRepository.save(postEntity);
 
+        //엘라스틱서치 인덱싱 제거
         String re = elasticsearchService.deleteDocument("post-index", ""+post.getId());
         System.out.println("re = " + re);
     }
