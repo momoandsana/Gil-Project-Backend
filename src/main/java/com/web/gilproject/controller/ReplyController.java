@@ -4,6 +4,7 @@ import com.web.gilproject.dto.CustomUserDetails;
 import com.web.gilproject.dto.ReplyDTO.ReplyDTO;
 import com.web.gilproject.dto.ReplyDTO.ReplyPostRequestDTO;
 import com.web.gilproject.service.BoardService;
+import com.web.gilproject.service.NotificationService;
 import com.web.gilproject.service.ReplyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import java.util.List;
 public class ReplyController {
     private final ReplyService replyService;
     private final BoardService boardService;
+    private final NotificationService notificationService;
 
     /**
      * 해당 게시글의 댓글 목록 가지고 오기
@@ -49,6 +51,10 @@ public class ReplyController {
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         Long userId=customUserDetails.getId();
         ReplyDTO replyDTO=replyService.createReply(postId,replyPostRequestDTO,userId);
+
+        //글 작성자에게 댓글 알림
+        notificationService.notifyComment(postId);
+
         return ResponseEntity.ok().build();
         /*
         원래는 201 created 응답이 맞지만 프론트에서 생성된 정보가 필요 없다고 해서
