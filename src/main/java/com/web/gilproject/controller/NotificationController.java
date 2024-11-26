@@ -70,12 +70,13 @@ public class NotificationController {
 
     }
 
-    @PostMapping("/send-post/{postId}")
-    public void sendPost(@PathVariable Long postId){
-        log.info("클라이언트에게 글알림");
-        notificationService.notifyComment(postId); //글 작성자에게 댓글 알림
-
-    }
+      //테스트용
+//    @PostMapping("/send-post/{postId}")
+//    public void sendPost(@PathVariable Long postId){
+//        log.info("클라이언트에게 글알림");
+//        notificationService.notifyComment(postId); //글 작성자에게 댓글 알림
+//
+//    }
 
     //알림 삭제?
 }
