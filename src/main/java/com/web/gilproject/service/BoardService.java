@@ -88,6 +88,8 @@ public class BoardService {
 //            postImages.add(postImage);
 //            imageUrls.add(imageUrl);
 //        }
+
+        // 사용자가 게시글에 사진을 첨부하지 않는 경우
         if (!images.isEmpty()) {
             List<PostImage> postImages = new ArrayList<>();
             for (MultipartFile image : images) {
@@ -215,6 +217,7 @@ public class BoardService {
 
         List<MultipartFile> newImages=postPatchRequestDTO.newImages();
 
+        // 사용자가 사진을 추가하지 않는 경우
         if(newImages!=null && !newImages.isEmpty())
         {
             for(MultipartFile file:newImages)
@@ -237,7 +240,6 @@ public class BoardService {
 
         }
 
-        // 진행 중...
         boardRepository.save(postEntity);
 
     }
