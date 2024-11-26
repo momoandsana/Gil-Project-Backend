@@ -57,9 +57,9 @@ public class BoardService {
                 .orElseThrow(()->new RuntimeException("No path found"));
 
         Post post=Post.builder()
-                .title(postRequestDTO.title())
-                .content(postRequestDTO.content())
-                .tag(postRequestDTO.tag())
+                .title(postRequestDTO.title()!=null?postRequestDTO.title():"")// null 값이 들어가면 안 되기 때문에 아무것도 내용이 없다면 빈 문자열이 들어간다
+                .content(postRequestDTO.content()!=null?postRequestDTO.content():"")
+                .tag(postRequestDTO.tag()!=null?postRequestDTO.tag():"")
                 .user(user)
                 .path(path)
                 .state(0)
@@ -72,22 +72,43 @@ public class BoardService {
         boardRepository.save(post);// 게시글 저장
 
         List<String> imageUrls=new ArrayList<>();
-        List<PostImage>postImages=new ArrayList<>();
+        //List<PostImage>postImages=new ArrayList<>();
 
-        for(MultipartFile image:postRequestDTO.images())
-        {
-            String imageUrl = amazonService.uploadFile(image, "upload_images/" + post.getId() + "/" + image.getOriginalFilename());
+        List<MultipartFile> images = postRequestDTO.images() != null ? postRequestDTO.images() : new ArrayList<>();
 
-            PostImage postImage = PostImage.builder()
-                    .post(post)
-                    .imageUrl(imageUrl)
-                    .build();
-            post.addPostImage(postImage);
-            postImages.add(postImage);
-            imageUrls.add(imageUrl);
+//        for(MultipartFile image:images)
+//        {
+//            String imageUrl = amazonService.uploadFile(image, "upload_images/" + post.getId() + "/" + image.getOriginalFilename());
+//
+//            PostImage postImage = PostImage.builder()
+//                    .post(post)
+//                    .imageUrl(imageUrl)
+//                    .build();
+//            post.addPostImage(postImage);
+//            postImages.add(postImage);
+//            imageUrls.add(imageUrl);
+//        }
+
+        // 사용자가 게시글에 사진을 첨부하지 않는 경우
+        if (!images.isEmpty()) {
+            List<PostImage> postImages = new ArrayList<>();
+            for (MultipartFile image : images) {
+                String imageUrl = amazonService.uploadFile(image, "upload_images/" + post.getId() + "/" + image.getOriginalFilename());
+                PostImage postImage = PostImage.builder()
+                        .post(post)
+                        .imageUrl(imageUrl)
+                        .build();
+                postImages.add(postImage);
+                post.addPostImage(postImage);
+            }
+
+            // 빈 리스트가 아닌 경우에만 저장
+            if (!postImages.isEmpty()) {
+                postImageRepository.saveAll(postImages);
+            }
         }
 
-        postImageRepository.saveAll(post.getPostImages());// 일괄 저장
+        //postImageRepository.saveAll(post.getPostImages());// 일괄 저장
 
         return PostResponseDTO.from(post);
     }
@@ -98,6 +119,7 @@ public class BoardService {
                 .findById(postId)
                 .orElseThrow(()->new RuntimeException("Post not found"));// 임시 exception
 
+        // 본인이 작성한 글만 삭제 가능
 //        if(!postEntity.getUser().getId().equals(userId))
 //        {
 //            throw new RuntimeException("User not allowed");
@@ -134,6 +156,13 @@ public class BoardService {
     public PostResDTO postDetails(Long postId,Long userId)
     {
         Post postEntity=boardRepository.findById(postId).orElseThrow(()->new RuntimeException("Post not found"));
+
+        // 본인이 작성한 글 조회하면 조회수 오르지 않는다
+        if(!postEntity.getUser().getId().equals(userId))
+        {
+            postEntity.setReadNum(postEntity.getReadNum()+1);
+        }
+
         PostResDTO postResDTO=new PostResDTO(postEntity,userId);
         postResDTO.setPathResDTO(pathService.decodingPath(postEntity.getPath()));
         return postResDTO;
@@ -166,7 +195,7 @@ public class BoardService {
         }
 
         List<String> deleteUrls=postPatchRequestDTO.deleteUrls();
-        if(!deleteUrls.isEmpty())
+        if(deleteUrls!=null && !deleteUrls.isEmpty())
         {
             for(String url:deleteUrls)
             {
@@ -188,11 +217,12 @@ public class BoardService {
 
         List<MultipartFile> newImages=postPatchRequestDTO.newImages();
 
-        if(!newImages.isEmpty())
+        // 사용자가 사진을 추가하지 않는 경우
+        if(newImages!=null && !newImages.isEmpty())
         {
             for(MultipartFile file:newImages)
             {
-                String fileName = "upload_images/" + postId + "/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
+                String fileName = "upload_images/" + postId + "/" + file.getOriginalFilename();
                 try{
                     String imageUrl= amazonService.uploadFile(file,fileName);
                     PostImage postImage=PostImage.builder()
@@ -210,7 +240,6 @@ public class BoardService {
 
         }
 
-        // 진행 중...
         boardRepository.save(postEntity);
 
     }

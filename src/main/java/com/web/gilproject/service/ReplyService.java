@@ -26,10 +26,12 @@ public class ReplyService {
     private final ReplyLikeRepository replyLikeRepository;
 
     @Transactional(readOnly = true)
-    public List<ReplyDTO> getRepliesByPostId(Long postId) {
+    public List<ReplyDTO> getRepliesByPostId(Long postId,Long userId) {
         Post post=boardRepository.findById(postId).orElseThrow(()->new RuntimeException("No post found"));
         List<Reply>replyEntities=replyRepository.findByPost(post);
-        return replyEntities.stream().map(ReplyDTO::from).toList();
+        return replyEntities.stream()
+                .map(reply->ReplyDTO.from(reply,userId))
+                .toList();
     }
 
     @Transactional
@@ -41,7 +43,7 @@ public class ReplyService {
         );
 
         post.setRepliesCount(post.getRepliesCount()+1);
-        return ReplyDTO.from(reply);
+        return ReplyDTO.from(reply,userId);
     }
 
     @Transactional
@@ -51,7 +53,9 @@ public class ReplyService {
 
         Reply replyEntity=replyRepository.findById(replyId).orElseThrow(()->new RuntimeException("No reply found"));
 
-        if(!replyEntity.getUser().getId().equals(userId)){
+        // 본인이 작성한 댓글 아니면 삭제 불가능
+        if(!replyEntity.getUser().getId().equals(userId))
+        {
             throw new RuntimeException("Not allowed user");
         }
 
@@ -71,7 +75,7 @@ public class ReplyService {
         if(replyLike.isPresent())
         {
             replyLikeRepository.delete(replyLike.get());
-            replyEntity.setLikesCount(replyEntity.getLikesCount()+1);
+            replyEntity.setLikesCount(replyEntity.getLikesCount()-1);
         }
         else
         {

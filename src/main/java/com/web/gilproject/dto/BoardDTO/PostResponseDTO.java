@@ -28,10 +28,16 @@ public record PostResponseDTO(Long postId, String nickName, String title, String
                 postEntity.getTag(),
                 BoardPathResponseDTO.from(postEntity.getPath()),
                 postEntity.getWriteDate(),
-                postEntity.getPostImages()
+//                postEntity.getPostImages()
+//                        .stream()
+//                        .map(PostImage::getImageUrl)
+//                        .collect(Collectors.toList())
+                postEntity.getPostImages() != null // Null 체크 추가
+                        ? postEntity.getPostImages()
                         .stream()
                         .map(PostImage::getImageUrl)
                         .collect(Collectors.toList())
+                        : List.of()
         );
     }
 }

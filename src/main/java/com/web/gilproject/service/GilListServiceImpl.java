@@ -220,6 +220,7 @@ public class GilListServiceImpl implements GilListService {
         List<PostResDTO> result = new ArrayList<>();
         for(Post post : listPostDTO){
             Long id = post.getId();
+            Long postUserId=post.getUser().getId();
             String userNickName = post.getUser().getNickName();
             Long pathId = post.getPath().getId();
             Double startLat = post.getPath().getStartLat();
@@ -250,7 +251,7 @@ public class GilListServiceImpl implements GilListService {
                     .stream()
                     .anyMatch(postWishList->postWishList.getUser().getId().equals(userId));
 
-            result.add(new PostResDTO(id, userNickName, pathId, startLat, startLong, state, title, content, tag,
+            result.add(new PostResDTO(id,postUserId, userNickName, pathId, startLat, startLong, state, title, content, tag,
                     writeDate,updateDate,readNum,postLikesCount, repliesCount,
                     postWishListsNum, userImgUrl, pathResDTO, imageUrls, isLiked, isWishListed));
         }
