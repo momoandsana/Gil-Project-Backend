@@ -19,7 +19,7 @@ public class PointController {
 
     //따라걷기 끝났을 때 포인트+10,해당 아이디에 대한 따라걷기정보 DB에 저장.
     @PatchMapping("/point")
-    public void PointController(@RequestBody PointConfirmDTO pointConfirmDTO, Authentication authentication) {
+    public void PointController(@RequestBody Long pathId, Authentication authentication) {
         CustomUserDetails customMemberDetails = (CustomUserDetails) authentication.getPrincipal();
         Long userId = customMemberDetails.getId();
         if(userId == null)
@@ -27,15 +27,11 @@ public class PointController {
             throw new MemberAuthenticationException(ErrorCode.NOTFOUND_USER);
         }
 
-        if (pointConfirmDTO.getDistance() == null || pointConfirmDTO.getTime() == null) {
-            throw new MemberAuthenticationException(ErrorCode.POINTPLUS_FAILED);
-        }
-
-        pointService.pointPlus(userId,pointConfirmDTO);
+        pointService.pointPlus(userId,pathId);
 
     }
 
-    @GetMapping("/walkAlong")
+    @GetMapping("/walkAlongs")
     public ResponseEntity<?> getWalkAlongLength(Authentication authentication) {
         CustomUserDetails customMemberDetails = (CustomUserDetails) authentication.getPrincipal();
         Long userId = customMemberDetails.getId();
@@ -43,7 +39,7 @@ public class PointController {
         {
             throw new MemberAuthenticationException(ErrorCode.NOTFOUND_USER);
         }
-        int walkAlongSize= pointService.getWalkAlongLength();
+        int walkAlongSize= pointService.getWalkAlongLength(userId);
 
         return ResponseEntity.ok(walkAlongSize);
         
