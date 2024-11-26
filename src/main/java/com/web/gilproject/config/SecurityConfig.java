@@ -80,7 +80,7 @@ public class SecurityConfig {
                         //config.setExposedHeaders(Collections.singletonList("Set-Cookie"));
 
                         //응답시 노출할 헤더
-                        config.setExposedHeaders(Arrays.asList("authorization", "newaccess"));
+                        config.setExposedHeaders(Arrays.asList("authorization", "newaccess","abc"));
 
 
                         return config;

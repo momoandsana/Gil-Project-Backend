@@ -1,6 +1,5 @@
 package com.web.gilproject.jwt;
 
-import com.web.gilproject.domain.Refresh;
 import com.web.gilproject.dto.CustomUserDetails;
 import com.web.gilproject.repository.RefreshRepository;
 import jakarta.servlet.FilterChain;
@@ -13,8 +12,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import java.util.Date;
-
 /**
  * 커스텀 로그인 필터
  */
@@ -24,7 +21,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private final JWTUtil jwtUtil;
     private RefreshRepository refreshRepository;
 
-    public LoginFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil,RefreshRepository refreshRepository) {
+    public LoginFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil, RefreshRepository refreshRepository) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
         this.refreshRepository = refreshRepository;
@@ -60,13 +57,17 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 //        String accessToken = jwtUtil.createJwt("access", customUserDetails, 1000 * 5L); //5초
         String refreshToken = jwtUtil.createJwt("refresh", customUserDetails, 1000 * 60 * 60 * 24 * 90L); //90일
 
-        //리프레시 토큰 DB에 저장
-        JWTUtil.addRefreshEntity(refreshRepository,customUserDetails.getId(),refreshToken,1000 * 60 * 60 * 24 * 90L); //90일
+        Boolean isExist = refreshRepository.existsByRefreshToken(refreshToken);
+        //리프레시 토큰이 DB에 없을경우 리프레시 토큰 DB에 저장
+        if (!isExist)
+        {
+            JWTUtil.addRefreshEntity(refreshRepository, customUserDetails.getId(), refreshToken, 1000 * 60 * 60 * 24 * 90L); //90일
+        }
 
         //헤더에 발급된 JWT 실어주기
         response.setHeader("authorization", "Bearer " + accessToken);
         //리프레시 토큰은 쿠키에
-        response.addCookie(JWTUtil.createCookie("refresh", refreshToken,true));
+        response.addCookie(JWTUtil.createCookie("refresh", refreshToken));
         response.setStatus(HttpStatus.OK.value());
     }
 
