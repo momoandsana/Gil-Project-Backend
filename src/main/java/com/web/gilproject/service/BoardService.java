@@ -7,6 +7,8 @@ import com.web.gilproject.dto.BoardDTO.PostPatchRequestDTO;
 import com.web.gilproject.dto.BoardDTO.PostRequestDTO;
 import com.web.gilproject.dto.BoardDTO.PostResponseDTO;
 import com.web.gilproject.dto.PostDTO_YJ.PostResDTO;
+import com.web.gilproject.exception.BoardErrorCode;
+import com.web.gilproject.exception.BoardException;
 import com.web.gilproject.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,12 +53,13 @@ public class BoardService {
     }
 
     @Transactional
-    public PostResponseDTO createPost(Long userId, PostRequestDTO postRequestDTO) throws IOException {
+    public PostResponseDTO createPost(Long userId, PostRequestDTO postRequestDTO)
+    {
         User user=userRepository.findById(userId)
-                .orElseThrow(()->new RuntimeException("No user found"));
+                .orElseThrow(()->new BoardException(BoardErrorCode.USER_NOT_FOUND));
 
         Path path=pathRepository.findById(postRequestDTO.pathId())
-                .orElseThrow(()->new RuntimeException("No path found"));
+                .orElseThrow(()->new BoardException(BoardErrorCode.PATH_NOT_FOUND));
 
         Post post=Post.builder()
                 .title(postRequestDTO.title()!=null?postRequestDTO.title():"")// null 값이 들어가면 안 되기 때문에 아무것도 내용이 없다면 빈 문자열이 들어간다
@@ -108,7 +111,7 @@ public class BoardService {
             }
             catch(IOException e)
             {
-                throw new BoardException()
+                throw new BoardException(BoardErrorCode.IMAGE_UPLOAD_FAILED);
             }
 
 
@@ -133,7 +136,7 @@ public class BoardService {
     public void deletePost(Long postId,Long userId) {
         Post postEntity=boardRepository
                 .findById(postId)
-                .orElseThrow(()->new RuntimeException("Post not found"));// 임시 exception
+                .orElseThrow(()->new BoardException(BoardErrorCode.POST_NOT_FOUND));
 
         // 본인이 작성한 글만 삭제 가능
 //        if(!postEntity.getUser().getId().equals(userId))
@@ -155,8 +158,8 @@ public class BoardService {
     @Transactional
     public void toggleLike(Long postId,Long userId)
     {
-        Post postEntity=boardRepository.findById(postId).orElseThrow(()->new RuntimeException("Post not found"));
-        User userEntity=userRepository.findById(userId).orElseThrow(()->new RuntimeException("User not found"));
+        Post postEntity=boardRepository.findById(postId).orElseThrow(()->new BoardException(BoardErrorCode.POST_NOT_FOUND));
+        User userEntity=userRepository.findById(userId).orElseThrow(()->new BoardException(BoardErrorCode.USER_NOT_FOUND));
         Optional<PostLike> postLike=postLikeRepository.findByUserAndPost(userEntity,postEntity);
 
         if(postLike.isPresent())
@@ -175,7 +178,7 @@ public class BoardService {
     @Transactional
     public PostResDTO postDetails(Long postId,Long userId)
     {
-        Post postEntity=boardRepository.findById(postId).orElseThrow(()->new RuntimeException("Post not found"));
+        Post postEntity=boardRepository.findById(postId).orElseThrow(()->new BoardException(BoardErrorCode.POST_NOT_FOUND));
 
         // 본인이 작성한 글 조회하면 조회수 오르지 않는다
         if(!postEntity.getUser().getId().equals(userId))
@@ -191,12 +194,12 @@ public class BoardService {
     @Transactional
     public void updatePost(Long postId, Long userId, PostPatchRequestDTO postPatchRequestDTO)
     {
-        Post postEntity=boardRepository.findById(postId).orElseThrow(()->new RuntimeException("Post not found"));
-        User userEntity=userRepository.findById(userId).orElseThrow(()->new RuntimeException("User not found"));
+        Post postEntity=boardRepository.findById(postId).orElseThrow(()->new BoardException(BoardErrorCode.POST_NOT_FOUND));
+        User userEntity=userRepository.findById(userId).orElseThrow(()->new BoardException(BoardErrorCode.USER_NOT_FOUND));
 
         if(!userEntity.equals(postEntity.getUser()))
         {
-            throw new RuntimeException("User not allowed");
+            throw new BoardException(BoardErrorCode.USER_NOT_ALLOWED);
         }
 
         if(postPatchRequestDTO.title()!=null)
@@ -231,7 +234,7 @@ public class BoardService {
                 }
 
                 PostImage postImage=postImageRepository.findByImageUrl(url)
-                        .orElseThrow(()->new RuntimeException("PostImage not found"));
+                        .orElseThrow(()->new BoardException(BoardErrorCode.IMAGE_UPLOAD_FAILED));
                 postEntity.removePostImage(postImage);
                 //postImageRepository.delete(postImage); , orphanRemoval=true 이므로
             }

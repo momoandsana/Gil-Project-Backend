@@ -10,10 +10,10 @@ import java.time.LocalDateTime;
 public class BoardExceptionAdvice {
 
     @ExceptionHandler(BoardException.class)
-    public ProblemDetail handleBoardException(BoardException ex) {
-        ProblemDetail problemDetail = ProblemDetail.forStatus(ex.getHttpStatus());
-        problemDetail.setTitle(ex.getTitle());
-        problemDetail.setDetail(ex.getMessage());
+    public ProblemDetail handleBoardException(BoardException e) {
+        ProblemDetail problemDetail = ProblemDetail.forStatus(e.getBoardErrorCode().getHttpStatus());
+        problemDetail.setTitle(e.getBoardErrorCode().getTitle());
+        problemDetail.setDetail(e.getBoardErrorCode().getMessage());
         problemDetail.setProperty("timestamp", LocalDateTime.now());
         return problemDetail;
     }
