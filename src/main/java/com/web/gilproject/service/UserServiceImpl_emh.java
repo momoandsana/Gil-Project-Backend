@@ -53,14 +53,25 @@ public class UserServiceImpl_emh implements UserService_emh{
         log.info("updateUserInfo : id = {}, userDTO = {}" ,id ,userDTO);
 
         User userEntity = userRepository.findById(id).orElse(null); //★예외 처리 필요
+
         //수정(닉네임, 비밀번호, 주소, 자기소개글)
         userEntity.setNickName(userDTO.getNickName()); //닉네임 변경 ★중복체크하는 메소드 활용 필요
         //userEntity.setPassword(userDTO.getPassword()); //비밀번호 변경 ★암호화 필요
-        userEntity.setAddress(userDTO.getAddress()); //주소 변경 ★API로 받아온 값 저장 필요
         userEntity.setLatitude(userDTO.getLatitude());
         userEntity.setLongitude(userDTO.getLongitude());
         userEntity.setEmail(userDTO.getEmail()); //이메일 변경
         userEntity.setComment(userDTO.getComment());
+    }
+
+    @Transactional
+    @Override
+    //내 주소 수정
+    public void updateUserAddr(Long id, UserDTO userDTO) {
+        log.info("updateUserAddr : id = {}, userDTO = {}" ,id ,userDTO);
+
+        User userEntity = userRepository.findById(id).orElse(null);
+        //주소 변경 ★API로 받아온 값 저장 필요
+        userEntity.setAddress(userDTO.getAddress());
     }
 
     @Transactional

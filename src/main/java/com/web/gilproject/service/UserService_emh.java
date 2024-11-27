@@ -21,6 +21,13 @@ public interface UserService_emh {
     void updateUserInfo(Long id, UserDTO userDTO);
 
     /**
+     * 내 주소 수정
+     * @param id
+     * @param userDTO
+     */
+    void updateUserAddr(Long id, UserDTO userDTO);
+
+    /**
      * 내 프로필 수정
      */
     void updateUserImg(Long id, String fileUrl);
