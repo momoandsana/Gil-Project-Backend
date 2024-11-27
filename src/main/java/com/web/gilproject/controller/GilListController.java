@@ -35,11 +35,6 @@ public class GilListController {
 
         Page<PostResDTO> listPost = gilListService.findByMyPosition(nowY, nowX, PageRequest.of(page, size), userId);
 
-        //검색 결과가 없을 때 예외 처리
-        if (listPost.getTotalElements() == 0) {
-            throw new GilListException(GilListErrorCode.NOTFOUND_LIST);
-        }
-
         return new ResponseEntity<>(listPost, HttpStatus.OK);
     }
     /**
@@ -52,11 +47,6 @@ public class GilListController {
         Long userId = userDetails.getId();
 
         Page<PostResDTO> listPost = gilListService.findByNearAddr(PageRequest.of(page, size), userId);
-
-        //검색 결과가 없을 때 예외 처리
-        if (listPost.getTotalElements() == 0) {
-            throw new GilListException(GilListErrorCode.NOTFOUND_LIST);
-        }
 
         return new ResponseEntity<>(listPost, HttpStatus.OK);
     }
@@ -73,11 +63,6 @@ public class GilListController {
 
         Page<PostResDTO> listPost = gilListService.findByNickName(nickName, PageRequest.of(page, size), userId);
 
-        //검색 결과가 없을 때 예외 처리
-        if (listPost.getTotalElements() == 0) {
-            throw new GilListException(GilListErrorCode.NOTFOUND_LIST);
-        }
-
         return new ResponseEntity<>(listPost, HttpStatus.OK);
     }
 
@@ -93,11 +78,6 @@ public class GilListController {
 
         Page<PostResDTO> listPost = gilListService.findMyGilList(PageRequest.of(page, size), userId);
 
-        //검색 결과가 없을 때 예외 처리
-        if (listPost.getTotalElements() == 0) {
-            throw new GilListException(GilListErrorCode.NOTFOUND_LIST);
-        }
-
         return new ResponseEntity<>(listPost, HttpStatus.OK);
     }
 
@@ -112,11 +92,6 @@ public class GilListController {
         Long userId = userDetails.getId();
 
         Page<PostResDTO> listPost = gilListService.findMyFav(PageRequest.of(page, size), userId);
-
-        //검색 결과가 없을 때 예외 처리
-        if (listPost.getTotalElements() == 0) {
-            throw new GilListException(GilListErrorCode.NOTFOUND_LIST);
-        }
 
         return new ResponseEntity<>(listPost, HttpStatus.OK);
     }
@@ -155,11 +130,6 @@ public class GilListController {
 
         Page<PostResDTO> listPost = gilListService.findByKeyword(keyword, PageRequest.of(page, size), userId);
 
-        //검색 결과가 없을 때 예외 처리
-        if (listPost.getTotalElements() == 0) {
-            throw new GilListException(GilListErrorCode.NOTFOUND_LIST);
-        }
-
         return new ResponseEntity<>(listPost, HttpStatus.OK);
     }
 
@@ -173,11 +143,6 @@ public class GilListController {
         Long userId = userDetails.getId();
 
         Page<PostResDTO> listPost = gilListService.findByTag(tag, PageRequest.of(page, size), userId);
-
-        //검색 결과가 없을 때 예외 처리
-        if (listPost.getTotalElements() == 0) {
-            throw new GilListException(GilListErrorCode.NOTFOUND_LIST);
-        }
 
         return new ResponseEntity<>(listPost, HttpStatus.OK);
     }
