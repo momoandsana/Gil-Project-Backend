@@ -1,10 +1,8 @@
 package com.web.gilproject.domain;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import net.minidev.json.annotate.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -13,6 +11,8 @@ import java.time.LocalDateTime;
 @Setter
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Notification { //알림
 
     @Id
@@ -29,5 +29,6 @@ public class Notification { //알림
     @CreationTimestamp
     private LocalDateTime date; //알림 발생 날짜
 
-    private Integer state; //상태(읽음 확인)
+    private Integer state; //상태(읽음 확인) - 0:안읽음, 1:읽음
+
 }
