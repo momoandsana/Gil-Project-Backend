@@ -4,6 +4,7 @@ package com.web.gilproject.service;
 import com.web.gilproject.domain.User;
 import com.web.gilproject.dto.UserDTO;
 import com.web.gilproject.dto.UserSimpleResDTO;
+import com.web.gilproject.repository.GilListRepository;
 import com.web.gilproject.repository.UserRepository_emh;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,20 +18,30 @@ public class UserServiceImpl_emh implements UserService_emh{
 
     private final UserRepository_emh userRepository;
     private final PathService pathService;
-    private final BoardService boardService;
+    private final GilListRepository gilListRepository;
     private final SubscribeService subscribeService;
+
 
     @Transactional(readOnly = true)
     @Override
     //내 정보 조회
-    public UserDTO findUserById(Long id) {
-        log.info("findUserById : id = " +id);
-
-        //id가 null이면 비회원으로 보여주기? or Error페이지?
-
-        User dbUser = userRepository.findById(id).orElse(null);
+    public UserDTO findUserById(Long userId) {
+        log.info("findUserById : userId = " +userId);
+        User userEntity = userRepository.findById(userId).orElse(null);
         //log.info("dbUser = " + dbUser); //이거 풀면 쿼리를 모두 가져옴(비효율적)
-        UserDTO userDTO = new UserDTO(dbUser); //Entity -> DTO변환
+        UserDTO userDTO = new UserDTO(userEntity); //Entity -> DTO변환
+
+        //내가 쓴 글 개수
+        Long postCount = gilListRepository.countByUserId(userId);
+        userDTO.setPostCount(postCount.intValue());
+
+        //따라걷기한 경로 개수
+        Integer pathCount = pathService.findPathByUserId(userId).size();
+        userDTO.setPathCount(pathCount);
+
+        //날 구독한 유저 수
+        Integer subscriberCount = subscribeService.findSubscriberByUserId(userId).size();
+        userDTO.setSubscribeByCount(subscriberCount);
 
         return userDTO;
     }
@@ -70,16 +81,16 @@ public class UserServiceImpl_emh implements UserService_emh{
         UserSimpleResDTO userSimpleResDTO = new UserSimpleResDTO(userEntity);
 
         // 내가 쓴 글 개수 추출
-        Integer boardCounts = boardService.getAllPathsById(id).size();
-        userSimpleResDTO.setPostCounts(boardCounts);
+        Long postCount = gilListRepository.countByUserId(id);
+        userSimpleResDTO.setPostCount(postCount.intValue());
 
-        // 따라걷기한 경로 개수 추출 (현재는 path, 나중에 따라걷기로 바꿔야함)
+        // 따라걷기한 경로 개수 (현재는 path, 나중에 따라걷기로 바꿔야함)
         Integer pathCounts = pathService.findPathByUserId(id).size();
-        userSimpleResDTO.setPathCounts(pathCounts);
+        userSimpleResDTO.setPathCount(pathCounts);
 
-        //내가 구독한 유저 수 추출
-        Integer subscribesCounts = subscribeService.findAllByUserId(id).size();
-        userSimpleResDTO.setSubscriptionCounts(subscribesCounts);
+        //날 구독한 유저 수
+        Integer subscriberCounts = subscribeService.findSubscriberByUserId(id).size();
+        userSimpleResDTO.setSubscribeByCount(subscriberCounts);
 
 
         log.info(userSimpleResDTO.toString());

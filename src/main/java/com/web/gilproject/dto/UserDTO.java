@@ -11,7 +11,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@ToString(of = {"id","name","nickName","imageUrl", "password", "email", "comment"})
+@ToString(of = {"id","name","nickName","imageUrl", "email", "comment","point","postCount","pathCount","subscribeByCount"})
 public class UserDTO {
 
     private Long id;
@@ -28,15 +28,9 @@ public class UserDTO {
     private LocalDateTime joinDate;
     private LocalDateTime updateDate;
     private Integer point;
-    private Integer state;
-    private Set<Post> posts;
-    private Set<Path> paths;
-    private Set<PostLike> postLikes;
-    private Set<Subscribe> subscriptions;
-    private Set<Subscribe> subscribeBy;
-    private Set<Notification> notifications;
-    private Set<PostWishlist> postWishLists;
-    private Set<ReplyLike> replyLikes;
+    private Integer postCount; //내가 쓴 글
+    private Integer pathCount; //따라걷기 개수
+    private Integer subscribeByCount; //나를 구독한 유저 수
 
     public UserDTO(User user) {
         this.id = user.getId();
@@ -53,6 +47,5 @@ public class UserDTO {
         this.joinDate = user.getJoinDate();
         this.updateDate = user.getUpdateDate();
         this.point = user.getPoint();
-        this.state = user.getState();
     }
 }

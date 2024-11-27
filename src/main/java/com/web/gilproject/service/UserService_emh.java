@@ -7,10 +7,10 @@ public interface UserService_emh {
 
     /**
      * 내 정보 조회
-     * @param id
+     * @param userId
      * @return (User정보, Path정보, Post정보, Subscribe정보, Wishlist정보)
      */
-    UserDTO findUserById(Long id);
+    UserDTO findUserById(Long userId);
 
 
     /**

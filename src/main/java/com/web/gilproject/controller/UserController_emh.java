@@ -35,10 +35,9 @@ public class UserController_emh {
      */
     @GetMapping("/mypage")
     public ResponseEntity<?> findUserById(Authentication authentication) {
-        log.info("findUserById 메소드 call..");
         CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
         Long userId = customUserDetails.getId();
-        log.info("userId = " + userId);
+        log.info("findUserById...userId = " + userId);
         UserDTO userDTO = userService.findUserById(userId);
         log.info("userDTO = " + userDTO);
         return new ResponseEntity<>(userDTO, HttpStatus.OK);
@@ -55,7 +54,7 @@ public class UserController_emh {
         Long userId = customUserDetails.getId();
         log.info("updateUser 메소드 call.... userId = {}, userDTO = {}",userId ,userDTO);
         userService.updateUserInfo(userId, userDTO);
-        return "redirect:/user/mypage/"+userId;
+        return "redirect:/user/mypage/";
     }
     
 
@@ -76,7 +75,7 @@ public class UserController_emh {
         } catch (IOException e) {
             return "파일 업로드 실패";
         }
-        return "redirect:/user/mypage/"+userId;
+        return "redirect:/user/mypage/";
     }
 
     /**
@@ -88,7 +87,7 @@ public class UserController_emh {
         Long userId = customUserDetails.getId();
         log.info("updateUserAddress : userId={} userDTO = {}", userId, userDTO);
         userService.updateUserInfo(userId, userDTO);
-        return "redirect:/user/mypage/"+userId;
+        return "redirect:/user/mypage/";
     }
 
 
