@@ -82,12 +82,12 @@ public class UserController_emh {
      * 내 주소 수정 (주소API로 집 주소, 집 위도, 집 경도 받아서 내용 수정)
      */
     @PutMapping("/mypage/address")
-    public String updateUserAddress(Authentication authentication, @RequestBody UserDTO userDTO){
+    public void updateUserAddress(Authentication authentication, @RequestBody UserDTO userDTO){
         CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
         Long userId = customUserDetails.getId();
         log.info("updateUserAddress : userId={} userDTO = {}", userId, userDTO);
-        userService.updateUserInfo(userId, userDTO);
-        return "redirect:/user/mypage/";
+        userService.updateUserAddr(userId, userDTO);
+//        return "redirect:/user/mypage/";
     }
 
 

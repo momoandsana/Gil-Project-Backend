@@ -71,7 +71,11 @@ public class UserServiceImpl_emh implements UserService_emh{
 
         User userEntity = userRepository.findById(id).orElse(null);
         //주소 변경 ★API로 받아온 값 저장 필요
-        userEntity.setAddress(userDTO.getAddress());
+        if(userEntity != null){
+            userEntity.setAddress(userDTO.getAddress());
+            userEntity.setLongitude(userDTO.getLongitude());
+            userEntity.setLatitude(userDTO.getLatitude());
+        }
     }
 
     @Transactional
