@@ -70,7 +70,8 @@ public class BoardController {
      * @throws IOException-> 나중에 수정하기
      */
     @PostMapping
-    public ResponseEntity<Void> createPost(Authentication authentication, PostRequestDTO postRequestDTO) throws IOException {
+    public ResponseEntity<Void> createPost(Authentication authentication, PostRequestDTO postRequestDTO)
+    {
         CustomUserDetails customMemberDetails = (CustomUserDetails) authentication.getPrincipal();
         Long userId = customMemberDetails.getId();
         boardService.createPost(userId, postRequestDTO);

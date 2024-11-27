@@ -52,7 +52,7 @@ public class ReissueService {
 
         //새로운 access 토큰 발급해주기
         String newAccessToken = jwtUtil.createJwt("access", customUserDetails, 1000 * 60 * 15L); //15분
-        //새로운 refresh 토큰 발급해주기
+        //새로운 refresh 토큰 발급해주기(refresh rotate)
         String newRefreshToken = jwtUtil.createJwt("refresh", customUserDetails, 1000 * 60 * 60 * 24 * 90L); //90일
 
         //기존 refresh DB에서 삭제
@@ -84,6 +84,12 @@ public class ReissueService {
             jwtUtil.isExpired(refresh);
         } catch (ExpiredJwtException e) {
             System.out.println("refresh 토큰이 만료됐습니다");
+            
+            //DB에서 있으면 삭제
+            if(refreshRepository.existsByRefreshToken(refresh)) {
+                refreshRepository.deleteByRefreshToken(refresh);
+            }
+            
             return new ResponseEntity<>("refresh token expired", HttpStatus.BAD_REQUEST); //400
         }
 //        System.out.println("refresh 토큰이 만료되지않았습니다!");
