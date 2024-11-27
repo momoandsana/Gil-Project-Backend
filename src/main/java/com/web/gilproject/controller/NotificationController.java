@@ -43,13 +43,14 @@ public class NotificationController {
     * */
 
 
-    @GetMapping(value = "/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @GetMapping(value = "/subscribe/{userId}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public ResponseEntity<SseEmitter> subscribe(
-            Authentication authentication,
+            //Authentication authentication,
+            @PathVariable Long userId,
             @RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId){
         log.info("Sse 세션 연결");
-        CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
-        Long userId = customUserDetails.getId();
+        //CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
+        //Long userId = customUserDetails.getId();
         return ResponseEntity.ok(notificationService.subscribe(userId, lastEventId));
     }
 
@@ -61,22 +62,25 @@ public class NotificationController {
 //        notificationService.broadcast(userId, eventPayload);
 //    }
 
-    @PostMapping("/send-data")
-    public void sendData(Authentication authentication){
+    @PostMapping("/send-data/{userId}")
+    public void sendData(
+            //Authentication authentication
+            @PathVariable Long userId
+    ){
         log.info("이벤트를 구독 중인 클라이언트에게 데이터를 전송한다.");
-        CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
-        Long userId = customUserDetails.getId();
+        //CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
+        //Long userId = customUserDetails.getId();
         notificationService.notify(userId,"data");
 
     }
 
       //테스트용
-//    @PostMapping("/send-post/{postId}")
-//    public void sendPost(@PathVariable Long postId){
-//        log.info("클라이언트에게 글알림");
-//        notificationService.notifyComment(postId); //글 작성자에게 댓글 알림
-//
-//    }
+    @PostMapping("/send-post/{postId}")
+    public void sendPost(@PathVariable Long postId){
+        log.info("클라이언트에게 글알림");
+        notificationService.notifyComment(postId); //글 작성자에게 댓글 알림
+
+    }
 
     //알림 삭제?
 }
