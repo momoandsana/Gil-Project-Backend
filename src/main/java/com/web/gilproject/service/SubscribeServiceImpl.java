@@ -22,10 +22,10 @@ public class SubscribeServiceImpl implements SubscribeService {
 
     @Transactional
     @Override
-    public List<Subscribe> findAllByUserId(Long userId) {
+    public List<Subscribe> findSubscriberByUserId(Long userId) {
         log.info("userId = " + userId);
         User user = userRepository.findById(userId).orElse(null);
-        List<Subscribe> subscriptions = subscribeRepository.findByUserId(user);
+        List<Subscribe> subscriptions = subscribeRepository.findAllBySubscribeUserId(user);
         log.info("subscriptions = " + subscriptions);
         return subscriptions;
     }

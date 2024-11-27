@@ -78,4 +78,7 @@ public interface GilListRepository extends JpaRepository<Post, Long> {
      * */
     @Query("select p from Post p left join p.postLikes pl left join p.replies r where p.id = :postId and p.state=0 group by p.id order by size(pl) desc")
     Page<Post> findById(@Param("postId") Long postId, Pageable pageable);
+
+    Long countByUserId(Long userId);
+
 }

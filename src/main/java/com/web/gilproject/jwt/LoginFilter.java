@@ -56,6 +56,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String accessToken = jwtUtil.createJwt("access", customUserDetails, 1000 * 60 * 15L); //15분
 //        String accessToken = jwtUtil.createJwt("access", customUserDetails, 1000 * 5L); //5초
         String refreshToken = jwtUtil.createJwt("refresh", customUserDetails, 1000 * 60 * 60 * 24 * 90L); //90일
+//        String refreshToken = jwtUtil.createJwt("refresh", customUserDetails, 1000 * 10L); //10초
 
         Boolean isExist = refreshRepository.existsByRefreshToken(refreshToken);
         //리프레시 토큰이 DB에 없을경우 리프레시 토큰 DB에 저장

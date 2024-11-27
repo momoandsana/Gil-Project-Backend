@@ -35,10 +35,9 @@ public class UserController_emh {
      */
     @GetMapping("/mypage")
     public ResponseEntity<?> findUserById(Authentication authentication) {
-        log.info("findUserById 메소드 call..");
         CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
         Long userId = customUserDetails.getId();
-        log.info("userId = " + userId);
+        log.info("findUserById...userId = " + userId);
         UserDTO userDTO = userService.findUserById(userId);
         log.info("userDTO = " + userDTO);
         return new ResponseEntity<>(userDTO, HttpStatus.OK);
@@ -55,7 +54,7 @@ public class UserController_emh {
         Long userId = customUserDetails.getId();
         log.info("updateUser 메소드 call.... userId = {}, userDTO = {}",userId ,userDTO);
         userService.updateUserInfo(userId, userDTO);
-        return "redirect:/user/mypage/"+userId;
+        return "redirect:/user/mypage/";
     }
     
 
@@ -76,7 +75,7 @@ public class UserController_emh {
         } catch (IOException e) {
             return "파일 업로드 실패";
         }
-        return "redirect:/user/mypage/"+userId;
+        return "redirect:/user/mypage/";
     }
 
     /**
@@ -88,7 +87,7 @@ public class UserController_emh {
         Long userId = customUserDetails.getId();
         log.info("updateUserAddress : userId={} userDTO = {}", userId, userDTO);
         userService.updateUserInfo(userId, userDTO);
-        return "redirect:/user/mypage/"+userId;
+        return "redirect:/user/mypage/";
     }
 
 
@@ -113,12 +112,11 @@ public class UserController_emh {
      * 프로필 눌렀을 때 다른 유저에게 보이는 내 정보 조회
      * (프로필 이미지, 닉네임, 자기소개글, 내가 쓴 글 개수, 구독자 수, 따라걷기 수)
      */
-    @GetMapping("/simpleInfo")
-    public ResponseEntity<?> findSimpleInfoById(Authentication authentication){
-        CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
-        Long userId = customUserDetails.getId();
-        log.info("userId={}", userId);
+    @GetMapping("/simpleInfo/{userId}")
+    public ResponseEntity<?> findSimpleInfoById(@PathVariable Long userId){
+        log.info("findSimpleInfoById...userId={}", userId);
         UserSimpleResDTO userSimpleResDTO = userService.findSimpleInfoById(userId);
         return new ResponseEntity<>(userSimpleResDTO, HttpStatus.OK);
     }
+
 }

@@ -49,14 +49,14 @@ public class TokenController {
 
         //새로운 access 토큰 발급해주기
         String accessToken = jwtUtil.createJwt("access", customUserDetails, 1000 * 60 * 15L); //15분
-        String newRefreshToken = jwtUtil.createJwt("refresh", customUserDetails, 1000 * 60 * 60 * 24 * 90L); //90일
+//        String newRefreshToken = jwtUtil.createJwt("refresh", customUserDetails, 1000 * 60 * 60 * 24 * 90L); //90일
         
         //DB 저장
-        JWTUtil.addRefreshEntity(refreshRepository, id,newRefreshToken,1000 * 60 * 60 * 24 * 90L);
+//        JWTUtil.addRefreshEntity(refreshRepository, id,newRefreshToken,1000 * 60 * 60 * 24 * 90L);
 
-        response.setHeader("abc", "Bearer " + accessToken);
-        response.addCookie(JWTUtil.createCookie("refresh", newRefreshToken));
-        System.out.println("access 토큰이 헤더를 통해 발급, refresh 토큰은 쿠키를 통해 재발급되었습니다");
+        response.setHeader("oauth2access", "Bearer " + accessToken);
+//        response.addCookie(JWTUtil.createCookie("refresh", newRefreshToken));
+        System.out.println("access 토큰이 헤더를 통해 발급되었습니다");
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

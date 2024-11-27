@@ -7,13 +7,14 @@ import java.time.LocalDateTime;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record ReplyDTO(
-    Long replyId,
-    String content,
-    String nickName,
-    String userImageUrl,
-    LocalDateTime replyDate,
-    Long likesCount,
-    Boolean isLiked
+        Long replyUserId,
+        Long replyId,
+        String content,
+        String nickName,
+        String userImageUrl,
+        LocalDateTime replyDate,
+        Long likesCount,
+        Boolean isLiked
 ) {
     public static ReplyDTO from(Reply reply,Long userId) {
         boolean isLiked=reply.getReplyLikes()
@@ -21,6 +22,7 @@ public record ReplyDTO(
                 .anyMatch(like->like.getUser().getId().equals(userId));
 
         return new ReplyDTO(
+                reply.getUser().getId(),
                 reply.getId(),
                 reply.getContent(),
                 reply.getUser().getNickName(),

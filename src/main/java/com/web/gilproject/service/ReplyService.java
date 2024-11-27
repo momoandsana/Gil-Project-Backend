@@ -6,6 +6,8 @@ import com.web.gilproject.domain.ReplyLike;
 import com.web.gilproject.domain.User;
 import com.web.gilproject.dto.ReplyDTO.ReplyDTO;
 import com.web.gilproject.dto.ReplyDTO.ReplyPostRequestDTO;
+import com.web.gilproject.exception.BoardErrorCode;
+import com.web.gilproject.exception.BoardException;
 import com.web.gilproject.repository.BoardRepository;
 import com.web.gilproject.repository.ReplyLikeRepository;
 import com.web.gilproject.repository.ReplyRepository;
@@ -27,8 +29,9 @@ public class ReplyService {
 
     @Transactional(readOnly = true)
     public List<ReplyDTO> getRepliesByPostId(Long postId,Long userId) {
-        Post post=boardRepository.findById(postId).orElseThrow(()->new RuntimeException("No post found"));
+        Post post=boardRepository.findById(postId).orElseThrow(()->new BoardException(BoardErrorCode.POST_NOT_FOUND));
         List<Reply>replyEntities=replyRepository.findByPost(post);
+
         return replyEntities.stream()
                 .map(reply->ReplyDTO.from(reply,userId))
                 .toList();
@@ -36,8 +39,8 @@ public class ReplyService {
 
     @Transactional
     public ReplyDTO createReply(Long postId, ReplyPostRequestDTO replyPostRequestDTO, Long userId) {
-        Post post=boardRepository.findById(postId).orElseThrow(()->new RuntimeException("No post found"));
-        User user=userRepository.findById(userId).orElseThrow(()->new RuntimeException("No user found"));
+        Post post=boardRepository.findById(postId).orElseThrow(()->new BoardException(BoardErrorCode.POST_NOT_FOUND));
+        User user=userRepository.findById(userId).orElseThrow(()->new BoardException(BoardErrorCode.USER_NOT_FOUND));
         Reply reply=replyRepository.save(
                 Reply.of(replyPostRequestDTO.content(),user,post)
         );
@@ -49,14 +52,14 @@ public class ReplyService {
     @Transactional
     public void deleteReply(Long postId, Long replyId, Long userId)
     {
-        Post postEntity=boardRepository.findById(postId).orElseThrow(()->new RuntimeException("No post found"));
+        Post postEntity=boardRepository.findById(postId).orElseThrow(()->new BoardException(BoardErrorCode.POST_NOT_FOUND));
 
-        Reply replyEntity=replyRepository.findById(replyId).orElseThrow(()->new RuntimeException("No reply found"));
+        Reply replyEntity=replyRepository.findById(replyId).orElseThrow(()->new BoardException(BoardErrorCode.REPLY_NOT_FOUND));
 
         // 본인이 작성한 댓글 아니면 삭제 불가능
         if(!replyEntity.getUser().getId().equals(userId))
         {
-            throw new RuntimeException("Not allowed user");
+            throw new BoardException(BoardErrorCode.USER_NOT_ALLOWED);
         }
 
         replyRepository.delete(replyEntity);
@@ -68,8 +71,8 @@ public class ReplyService {
 
     @Transactional
     public void toggleLike(Long replyId, Long userId) {
-        User userEntity=userRepository.findById(userId).orElseThrow(()->new RuntimeException("No user found"));
-        Reply replyEntity=replyRepository.findById(replyId).orElseThrow(()->new RuntimeException("No reply found"));
+        User userEntity=userRepository.findById(userId).orElseThrow(()->new BoardException(BoardErrorCode.USER_NOT_FOUND));
+        Reply replyEntity=replyRepository.findById(replyId).orElseThrow(()->new BoardException(BoardErrorCode.REPLY_NOT_FOUND));
         Optional<ReplyLike> replyLike=replyLikeRepository.findByUserAndReply(userEntity,replyEntity);
 
         if(replyLike.isPresent())
