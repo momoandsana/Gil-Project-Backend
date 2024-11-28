@@ -6,7 +6,6 @@ import com.web.gilproject.dto.NotificationResDTO;
 import com.web.gilproject.repository.BoardRepository;
 import com.web.gilproject.repository.NotificationRepository;
 import com.web.gilproject.repository.ReplyRepository;
-import com.web.gilproject.repository.UserRepository_emh;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,10 +29,9 @@ public class NotificationServiceImpl implements NotificationService {
     private final BoardRepository boardRepository;
     private final ReplyRepository replyRepository;
     private final NotificationRepository notificationRepository;
-    private final UserRepository_emh userRepository;
 
 
-    //클라이언트가 구독을 위해 호출하는 메소드
+    //클라이언트가 실시간 알림을 받기위해 호출하는 메소드 (구독이라고 표현함)
     @Override
     @Transactional
     public SseEmitter subscribe(Long userId) {
@@ -41,7 +39,7 @@ public class NotificationServiceImpl implements NotificationService {
 
         //1. 현재 클라이언트를 위한 sseEmitter 객체 생성해서
         log.info("사용자 아이디를 기반으로 이벤트 Emiiter를 생성");
-        SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);  //Long.MAX_VALUE(연결 최대한 오래 유지 위해)
+        SseEmitter emitter = new SseEmitter(30*60*1000L); // 권장하는 30분으로 설정(기본은 30초임)
         
         //2. map에 사용자 ID로 Emitter 저장
         emitters.put(userId, emitter);
@@ -53,19 +51,20 @@ public class NotificationServiceImpl implements NotificationService {
         //초기 연결 메세지 전송
         sendToClient(userId, "connection", "SSE 연결 성공", "초기 연결 메세지");
 
-        //미확인 알림 전송
-        List<Notification> unreadNotificationList = this.getUnreadNotifications(userId);
+        //내 알림 목록 전송
+        List<Notification> myNotificationList = this.getNotificationsByUserId(userId);
         List<NotificationResDTO> notificationResDTOList = new ArrayList<>();
 
-        unreadNotificationList.forEach(notification -> { //Entity -> DTO
+        myNotificationList.forEach(notification -> { //Entity -> DTO
             NotificationResDTO notificationResDTO = new NotificationResDTO(notification);
             notificationResDTOList.add(notificationResDTO);
         });
-        sendToClient(userId, "unread_notifications", notificationResDTOList, "미 확인 알림 전송");
+        sendToClient(userId, "myNotifications", notificationResDTOList, "내 알림 목록");
 
+        //4. 연결 종료 및 제거 리스너  (상황별 emitter 삭제 처리) -
 
-        //4. 연결 종료 및 제거 리스너  (상황별 emitter 삭제 처리)
-         //Emitter가 완료될 때 (모든 데이터가 성공적으로 전송된 상태) Emitter를 삭제한다
+        //Emitter가 완료될 때 (모든 데이터가 성공적으로 전송된 상태) Emitter를 삭제한다
+        //이 메소드는 단순히 현재 연결의 리소스 정리하는 역할. 연결이 끊어지면 클라이언트 측에서 자동재연결 매커니즘 제공함
         emitter.onCompletion(()->{
             log.info("Emitter가 완료될 때 (모든 데이터가 성공적으로 전송된 상태)");
             emitters.remove(userId);
@@ -85,10 +84,8 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
 
-
-    //클라이언트에게 데이터를 전송
     // 서버의 이벤트를 클라이언트에게 보내는 메소드
-    // 다른 서비스 로직에서 이 메소드를 사용해 데이터를 Object event에 넣고 전송하면 된다.
+    // 다른 서비스 로직에서 이 메소드를 사용해 이벤트를 전송하면 된다.
     @Override
     @Transactional
     public void sendToClient(Long userId, String name, Object data, String comment) {
@@ -124,9 +121,9 @@ public class NotificationServiceImpl implements NotificationService {
         User user = receivedReply.getPost().getUser();
         Long userId = user.getId();
 
-        //user:알림 받는 사람, content:댓글 내용, state: 읽지않음
+        //user:알림 받는 사람, content:댓글 내용
         Notification notification =
-                Notification.builder().user(user).content(receivedReply.getContent()).state(0).build();
+                Notification.builder().user(user).content(receivedReply.getContent()).build();
 
         //DB에 알림 내용 저장
         Notification dbNotification = notificationRepository.save(notification);
@@ -143,6 +140,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     //게시글 알림 - 게시글 작성자를 구독한 유저들에게
     @Override
+    @Transactional
     public void notifyPost(Long postId) {
         log.info("게시글 알림주러 가쟈~~ postId = {}", postId);
         
@@ -156,9 +154,9 @@ public class NotificationServiceImpl implements NotificationService {
             User subscriber = subscribe.getUserId(); //알림 받을 유저 정보(=구독자)
             Long subscriberId = subscriber.getId();
 
-            //user:알림 받는 사람, content:게시글 제목, state: 읽지않음
+            //user:알림 받는 사람, content:게시글 제목
             Notification notification =
-                    Notification.builder().user(subscriber).content(post.getTitle()).state(0).build();
+                    Notification.builder().user(subscriber).content(post.getTitle()).build();
 
             //DB에 알림 내용 저장
             Notification dbNotification = notificationRepository.save(notification);
@@ -171,19 +169,15 @@ public class NotificationServiceImpl implements NotificationService {
                 sendToClient(subscriberId,"PostNotify", notificationResDTO, post.getUser().getNickName()+" 님의 새 게시글이 등록되었어요!");
             }
         });
-        
-        
-
     }
 
-    
-    //사용자의 미확인 알림 조회
+    //사용자의 알림 리스트 조회
     @Override
     @Transactional(readOnly = true)
-    public List<Notification> getUnreadNotifications(Long userId) {
-        return notificationRepository.findByUserIdAndState(userId, 0);
+    public List<Notification> getNotificationsByUserId(Long userId) {
+        return notificationRepository.findByUserIdOrderByDateDesc(userId);
     }
-    
+
     //알림 읽음 처리
     @Override
     @Transactional

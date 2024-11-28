@@ -25,11 +25,11 @@ public interface NotificationService {
     void sendToClient(Long userId, String name, Object data, String comment);
 
     /**
-     * 사용자의 미확인 알림 조회
+     * 사용자의 알림 목록 조회
      * @param userId
      * @return
      */
-    List<Notification> getUnreadNotifications(Long userId);
+    List<Notification> getNotificationsByUserId(Long userId);
 
     /**
      * 댓글 알림 - 게시글 작성자에게
