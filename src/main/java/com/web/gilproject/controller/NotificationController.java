@@ -1,17 +1,13 @@
 package com.web.gilproject.controller;
 
-import com.web.gilproject.domain.Notification;
 import com.web.gilproject.dto.CustomUserDetails;
-import com.web.gilproject.dto.IntergrateUserDetails;
 import com.web.gilproject.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.annotations.Parameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -40,39 +36,54 @@ public class NotificationController {
     * */
 
 
-    // 1. 연결
-    @GetMapping(value = "/subscribe/{userId}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    // 연결 (알림 받을 준비) - 로그인되면 호출 필요
+    @GetMapping(value = "/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public ResponseEntity<SseEmitter> subscribe(
-            //Authentication authentication
-            @PathVariable Long userId
+            Authentication authentication
              ){
         log.info("Sse 세션 연결");
-        //CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
-        //Long userId = customUserDetails.getId();
+        CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
+        Long userId = customUserDetails.getId();
         SseEmitter emitter = notificationService.subscribe(userId);
         return new ResponseEntity<>(emitter, HttpStatus.OK);
     }
 
 
-    //테스트용(댓글알림)
-    @PostMapping("/send-post/{postId}")
-    public void sendPost(@PathVariable Long postId){
-        log.info("클라이언트에게 글알림");
+    //테스트용(댓글알림) - 실제 호출은 ReplyService의 createReply 메소드에서 진행
+    @PostMapping("/commentNotify/{postId}")
+    public void notifyComment(@PathVariable Long postId){
+        log.info("클라이언트에게 댓글 알림");
         notificationService.notifyComment(postId); //글 작성자에게 댓글 알림
 
     }
 
+    //테스트용(게시글 알림) - 실제 호출은 BoardService의 createPost 메소드애서 진행
+    @PostMapping("/postNotify/{postId}")
+    public void notifyPost(@PathVariable Long postId){
+        log.info("구독한 유저들에게 게시글 알림");
+        notificationService.notifyPost(postId);
+    }
+
 
     //알림 읽음 처리
-    @PostMapping("/read")
-    public ResponseEntity<?> markNotificationAsRead(Authentication authentication, Long NotificationId){
+    @PostMapping("/read/{notificationId}")
+    public ResponseEntity<?> markNotificationAsRead(Authentication authentication, @PathVariable Long notificationId){
         CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
         Long userId = customUserDetails.getId();
-        notificationService.markNotificationAsRead(userId, NotificationId);
+        log.info("markNotificationAsRead userId={}, notificationId={}", userId, notificationId);
+        notificationService.markNotificationAsRead(userId, notificationId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
 
-    //알림 삭제?
+    //알림 삭제
+    @DeleteMapping("/{notificationId}")
+    public ResponseEntity<?> deleteNotification(Authentication authentication, @PathVariable Long notificationId){
+        CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
+        Long userId = customUserDetails.getId();
+        log.info("deleteNotification userId={}, notificationId={}", userId, notificationId);
+        notificationService.deleteNotification(userId, notificationId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
 }

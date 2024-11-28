@@ -17,28 +17,12 @@ public interface NotificationService {
     SseEmitter subscribe(Long userId);
 
     /**
-     * 서버의 이벤트를 클라이언트에게 보내는 메소드
-     * 다른 서비스 로직에서 이 메소드를 사용해 데이터를 Object event에 넣고 전송하면 된다.
-     *
-     * @param userId - 메세지를 전송할 사용자의 아이디
-     * @param event  - 전송할 이벤트 객체
-     */
-    void notify(Long userId, Object event);
-
-
-    /**
      * 클라이언트에게 데이터를 전송
      *
      * @param userId - 데이터를 받을 사용자의 아이디
      * @param data   - 전송할 데이터
      */
     void sendToClient(Long userId, String name, Object data, String comment);
-
-    /**
-     * 댓글 알림 - 게시글 작성자에게
-     * @param postId
-     */
-    void notifyComment(Long postId);
 
     /**
      * 사용자의 미확인 알림 조회
@@ -48,11 +32,28 @@ public interface NotificationService {
     List<Notification> getUnreadNotifications(Long userId);
 
     /**
+     * 댓글 알림 - 게시글 작성자에게
+     * @param replyId
+     */
+    void notifyComment(Long replyId);
+
+    /**
+     * 게시글 알림 - 게시글 작성한 유저를 구독한 사람들에게
+     * @param postId
+     */
+    void notifyPost(Long postId);
+
+    /**
      * 알림 읽음 처리
      * @param userId
      * @param notificationId
      */
     void markNotificationAsRead(Long userId, Long notificationId);
 
+    /**
+     * 알림 삭제
+     * @param notificationId
+     */
+    void deleteNotification(Long userId, Long notificationId);
 
 }

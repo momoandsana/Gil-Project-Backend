@@ -19,7 +19,6 @@ import java.util.List;
 public class ReplyController {
     private final ReplyService replyService;
     private final BoardService boardService;
-    private final NotificationService notificationService;
 
     /**
      * 해당 게시글의 댓글 목록 가지고 오기
@@ -51,9 +50,6 @@ public class ReplyController {
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         Long userId=customUserDetails.getId();
         ReplyDTO replyDTO=replyService.createReply(postId,replyPostRequestDTO,userId);
-
-        //글 작성자에게 댓글 알림
-        notificationService.notifyComment(postId);
 
         return ResponseEntity.ok().build();
         /*

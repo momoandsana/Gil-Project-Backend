@@ -12,7 +12,5 @@ public interface ReplyRepository extends JpaRepository<Reply, Long> {
 
     List<Reply> findByUser(User user);
 
-    //해당 게시글의 가장 최근 댓글 조회(알림 기능에서 사용)
-    Reply findFirstByPostIdOrderByWriteDateDesc(Long postId);
 
 }
