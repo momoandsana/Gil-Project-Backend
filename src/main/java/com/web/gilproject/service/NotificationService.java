@@ -22,7 +22,7 @@ public interface NotificationService {
      * @param userId - 데이터를 받을 사용자의 아이디
      * @param data   - 전송할 데이터
      */
-    void sendToClient(Long userId, String name, Object data, String comment);
+    void sendToClient(Long userId, String name, String comment, Object data);
 
     /**
      * 사용자의 알림 목록 조회

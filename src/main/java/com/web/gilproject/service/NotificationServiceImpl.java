@@ -49,7 +49,7 @@ public class NotificationServiceImpl implements NotificationService {
         // sse연결이 이뤄진 후 하나의 데이터도 전송되지 않고 SseEmitter의 유효시간이 끝나면 503응답(Service Unavailable) 발생
 
         //초기 연결 메세지 전송
-        sendToClient(userId, "connection", "SSE 연결 성공", "초기 연결 메세지");
+        sendToClient(userId, "connection", "초기 연결 메세지","SSE 연결 성공");
 
         //내 알림 목록 전송
         List<Notification> myNotificationList = this.getNotificationsByUserId(userId);
@@ -59,7 +59,7 @@ public class NotificationServiceImpl implements NotificationService {
             NotificationResDTO notificationResDTO = new NotificationResDTO(notification);
             notificationResDTOList.add(notificationResDTO);
         });
-        sendToClient(userId, "myNotifications", notificationResDTOList, "내 알림 목록");
+        sendToClient(userId, "myNotifications","내 알림 목록", notificationResDTOList);
 
         //4. 연결 종료 및 제거 리스너  (상황별 emitter 삭제 처리) -
 
@@ -88,7 +88,7 @@ public class NotificationServiceImpl implements NotificationService {
     // 다른 서비스 로직에서 이 메소드를 사용해 이벤트를 전송하면 된다.
     @Override
     @Transactional
-    public void sendToClient(Long userId, String name, Object data, String comment) {
+    public void sendToClient(Long userId, String name, String comment, Object data) {
         log.info("클라이언트에게 데이터를 전송 userId={}, name={}, comment={}, data={}", userId, name, comment, data);
 
         //★이벤트 종류를 파악해서 보내는 데이터를 다르게하면 되겠다!
@@ -121,9 +121,15 @@ public class NotificationServiceImpl implements NotificationService {
         User user = receivedReply.getPost().getUser();
         Long userId = user.getId();
 
-        //user:알림 받는 사람, content:댓글 내용
+        //user:알림 받는 사람, type: 알림 타입, postId: 클릭시 링크위한 게시글 번호, content:댓글 내용
         Notification notification =
-                Notification.builder().user(user).content(receivedReply.getContent()).build();
+                Notification.builder()
+                        .user(user)
+                        .type("COMMENT_NOTIFY")
+                        .post(receivedReply.getPost())
+                        .content(receivedReply.getContent())
+                        .state(0)
+                        .build();
 
         //DB에 알림 내용 저장
         Notification dbNotification = notificationRepository.save(notification);
@@ -133,7 +139,7 @@ public class NotificationServiceImpl implements NotificationService {
 
             //알림 보내기(실시간 알림)
             NotificationResDTO notificationResDTO = new NotificationResDTO(dbNotification); //Entity->DTO
-            sendToClient(userId, "CommentNotify", notificationResDTO, "게시글에 댓글이 달렸어요!");
+            sendToClient(userId, "댓글 알림", "게시글에 댓글이 달렸어요!", notificationResDTO);
        }
     }
 
@@ -156,7 +162,13 @@ public class NotificationServiceImpl implements NotificationService {
 
             //user:알림 받는 사람, content:게시글 제목
             Notification notification =
-                    Notification.builder().user(subscriber).content(post.getTitle()).build();
+                    Notification.builder()
+                            .type("POST_NOTIFY")
+                            .user(subscriber)
+                            .post(post)
+                            .content(post.getTitle())
+                            .state(0)
+                            .build();
 
             //DB에 알림 내용 저장
             Notification dbNotification = notificationRepository.save(notification);
@@ -166,7 +178,7 @@ public class NotificationServiceImpl implements NotificationService {
 
                 //알림 보내기(실시간 알림)
                 NotificationResDTO notificationResDTO = new NotificationResDTO(dbNotification); //Entity->DTO
-                sendToClient(subscriberId,"PostNotify", notificationResDTO, post.getUser().getNickName()+" 님의 새 게시글이 등록되었어요!");
+                sendToClient(subscriberId,"게시글 알림","새 게시글이 등록되었어요!", notificationResDTO);
             }
         });
     }

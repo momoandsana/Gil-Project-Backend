@@ -13,7 +13,9 @@ import java.time.LocalDateTime;
 public class NotificationResDTO {
 
     private Long id;
+    private String type;
     private Long userId;
+    private Long postId;
     private String userImageUrl;
     private String content;
     private LocalDateTime date;
@@ -21,7 +23,9 @@ public class NotificationResDTO {
 
     public NotificationResDTO(Notification notification) {
         this.id = notification.getId();
+        this.type = notification.getType();
         this.userId = notification.getUser().getId();
+        this.postId = notification.getPost().getId();
         this.userImageUrl = notification.getUser().getImageUrl();
         this.content = notification.getContent();
         this.date = notification.getDate();

@@ -66,7 +66,7 @@ public class NotificationController {
 
 
     //알림 읽음 처리
-    @PostMapping("/read/{notificationId}")
+    @PutMapping("/read/{notificationId}")
     public ResponseEntity<?> markNotificationAsRead(Authentication authentication, @PathVariable Long notificationId){
         CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
         Long userId = customUserDetails.getId();
