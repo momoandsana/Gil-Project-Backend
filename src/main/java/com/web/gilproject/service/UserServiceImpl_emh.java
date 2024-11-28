@@ -69,13 +69,15 @@ public class UserServiceImpl_emh implements UserService_emh{
     public void updateUserAddr(Long id, UserDTO userDTO) {
         log.info("updateUserAddr : id = {}, userDTO = {}" ,id ,userDTO);
 
-        User userEntity = userRepository.findById(id).orElse(null);
-        //주소 변경 ★API로 받아온 값 저장 필요
-        if(userEntity != null){
-            userEntity.setAddress(userDTO.getAddress());
-            userEntity.setLongitude(userDTO.getLongitude());
-            userEntity.setLatitude(userDTO.getLatitude());
-        }
+//        User userEntity = userRepository.findById(id).orElse(null);
+//        //주소 변경 ★API로 받아온 값 저장 필요
+//        if(userEntity != null){
+//            userEntity.setAddress(userDTO.getAddress());
+//            userEntity.setLongitude(userDTO.getLongitude());
+//            userEntity.setLatitude(userDTO.getLatitude());
+//        }
+
+         userRepository.updateUserAddress(id,userDTO.getAddress(),userDTO.getLongitude(),userDTO.getLatitude());
     }
 
     @Transactional
