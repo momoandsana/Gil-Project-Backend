@@ -73,7 +73,7 @@ public class ElasticsearchService {
                                     .multiMatch(mm -> mm
                                             .query(searchText)   // 검색어
                                             .fields(fields)     // 검색할 필드 목록
-                                            .fuzziness("2") // 유사도 설정
+                                            .fuzziness("1") // 유사도 설정
                                     )
                             ),
                     Map.class
