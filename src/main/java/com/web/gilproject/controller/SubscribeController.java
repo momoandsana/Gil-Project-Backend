@@ -18,6 +18,7 @@ public class SubscribeController {
 
     private final SubscribeService subscribeService;
 
+    //구독 추가
     @PostMapping("/{subscribeUserId}")
     public ResponseEntity<?> createSubscribe(Authentication authentication, @PathVariable Long subscribeUserId) {
         CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
@@ -27,6 +28,7 @@ public class SubscribeController {
         return new ResponseEntity<>(re, HttpStatus.OK);
     }
 
+    //구독 해지
     @DeleteMapping("/{subscribeUserId}")
     public ResponseEntity<?> deleteSubscribe(Authentication authentication, @PathVariable Long subscribeUserId) {
         CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();

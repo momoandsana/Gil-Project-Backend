@@ -1,5 +1,6 @@
 package com.web.gilproject.controller;
 
+import com.web.gilproject.domain.Subscribe;
 import com.web.gilproject.dto.CustomUserDetails;
 import com.web.gilproject.dto.PathResDTO;
 import com.web.gilproject.dto.PostDTO_YJ.PostResDTO;
@@ -22,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 @RequiredArgsConstructor
@@ -49,7 +51,7 @@ public class UserController_emh {
     }
 
     /**
-     * 프로필 눌렀을 때 다른 유저에게 보이는 내 정보 조회
+     * 간단 정보 조회 (프로필 눌렀을 때 다른 유저에게 보이는 내 프로필)
      * (프로필 이미지, 닉네임, 자기소개글, 내가 쓴 글 개수, 구독자 수, 따라걷기 수)
      */
     @GetMapping("/simpleInfo/{userId}")
@@ -134,7 +136,7 @@ public class UserController_emh {
      * 내가 작성한 산책길 글목록
      */
     @GetMapping("/mypage/myPost")
-    public ResponseEntity<?> findMyGilList(Integer page, Integer size, Authentication authentication){
+    public ResponseEntity<?> findGilListById(Integer page, Integer size, Authentication authentication){
 
         //현재 로그인 중인 유저의 Id를 찾아오기
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
@@ -147,7 +149,7 @@ public class UserController_emh {
      * 내가 찜한 산책길 글목록
      */
     @GetMapping("/mypage/postWishlist")
-    public ResponseEntity<?> findMyFav(Integer page, Integer size, Authentication authentication){
+    public ResponseEntity<?> findPostWishlistById(Integer page, Integer size, Authentication authentication){
 
         //현재 로그인 중인 유저의 Id를 찾아오기
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
@@ -162,8 +164,13 @@ public class UserController_emh {
     /**
      * 내가 구독한 유저
      */
+    @GetMapping("mypage/subscribe")
+    public ResponseEntity<?> findAllSubscribeByUserId(Authentication authentication){
+        CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
+        Long userId = customUserDetails.getId();
+        log.info("findSubscribeById call...userId = {}", userId);
+        List<UserSimpleResDTO> userSimpleResDTOList = userService.findAllSubscribeByUserId(userId);
+        return new ResponseEntity<>(userSimpleResDTOList, HttpStatus.OK);
+    }
 
-    /**
-     * 나의 포인트
-     */
 }
