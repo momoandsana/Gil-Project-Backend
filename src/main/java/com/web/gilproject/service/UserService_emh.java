@@ -12,18 +12,33 @@ public interface UserService_emh {
      */
     UserDTO findUserById(Long userId);
 
+    /**
+     * 내 프로필 이미지 수정
+     * @param id
+     * @param fileUrl
+     */
+    void updateUserImg(Long id, String fileUrl);
 
     /**
-     * 내 정보 수정
+     * 내 정보 수정 (닉네임, 이메일, 자기소개글)
      * @param id
      * @param userDTO
      */
     void updateUserInfo(Long id, UserDTO userDTO);
 
     /**
-     * 내 프로필 수정
+     * 비밀번호 변경
+     * @param id
+     * @param password
      */
-    void updateUserImg(Long id, String fileUrl);
+    void updateUserPassword(Long id, String password);
+
+    /**
+     * 내 주소 수정
+     * @param id
+     * @param userDTO
+     */
+    void updateUserAddr(Long id, UserDTO userDTO);
 
 
     /**

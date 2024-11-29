@@ -26,6 +26,7 @@ public class ReplyService {
     private final BoardRepository boardRepository;
     private final UserRepository_JHW userRepository;
     private final ReplyLikeRepository replyLikeRepository;
+    private final NotificationService notificationService;
 
     @Transactional(readOnly = true)
     public List<ReplyDTO> getRepliesByPostId(Long postId,Long userId) {
@@ -44,6 +45,9 @@ public class ReplyService {
         Reply reply=replyRepository.save(
                 Reply.of(replyPostRequestDTO.content(),user,post)
         );
+
+        //게시물 유저에게 댓글 알림
+        notificationService.notifyComment(reply.getId());
 
         post.setRepliesCount(post.getRepliesCount()+1);
         return ReplyDTO.from(reply,userId);
