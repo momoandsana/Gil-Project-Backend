@@ -35,6 +35,7 @@ public class BoardService {
     private final PostLikeRepository postLikeRepository;
     private final PathService pathService;
     private final ElasticsearchService elasticsearchService;
+    private final NotificationService notificationService;
 
     @Value("${aws.s3.bucketName}")
     private String bucketName;
@@ -74,7 +75,10 @@ public class BoardService {
                 .build();
 
 
-        boardRepository.save(post);// 게시글 저장
+        Post dbpost = boardRepository.save(post);// 게시글 저장
+        
+        //작성자를 구독한 유저들에게 새로운 글 알림
+        notificationService.notifyPost(dbpost.getId());
 
         List<String> imageUrls=new ArrayList<>();
 

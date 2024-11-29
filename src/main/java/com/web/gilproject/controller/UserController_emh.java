@@ -31,74 +31,86 @@ public class UserController_emh {
 
     /**
      * 내 정보 조회하기 : 마이페이지 누르면 보이는 정보 모두 조회
-     * (User정보, Path정보, Post정보, Subscribe정보, Wishlist정보)
+     * (User정보, pathCount, postCount, subscribeCount) - Wishlist정보??
      */
     @GetMapping("/mypage")
     public ResponseEntity<?> findUserById(Authentication authentication) {
         CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
         Long userId = customUserDetails.getId();
-        log.info("findUserById...userId = " + userId);
+        log.info("findUserById call...userId = " + userId);
         UserDTO userDTO = userService.findUserById(userId);
         log.info("userDTO = " + userDTO);
         return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }
 
     /**
-     * 내 정보 수정하기 (수정하기 or 뒤로가기 버튼 누르면)
-     * ※구현 내용 : 닉네임, 이메일, 자기소개글
-     * ※확인 필요 : 닉네임, 이메일, 비밀번호(닉네임-중복 확인 필요, 이메일-검증 필요, 비번-암호화필요)
-     */
-    @PutMapping("/mypage/update")
-    public String updateUser(Authentication authentication, @RequestBody UserDTO userDTO){
-        CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
-        Long userId = customUserDetails.getId();
-        log.info("updateUser 메소드 call.... userId = {}, userDTO = {}",userId ,userDTO);
-        userService.updateUserInfo(userId, userDTO);
-        return "redirect:/user/mypage/";
-    }
-    
-
-    /**
-     * 내 프로필 수정 (s3에 올라와 있는 파일 삭제도 구현 필요 - 추후 진행 예정)
+     * 내 프로필 이미지 수정 (s3에 올라와 있는 파일 삭제도 구현 필요 - 추후 진행 예정)
      */
     @PostMapping("/mypage/profile")
     public String updateUserProfile(Authentication authentication, @RequestParam("file") MultipartFile file){
         CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
         Long userId = customUserDetails.getId();
-        log.info("updateUserProfile : id={} file={} ", userId, file);
+        log.info("updateUserProfile call... id={} file={} ", userId, file);
         try {
             //s3에 파일 업로드하고
             String fileUrl = s3Service.uploadFileToFolder(file,"profile_images");
-            //업로드된 url받아서 DB에 저장(수정)
+            //업로드된 url받아서 DB에 저장(기존 파일 있으면 수정)
             userService.updateUserImg(userId, fileUrl);
-            //s3에 있는 파일 삭제도 필요한가?
+            //s3에 있는 기존 파일 삭제??
+
         } catch (IOException e) {
             return "파일 업로드 실패";
         }
-        return "redirect:/user/mypage/";
+        return "redirect:/user/mypage/"+userId;
+    }
+
+    /**
+     * 내 정보 수정하기 (수정하기 or 뒤로가기 버튼 누르면)
+     * ※구현 내용 : 닉네임, 이메일, 자기소개글
+     * ※확인 필요 : 닉네임, 이메일, 비밀번호(닉네임, 이메일-검증된 값 받아서 수정)
+     */
+    @PutMapping("/mypage/update")
+    public String updateUserInfo(Authentication authentication, @RequestBody UserDTO userDTO){
+        CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
+        Long userId = customUserDetails.getId();
+        log.info("updateUserInfo call.... userId = {}, userDTO = {}",userId ,userDTO);
+        userService.updateUserInfo(userId, userDTO);
+        return "redirect:/user/mypage/"+userId;
+    }
+
+    /**
+     *  비밀번호 변경 (암호화된 정보 받아서 DB에 update)
+     */
+    @PutMapping("/mypage/updatePwd")
+    public String updateUserPwd(Authentication authentication, @PathVariable String password){
+        CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
+        Long userId = customUserDetails.getId();
+        log.info("updateUserPwd call...userId = {}, password={}", userId, password);
+        userService.updateUserPassword(userId, password);
+        return "redirect:/user/mypage/"+userId;
     }
 
     /**
      * 내 주소 수정 (주소API로 집 주소, 집 위도, 집 경도 받아서 내용 수정)
      */
     @PutMapping("/mypage/address")
-    public void updateUserAddress(Authentication authentication, @RequestBody UserDTO userDTO){
+    public String updateUserAddress(Authentication authentication, @RequestBody UserDTO userDTO){
         CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
         Long userId = customUserDetails.getId();
-        log.info("updateUserAddress : userId={} userDTO = {}", userId, userDTO);
+        log.info("updateUserAddress call... userId={} userDTO = {}", userId, userDTO);
         userService.updateUserAddr(userId, userDTO);
-//        return "redirect:/user/mypage/";
+        return "redirect:/user/mypage/"+userId;
     }
 
 
     /**
-     * 내 경로 기록보기
+     * 내 경로 보러가기
      */
     @GetMapping("/mypage/mypath")
     public ResponseEntity<?> findPathById(Authentication authentication){
-        log.info("findPathById call..");
         CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
         Long userId = customUserDetails.getId();
+        log.info("findPathById call..userId={} ", userId);
         List<PathResDTO> pathResDTOList = pathService.findPathByUserIdTransform(userId);
         return new ResponseEntity<>(pathResDTOList, HttpStatus.OK);
     }
@@ -114,7 +126,7 @@ public class UserController_emh {
      */
     @GetMapping("/simpleInfo/{userId}")
     public ResponseEntity<?> findSimpleInfoById(@PathVariable Long userId){
-        log.info("findSimpleInfoById...userId={}", userId);
+        log.info("findSimpleInfoById call...userId={}", userId);
         UserSimpleResDTO userSimpleResDTO = userService.findSimpleInfoById(userId);
         return new ResponseEntity<>(userSimpleResDTO, HttpStatus.OK);
     }

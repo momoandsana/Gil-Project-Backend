@@ -14,23 +14,22 @@ import java.util.Set;
 @ToString(of = {"id","name","nickName","imageUrl", "email", "comment","point","postCount","pathCount","subscribeByCount"})
 public class UserDTO {
 
-    private Long id;
-    private Integer platform;
-    private String name;
-    private String nickName;
-    private String imageUrl;
-    private String password;
-    private String email;
-    private String comment;
-    private String address;
-    private Double latitude;
-    private Double longitude;
-    private LocalDateTime joinDate;
-    private LocalDateTime updateDate;
-    private Integer point;
-    private Integer postCount; //내가 쓴 글
-    private Integer pathCount; //따라걷기 개수
-    private Integer subscribeByCount; //나를 구독한 유저 수
+    private Long id;                   //회원번호
+    private Integer platform;          //로그인 플랫폼
+    private String name;               //회원 이름
+    private String nickName;           //닉네임
+    private String imageUrl;           //프로필 이미지
+    private String password;           //비밀번호
+    private String email;              //이메일
+    private String comment;            //자기소개글
+    private String address;            //집 주소
+    private Double latitude;           //집 주소 위도
+    private Double longitude;          //집 주소 경도
+    private LocalDateTime joinDate;    //가입일자
+    private Integer point;             //포인트
+    private Integer postCount;         //내가 쓴 글 개수
+    private Integer pathCount;         //따라걷기 개수
+    private Integer subscribeByCount;  //구독자 수(나를 구독한 유저 수)
 
     public UserDTO(User user) {
         this.id = user.getId();
@@ -45,7 +44,6 @@ public class UserDTO {
         this.latitude = user.getLatitude();
         this.longitude = user.getLongitude();
         this.joinDate = user.getJoinDate();
-        this.updateDate = user.getUpdateDate();
         this.point = user.getPoint();
     }
 }
