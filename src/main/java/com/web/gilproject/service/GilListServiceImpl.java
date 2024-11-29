@@ -66,21 +66,28 @@ public class GilListServiceImpl implements GilListService {
 
         //전체조회
         Page<Post> pagePostDTO = gilListRepository.findAllPostDTO(pageable);
+        System.out.println("pagePostDTO.getSize() = " + pagePostDTO.getSize());
 
-        //내 집주소로부터 반경 1km이내의 산책길 글목록만 남기기
-        List<Post> filteredPosts = pagePostDTO.getContent().stream()
-                .filter(post -> {
-                    Double startLat = post.getPath().getStartLat();
-                    Double startLong = post.getPath().getStartLong();
-                    Double difference = this.distance(homeLat, homeLong, startLat, startLong);
-                    return difference < 1.0;
-                })
-                .collect(Collectors.toList());
+//        //내 집주소로부터 반경 1km이내의 산책길 글목록만 남기기
+//        List<Post> filteredPosts = pagePostDTO.getContent().stream()
+//                .filter(post -> {
+//                    Double startLat = post.getPath().getStartLat();
+//                    Double startLong = post.getPath().getStartLong();
+//                    Double difference = this.distance(homeLat, homeLong, startLat, startLong);
+//                    return difference < 1.0;
+//                })
+//                .collect(Collectors.toList());
+//        System.out.println("filteredPosts = " + filteredPosts.size());
+//
+//        // 요청받은 페이지 정보에 맞게 슬라이싱
+//        int start = (int) pageable.getOffset(); // 시작 인덱스
+//        int end = Math.min(start + pageable.getPageSize(), filteredPosts.size()); // 종료 인덱스
+//        List<PostResDTO> pagedPosts = this.changeList(filteredPosts.subList(start, end), userId);
 
         return new PageImpl<>(
-                this.changeList(filteredPosts, userId),
+                this.changeList(pagePostDTO.getContent(), userId),
                 pageable,
-                filteredPosts.size()
+                pagePostDTO.getContent().size()
         );
     }
 
