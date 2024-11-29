@@ -126,6 +126,55 @@ public class PathService {
 
     }
 
+    public PathResDTO getOnePath(Long pathId) {
+        Path path = pathRepository.findById(pathId)
+                .orElseThrow(() -> new PathPinException(PathErrorCode.NOTFOUND_PATH));
+
+        PathResDTO pathDTO = new PathResDTO();
+        UserResDTO userDTO = new UserResDTO();
+
+        userDTO.setId(path.getUser().getId());
+        pathDTO.setUser(userDTO);
+
+        pathDTO.setId(path.getId());
+        pathDTO.setContent(path.getContent());
+        pathDTO.setState(path.getState());
+        pathDTO.setTitle(path.getTitle());
+        pathDTO.setTime(path.getTime());
+        pathDTO.setDistance(path.getDistance());
+        pathDTO.setCreateDate(path.getCreatedDate());
+        pathDTO.setStartLat(path.getStartLat());
+        pathDTO.setStartLong(path.getStartLong());
+        pathDTO.setStartAddr(path.getStartAddr());
+
+        pathDTO.setRouteCoordinates(
+                Arrays.stream(path.getRoute().getCoordinates())
+                        .map(coordinate -> {
+                            CoordinateResDTO coordDto = new CoordinateResDTO();
+                            coordDto.setLatitude(String.valueOf(coordinate.x));
+                            coordDto.setLongitude(String.valueOf(coordinate.y));
+                            return coordDto;
+                        }).collect(Collectors.toList())
+        );
+
+        pathDTO.setPins(
+                path.getPins() != null ?
+                        path.getPins().stream()
+                                .map(pin -> {
+                                    PinResDTO pinDTO = new PinResDTO();
+                                    pinDTO.setId(pin.getId());
+                                    pinDTO.setImageUrl(pin.getImageUrl());
+                                    pinDTO.setContent(pin.getContent());
+                                    pinDTO.setLatitude(pin.getLatitude());
+                                    pinDTO.setLongitude(pin.getLongitude());
+                                    return pinDTO;
+                                }).collect(Collectors.toList())
+                        : Collections.emptyList()
+        );
+
+        return pathDTO;
+    }
+
     //전체경로 내뱉기
     public List<PathResDTO> findPathAllTransform() {
 
