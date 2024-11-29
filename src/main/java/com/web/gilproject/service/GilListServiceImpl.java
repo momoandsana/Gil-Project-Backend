@@ -9,16 +9,13 @@ import com.web.gilproject.repository.UserRepository_YJ;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.parameters.P;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -37,11 +34,11 @@ public class GilListServiceImpl implements GilListService {
     @Transactional(readOnly = true)
     @Override
     public Page<PostResDTO> findByMyPosition(Double nowY, Double nowX, Pageable pageable, Long userId) {
-        //전체 조회
-        Page<Post> pagePostDTO = gilListRepository.findAllPostDTO(pageable);
+        // 전체 데이터 조회 후 List에 저장
+        List<Post> allPostsList = new ArrayList<>(gilListRepository.findAllPostDTO(Pageable.unpaged()).getContent());
 
-        //내 위치로부터 1km이내의 산책길 글목록만 남기기
-        List<Post> filteredPosts = pagePostDTO.getContent().stream()
+        // 내 위치로부터 1km 이내의 산책길 글목록만 필터링
+        List<Post> filteredPostsList = allPostsList.stream()
                 .filter(post -> {
                     Double startLat = post.getPath().getStartLat();
                     Double startLong = post.getPath().getStartLong();
@@ -50,7 +47,19 @@ public class GilListServiceImpl implements GilListService {
                 })
                 .collect(Collectors.toList());
 
-        return new PageImpl<>(this.changeList(filteredPosts, userId), pageable, filteredPosts.size());
+        //좋아요 많은 순으로 정렬
+        filteredPostsList.sort((p1, p2) -> Integer.compare(p2.getPostLikes().size(), p1.getPostLikes().size()));
+
+        // 전체 데이터 수 계산
+        long total = filteredPostsList.size();
+
+        // 페이징 처리: 현재 페이지 범위에 해당하는 데이터 슬라이싱
+        int start = (int) pageable.getOffset();
+        int end = Math.min(start + pageable.getPageSize(), filteredPostsList.size());
+        List<Post> pagedResult = filteredPostsList.subList(start, end);
+
+        // 반환
+        return new PageImpl<>(this.changeList(pagedResult, userId), pageable, total);
     }
 
     /**
@@ -64,31 +73,32 @@ public class GilListServiceImpl implements GilListService {
         Double homeLat = userRepository.findByUserId(userId).getLatitude(); //집주소 위도
         Double homeLong = userRepository.findByUserId(userId).getLongitude(); //집주소 경도
 
-        //전체조회
-        Page<Post> pagePostDTO = gilListRepository.findAllPostDTO(pageable);
-        System.out.println("pagePostDTO.getSize() = " + pagePostDTO.getSize());
+        // 전체 데이터 조회 후 List에 저장
+        List<Post> allPostsList = new ArrayList<>(gilListRepository.findAllPostDTO(Pageable.unpaged()).getContent());
 
-//        //내 집주소로부터 반경 1km이내의 산책길 글목록만 남기기
-//        List<Post> filteredPosts = pagePostDTO.getContent().stream()
-//                .filter(post -> {
-//                    Double startLat = post.getPath().getStartLat();
-//                    Double startLong = post.getPath().getStartLong();
-//                    Double difference = this.distance(homeLat, homeLong, startLat, startLong);
-//                    return difference < 1.0;
-//                })
-//                .collect(Collectors.toList());
-//        System.out.println("filteredPosts = " + filteredPosts.size());
-//
-//        // 요청받은 페이지 정보에 맞게 슬라이싱
-//        int start = (int) pageable.getOffset(); // 시작 인덱스
-//        int end = Math.min(start + pageable.getPageSize(), filteredPosts.size()); // 종료 인덱스
-//        List<PostResDTO> pagedPosts = this.changeList(filteredPosts.subList(start, end), userId);
+        //내 집주소로부터 반경 1km이내의 산책길 글목록만 남기기
+        List<Post> filteredPostsList = allPostsList.stream()
+                .filter(post -> {
+                    Double startLat = post.getPath().getStartLat();
+                    Double startLong = post.getPath().getStartLong();
+                    Double difference = this.distance(homeLat, homeLong, startLat, startLong);
+                    return difference < 1.0;
+                })
+                .collect(Collectors.toList());
 
-        return new PageImpl<>(
-                this.changeList(pagePostDTO.getContent(), userId),
-                pageable,
-                pagePostDTO.getContent().size()
-        );
+        //좋아요 많은 순으로 정렬
+        filteredPostsList.sort((p1, p2) -> Integer.compare(p2.getPostLikes().size(), p1.getPostLikes().size()));
+
+        // 전체 데이터 수 계산
+        long total = filteredPostsList.size();
+
+        // 페이징 처리: 현재 페이지 범위에 해당하는 데이터 슬라이싱
+        int start = (int) pageable.getOffset();
+        int end = Math.min(start + pageable.getPageSize(), filteredPostsList.size());
+        List<Post> pagedResult = filteredPostsList.subList(start, end);
+
+        // 반환
+        return new PageImpl<>(this.changeList(pagedResult, userId), pageable, total);
     }
 
     /**
@@ -135,21 +145,28 @@ public class GilListServiceImpl implements GilListService {
     @Override
     public Page<PostResDTO> findMyFav(Pageable pageable, Long userId) {
 
-        //전체 산책길 글목록 조회
-        Page<Post> pagePostDTO = gilListRepository.findAllPostDTO(pageable);
+        // 전체 산책길 글목록 조회 후 List에 저장
+        List<Post> allPostsList = new ArrayList<>(gilListRepository.findAllPostDTO(Pageable.unpaged()).getContent());
 
-        //해당 유저id가 찜한 목록만 조회
-        List<Post> listPostDTO = pagePostDTO.getContent().stream()
+        // 해당 유저 ID가 찜한 목록만 필터링
+        List<Post> filteredPostsList = allPostsList.stream()
                 .filter(post -> post.getPostWishLists().stream()
                         .anyMatch(postWishlist -> postWishlist.getUser().getId().equals(userId))) // 유저 ID가 있는지 확인
                 .collect(Collectors.toList());
 
-        return new PageImpl<>(
-                this.changeList(listPostDTO, userId),
-                pageable,
-                listPostDTO.size()
-        );
+        //좋아요 순 정렬
+        filteredPostsList.sort((p1, p2) -> Integer.compare(p2.getPostLikes().size(), p1.getPostLikes().size()));
 
+        // 전체 데이터 수 계산
+        long total = filteredPostsList.size();
+
+        // 페이징 처리: 현재 페이지 범위에 해당하는 데이터 슬라이싱
+        int start = (int) pageable.getOffset();
+        int end = Math.min(start + pageable.getPageSize(), filteredPostsList.size());
+        List<Post> pagedResult = filteredPostsList.subList(start, end);
+
+        // 반환
+        return new PageImpl<>(this.changeList(pagedResult, userId), pageable, total);
     }
 
     /**
@@ -158,38 +175,22 @@ public class GilListServiceImpl implements GilListService {
     @Transactional(readOnly = true)
     @Override
     public Page<PostResDTO> findByKeyword(String keyword, Pageable pageable, Long userId) {
-        /*
-        //키워드 검색(제목, 내용, 닉네임, 시작주소)
-        Page<Post> titleKeyword = gilListRepository.findByTitleContaining(keyword, pageable);
-        Page<Post> contentKeyword = gilListRepository.findByContentContaining(keyword, pageable);
-        Page<Post> nickNameKeyword = gilListRepository.findByNickNameContaining(keyword, pageable);
-        Page<Post> startAddrKeyword = gilListRepository.findByStartAddrContaining(keyword, pageable);
-
-        //중복제거
-        Set<Post> combinedSet = new HashSet<>();
-        combinedSet.addAll(titleKeyword.getContent());
-        combinedSet.addAll(contentKeyword.getContent());
-        combinedSet.addAll(nickNameKeyword.getContent());
-        combinedSet.addAll(startAddrKeyword.getContent());
-        */
-
-        Set<Post> combinedSet = new HashSet<>();
+        List<Post> searchList = new ArrayList<>();
 
         List<String> esRe = elasticsearchService.multiFieldSearch("post-index", keyword, List.of("title", "content", "startAddr", "nickName"));
         for(String postId:esRe){
-            combinedSet.addAll(gilListRepository.findById(Long.parseLong(postId), pageable).getContent());
+            searchList.addAll(gilListRepository.findById(Long.parseLong(postId), pageable).getContent());
         }
 
         //좋아요 많은 순으로 정렬
-        List<Post> combinedList = new ArrayList<>(combinedSet);
-        combinedList.sort((p1, p2) -> Integer.compare(p2.getPostLikes().size(), p1.getPostLikes().size()));
+        searchList.sort((p1, p2) -> Integer.compare(p2.getPostLikes().size(), p1.getPostLikes().size()));
         // 전체 데이터 수 계산
-        long total = combinedSet.size();
+        long total = searchList.size();
 
         // 페이징 처리: 현재 페이지 범위에 해당하는 데이터 슬라이싱
         int start = (int) pageable.getOffset();
-        int end = Math.min((start + pageable.getPageSize()), combinedList.size());
-        List<Post> pagedResult = combinedList.subList(start, end);
+        int end = Math.min((start + pageable.getPageSize()), searchList.size());
+        List<Post> pagedResult = searchList.subList(start, end);
 
         return new PageImpl<>(this.changeList(pagedResult, userId), pageable, total);
     }
