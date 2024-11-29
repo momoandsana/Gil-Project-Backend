@@ -37,13 +37,9 @@ public class NotificationController {
 
 
     // 연결 (알림 받을 준비) - 로그인되면 호출 필요
-    @GetMapping(value = "/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public ResponseEntity<SseEmitter> subscribe(
-            Authentication authentication
-             ){
+    @GetMapping(value = "/subscribe/{userId}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public ResponseEntity<SseEmitter> subscribe(@PathVariable Long userId) {
         log.info("Sse 세션 연결");
-        CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
-        Long userId = customUserDetails.getId();
         SseEmitter emitter = notificationService.subscribe(userId);
         return new ResponseEntity<>(emitter, HttpStatus.OK);
     }
