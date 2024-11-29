@@ -129,11 +129,14 @@ public class PathService {
     public PathResDTO getOnePath(Long pathId) {
         Path path = pathRepository.findById(pathId)
                 .orElseThrow(() -> new PathPinException(PathErrorCode.NOTFOUND_PATH));
-        UserResDTO userDTO = userRepository.findByPathId(pathId);
+
+        // User 엔티티를 가져와서 DTO로 변환
+        User user = userRepository.findByPathId(pathId);
+        UserResDTO userDTO = new UserResDTO();
+        userDTO.setId(user.getId());
+        // 필요한 다른 user 필드들도 설정
 
         PathResDTO pathDTO = new PathResDTO();
-
-        userDTO.setId(path.getUser().getId());
         pathDTO.setUser(userDTO);
 
         pathDTO.setId(path.getId());
@@ -146,6 +149,7 @@ public class PathService {
         pathDTO.setStartLat(path.getStartLat());
         pathDTO.setStartLong(path.getStartLong());
         pathDTO.setStartAddr(path.getStartAddr());
+
 
         pathDTO.setRouteCoordinates(
                 Arrays.stream(path.getRoute().getCoordinates())
