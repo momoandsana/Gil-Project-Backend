@@ -31,6 +31,23 @@ public class PointController {
 
     }
 
+    //현재 로그인된 유저 포인트 뿌려주기
+    @GetMapping("/point")
+    public ResponseEntity<Integer> PointController(Authentication authentication) {
+        CustomUserDetails customMemberDetails = (CustomUserDetails) authentication.getPrincipal();
+        Long userId = customMemberDetails.getId();
+        if(userId == null)
+        {
+            throw new MemberAuthenticationException(ErrorCode.NOTFOUND_USER);
+        }
+
+        int point =  pointService.getPoint(userId);
+
+        return ResponseEntity.ok(point);
+    }
+
+
+    //따라걷기 저장
     @GetMapping("/walkAlongs")
     public ResponseEntity<?> getWalkAlongLength(Authentication authentication) {
         CustomUserDetails customMemberDetails = (CustomUserDetails) authentication.getPrincipal();
