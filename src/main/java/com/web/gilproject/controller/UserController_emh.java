@@ -2,13 +2,17 @@ package com.web.gilproject.controller;
 
 import com.web.gilproject.dto.CustomUserDetails;
 import com.web.gilproject.dto.PathResDTO;
+import com.web.gilproject.dto.PostDTO_YJ.PostResDTO;
 import com.web.gilproject.dto.UserDTO;
 import com.web.gilproject.dto.UserSimpleResDTO;
 import com.web.gilproject.service.AmazonService;
+import com.web.gilproject.service.GilListService;
 import com.web.gilproject.service.PathService;
 import com.web.gilproject.service.UserService_emh;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -28,6 +32,7 @@ public class UserController_emh {
     private final UserService_emh userService;
     private final AmazonService s3Service;
     private final PathService pathService;
+    private final GilListService gilListService;
 
     /**
      * 내 정보 조회하기 : 마이페이지 누르면 보이는 정보 모두 조회
@@ -41,6 +46,17 @@ public class UserController_emh {
         UserDTO userDTO = userService.findUserById(userId);
         log.info("userDTO = " + userDTO);
         return new ResponseEntity<>(userDTO, HttpStatus.OK);
+    }
+
+    /**
+     * 프로필 눌렀을 때 다른 유저에게 보이는 내 정보 조회
+     * (프로필 이미지, 닉네임, 자기소개글, 내가 쓴 글 개수, 구독자 수, 따라걷기 수)
+     */
+    @GetMapping("/simpleInfo/{userId}")
+    public ResponseEntity<?> findSimpleInfoById(@PathVariable Long userId){
+        log.info("findSimpleInfoById call...userId={}", userId);
+        UserSimpleResDTO userSimpleResDTO = userService.findSimpleInfoById(userId);
+        return new ResponseEntity<>(userSimpleResDTO, HttpStatus.OK);
     }
 
     /**
@@ -102,11 +118,10 @@ public class UserController_emh {
         return "redirect:/user/mypage/"+userId;
     }
 
-
     /**
-     * 내 경로 보러가기
+     * 나의 경로 기록 
      */
-    @GetMapping("/mypage/mypath")
+    @GetMapping("/mypage/myPath")
     public ResponseEntity<?> findPathById(Authentication authentication){
         CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
         Long userId = customUserDetails.getId();
@@ -115,20 +130,40 @@ public class UserController_emh {
         return new ResponseEntity<>(pathResDTOList, HttpStatus.OK);
     }
 
-    /**
-     * 내 게시물 보기 (염진님이 구현해주실 예정)
+     /**
+     * 내가 작성한 산책길 글목록
      */
+    @GetMapping("/mypage/myPost")
+    public ResponseEntity<?> findMyGilList(Integer page, Integer size, Authentication authentication){
 
-
-    /**
-     * 프로필 눌렀을 때 다른 유저에게 보이는 내 정보 조회
-     * (프로필 이미지, 닉네임, 자기소개글, 내가 쓴 글 개수, 구독자 수, 따라걷기 수)
-     */
-    @GetMapping("/simpleInfo/{userId}")
-    public ResponseEntity<?> findSimpleInfoById(@PathVariable Long userId){
-        log.info("findSimpleInfoById call...userId={}", userId);
-        UserSimpleResDTO userSimpleResDTO = userService.findSimpleInfoById(userId);
-        return new ResponseEntity<>(userSimpleResDTO, HttpStatus.OK);
+        //현재 로그인 중인 유저의 Id를 찾아오기
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        Long userId = userDetails.getId();
+        Page<PostResDTO> listPost = gilListService.findMyGilList(PageRequest.of(page, size), userId);
+        return new ResponseEntity<>(listPost, HttpStatus.OK);
     }
 
+    /**
+     * 내가 찜한 산책길 글목록
+     */
+    @GetMapping("/mypage/postWishlist")
+    public ResponseEntity<?> findMyFav(Integer page, Integer size, Authentication authentication){
+
+        //현재 로그인 중인 유저의 Id를 찾아오기
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        Long userId = userDetails.getId();
+
+        Page<PostResDTO> listPost = gilListService.findMyFav(PageRequest.of(page, size), userId);
+
+        return new ResponseEntity<>(listPost, HttpStatus.OK);
+    }
+
+
+    /**
+     * 내가 구독한 유저
+     */
+
+    /**
+     * 나의 포인트
+     */
 }

@@ -8,6 +8,7 @@ import com.web.gilproject.repository.GilListRepository;
 import com.web.gilproject.repository.UserRepository_emh;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,8 @@ public class UserServiceImpl_emh implements UserService_emh{
     private final PathService pathService;
     private final GilListRepository gilListRepository;
     private final SubscribeService subscribeService;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
 
 
     @Transactional(readOnly = true)
@@ -87,7 +90,8 @@ public class UserServiceImpl_emh implements UserService_emh{
     //비밀번호 변경 (암호화된 비번 받아서 DB수정)
     public void updateUserPassword(Long userId, String password) {
         User userEntity = userRepository.findById(userId).orElse(null);
-        userEntity.setPassword(password);
+        String newPassword = bCryptPasswordEncoder.encode(password); //암호화
+        userEntity.setPassword(newPassword);
     }
 
 //    @Transactional

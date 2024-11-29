@@ -37,6 +37,7 @@ public class GilListController {
 
         return new ResponseEntity<>(listPost, HttpStatus.OK);
     }
+
     /**
      * 2. 내 주소 주변 산책길 글목록
      * */
@@ -67,37 +68,7 @@ public class GilListController {
     }
 
     /**
-     * 4. 내가 쓴 산책길 글목록
-     * */
-    @GetMapping("/myGilList")
-    public ResponseEntity<?> findMyGilList(Integer page, Integer size, Authentication authentication){
-
-        //현재 로그인 중인 유저의 Id를 찾아오기
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        Long userId = userDetails.getId();
-
-        Page<PostResDTO> listPost = gilListService.findMyGilList(PageRequest.of(page, size), userId);
-
-        return new ResponseEntity<>(listPost, HttpStatus.OK);
-    }
-
-    /**
-     * 5. 내가 찜한 산책길 글목록
-     * */
-    @GetMapping("/myFav")
-    public ResponseEntity<?> findMyFav(Integer page, Integer size, Authentication authentication){
-
-        //현재 로그인 중인 유저의 Id를 찾아오기
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        Long userId = userDetails.getId();
-
-        Page<PostResDTO> listPost = gilListService.findMyFav(PageRequest.of(page, size), userId);
-
-        return new ResponseEntity<>(listPost, HttpStatus.OK);
-    }
-
-    /**
-     * 6. 키워드 검색으로 글목록 조회하기
+     * 4. 키워드 검색으로 글목록 조회하기
      * */
     @GetMapping("/keyword")
     public ResponseEntity<?> findByKeyword(@RequestParam String keyword, Integer page, Integer size, Authentication authentication) {
@@ -134,7 +105,7 @@ public class GilListController {
     }
 
     /**
-     * 7. 태그 검색으로 글목록 조회하기
+     * 5. 태그 검색으로 글목록 조회하기
      * */
     @GetMapping("/tag")
     public ResponseEntity<?> findByTag(@RequestParam String tag, Integer page, Integer size, Authentication authentication) {
