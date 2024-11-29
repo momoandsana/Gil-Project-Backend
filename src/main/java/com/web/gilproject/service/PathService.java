@@ -68,9 +68,14 @@ public class PathService {
     //LineString변환 후 Controller로 넘기는 메소드
     public List<PathResDTO> findPathByUserIdTransform(Long userId) {
 
-        List<Path> list = pathRepository.findPathByUserId(userId); // JPQL에서 JOIN FETCH 사용
-        //System.out.println(list);
-        if(list != null && !list.isEmpty()) {
+
+        List<Path> list = pathRepository.findPathByUserId(userId);
+
+        if (list == null || list.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+
             return list.stream()
                     .map(path -> {
                         PathResDTO pathDTO = new PathResDTO();
@@ -118,10 +123,7 @@ public class PathService {
                         return pathDTO;
                     })
                     .collect(Collectors.toList());
-        }
-        else{
-            return Collections.emptyList();
-        }
+
     }
 
     //전체경로 내뱉기
