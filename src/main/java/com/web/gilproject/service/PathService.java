@@ -129,9 +129,9 @@ public class PathService {
     public PathResDTO getOnePath(Long pathId) {
         Path path = pathRepository.findById(pathId)
                 .orElseThrow(() -> new PathPinException(PathErrorCode.NOTFOUND_PATH));
+        UserResDTO userDTO = userRepository.findByPathId(pathId);
 
         PathResDTO pathDTO = new PathResDTO();
-        UserResDTO userDTO = new UserResDTO();
 
         userDTO.setId(path.getUser().getId());
         pathDTO.setUser(userDTO);
