@@ -22,4 +22,6 @@ public interface PathRepository extends JpaRepository<Path, Long>{
 
     @Query("SELECT  p FROM Path p LEFT JOIN FETCH p.pins WHERE p.state = 0")
      List<Path> findAllState();
+
+
 }

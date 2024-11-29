@@ -126,6 +126,59 @@ public class PathService {
 
     }
 
+    public PathResDTO getOnePath(Long pathId) {
+        Path path = pathRepository.findById(pathId)
+                .orElseThrow(() -> new PathPinException(PathErrorCode.NOTFOUND_PATH));
+
+        // User 엔티티를 가져와서 DTO로 변환
+        User user = userRepository.findByPathId(pathId);
+        UserResDTO userDTO = new UserResDTO();
+        userDTO.setId(user.getId());
+        // 필요한 다른 user 필드들도 설정
+
+        PathResDTO pathDTO = new PathResDTO();
+        pathDTO.setUser(userDTO);
+
+        pathDTO.setId(path.getId());
+        pathDTO.setContent(path.getContent());
+        pathDTO.setState(path.getState());
+        pathDTO.setTitle(path.getTitle());
+        pathDTO.setTime(path.getTime());
+        pathDTO.setDistance(path.getDistance());
+        pathDTO.setCreateDate(path.getCreatedDate());
+        pathDTO.setStartLat(path.getStartLat());
+        pathDTO.setStartLong(path.getStartLong());
+        pathDTO.setStartAddr(path.getStartAddr());
+
+
+        pathDTO.setRouteCoordinates(
+                Arrays.stream(path.getRoute().getCoordinates())
+                        .map(coordinate -> {
+                            CoordinateResDTO coordDto = new CoordinateResDTO();
+                            coordDto.setLatitude(String.valueOf(coordinate.x));
+                            coordDto.setLongitude(String.valueOf(coordinate.y));
+                            return coordDto;
+                        }).collect(Collectors.toList())
+        );
+
+        pathDTO.setPins(
+                path.getPins() != null ?
+                        path.getPins().stream()
+                                .map(pin -> {
+                                    PinResDTO pinDTO = new PinResDTO();
+                                    pinDTO.setId(pin.getId());
+                                    pinDTO.setImageUrl(pin.getImageUrl());
+                                    pinDTO.setContent(pin.getContent());
+                                    pinDTO.setLatitude(pin.getLatitude());
+                                    pinDTO.setLongitude(pin.getLongitude());
+                                    return pinDTO;
+                                }).collect(Collectors.toList())
+                        : Collections.emptyList()
+        );
+
+        return pathDTO;
+    }
+
     //전체경로 내뱉기
     public List<PathResDTO> findPathAllTransform() {
 

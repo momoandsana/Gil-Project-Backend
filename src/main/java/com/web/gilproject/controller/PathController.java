@@ -11,6 +11,7 @@ import com.web.gilproject.exception.PathPinException;
 import com.web.gilproject.service.AmazonService;
 import com.web.gilproject.service.PathService;
 import com.web.gilproject.service.PinService;
+import com.web.gilproject.service.PostWishlistServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -156,6 +157,14 @@ public class PathController {
         List<PathResDTO> pathResDTOList = pathService.findPathByUserIdTransform(userId);
 
         return ResponseEntity.ok(pathResDTOList);
+    }
+
+    //프론트에서 넘겨받은 pathId로 하나의 경로+핀 뿌리기
+    @GetMapping("/follow/{pathId}")
+    public ResponseEntity<?> getOnePath(@PathVariable Long pathId) {
+        PathResDTO pathResDTO = pathService.getOnePath(pathId);
+
+        return ResponseEntity.ok(pathResDTO);
     }
 
     //전체 경로+핀 뿌리기
