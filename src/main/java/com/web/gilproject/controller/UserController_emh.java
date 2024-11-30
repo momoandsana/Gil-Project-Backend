@@ -100,11 +100,14 @@ public class UserController_emh {
      *  비밀번호 변경 (암호화된 정보 받아서 DB에 update)
      */
     @PutMapping("/mypage/updatePwd")
-    public String updateUserPwd(Authentication authentication, @PathVariable String password){
+    public String updateUserPwd(Authentication authentication, @PathVariable String password, @PathVariable String newPassword){
         CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
         Long userId = customUserDetails.getId();
         log.info("updateUserPwd call...userId = {}, password={}", userId, password);
-        userService.updateUserPassword(userId, password);
+
+        if(!customUserDetails.getPassword().equals(password)) return "비밀번호가 일치하지 않습니다";
+
+        userService.updateUserPassword(userId, newPassword);
         return "redirect:/user/mypage/"+userId;
     }
 
