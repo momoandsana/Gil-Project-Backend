@@ -106,7 +106,7 @@ public class UserController_emh {
     /**
      * 내 경로 보러가기
      */
-    @GetMapping("/mypage/mypath")
+    @GetMapping("/mypage/myPath")
     public ResponseEntity<?> findPathById(Authentication authentication){
         CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
         Long userId = customUserDetails.getId();
