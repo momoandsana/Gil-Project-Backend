@@ -1,6 +1,7 @@
 package com.web.gilproject.service;
 
 
+import com.web.gilproject.domain.Subscribe;
 import com.web.gilproject.domain.User;
 import com.web.gilproject.dto.UserDTO;
 import com.web.gilproject.dto.UserSimpleResDTO;
@@ -8,8 +9,13 @@ import com.web.gilproject.repository.GilListRepository;
 import com.web.gilproject.repository.UserRepository_emh;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +26,7 @@ public class UserServiceImpl_emh implements UserService_emh{
     private final PathService pathService;
     private final GilListRepository gilListRepository;
     private final SubscribeService subscribeService;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
 
     @Transactional(readOnly = true)
@@ -39,11 +46,38 @@ public class UserServiceImpl_emh implements UserService_emh{
         userDTO.setPathCount(pathCount);
 
         //날 구독한 유저 수
-        Integer subscriberCount = subscribeService.findSubscriberByUserId(userId).size();
+        Integer subscriberCount = subscribeService.findSubscribeByUserId(userId).size();
         userDTO.setSubscribeByCount(subscriberCount);
 
         return userDTO;
     }
+
+    @Transactional
+    @Override
+    //내 정보 간단 조회 (프로필 이미지 눌렀을때 보이는 요약 버전)
+    public UserSimpleResDTO findSimpleInfoById(Long userId) {
+        log.info("findSimpleInfoById : userId = " + userId);
+        // user 정보 추출
+        User userEntity = userRepository.findById(userId).orElse(null);
+        UserSimpleResDTO userSimpleResDTO = new UserSimpleResDTO(userEntity);
+
+        // 내가 쓴 글 개수 추출
+        Long postCount = gilListRepository.countByUserId(userId);
+        userSimpleResDTO.setPostCount(postCount.intValue());
+
+        // 따라걷기한 경로 개수 (현재는 path, 나중에 따라걷기로 바꿔야함)
+        Integer pathCounts = pathService.findPathByUserId(userId).size();
+        userSimpleResDTO.setPathCount(pathCounts);
+
+        //날 구독한 유저 수
+        Integer subscriberCounts = subscribeService.findSubscribeByUserId(userId).size();
+        userSimpleResDTO.setSubscribeByCount(subscriberCounts);
+
+        log.info(userSimpleResDTO.toString());
+        return userSimpleResDTO;
+    }
+
+
     @Transactional
     @Override
     //내 주소 수정
@@ -87,7 +121,8 @@ public class UserServiceImpl_emh implements UserService_emh{
     //비밀번호 변경 (암호화된 비번 받아서 DB수정)
     public void updateUserPassword(Long userId, String password) {
         User userEntity = userRepository.findById(userId).orElse(null);
-        userEntity.setPassword(password);
+        String newPassword = bCryptPasswordEncoder.encode(password); //암호화
+        userEntity.setPassword(newPassword);
     }
 
 //    @Transactional
@@ -103,28 +138,29 @@ public class UserServiceImpl_emh implements UserService_emh{
 //        userEntity.setLongitude(userDTO.getLongitude());
 //    }
 
+    //나를 구독한 유저 목록 조회
     @Transactional
     @Override
-    //내 정보 간단 조회 (프로필 이미지 눌렀을때 보이는 요약 버전)
-    public UserSimpleResDTO findSimpleInfoById(Long userId) {
-        log.info("findSimpleInfoById : userId = " + userId);
-        // user 정보 추출
-        User userEntity = userRepository.findById(userId).orElse(null);
-        UserSimpleResDTO userSimpleResDTO = new UserSimpleResDTO(userEntity);
+    public List<UserSimpleResDTO> findAllSubscribeByUserId(Long userId) {
+        List<UserSimpleResDTO> userSimpleResDTOList = new ArrayList<>();
+        List<Subscribe> mySubscribeList = subscribeService.findMySubscribeByUserId(userId);
+        mySubscribeList.forEach(subscribe -> {
+            UserSimpleResDTO userSimpleResDTO = new UserSimpleResDTO(subscribe.getSubscribeUserId());
 
-        // 내가 쓴 글 개수 추출
-        Long postCount = gilListRepository.countByUserId(userId);
-        userSimpleResDTO.setPostCount(postCount.intValue());
+            // 내가 쓴 글 개수 추출
+            Long postCount = gilListRepository.countByUserId(userId);
+            userSimpleResDTO.setPostCount(postCount.intValue());
 
-        // 따라걷기한 경로 개수 (현재는 path, 나중에 따라걷기로 바꿔야함)
-        Integer pathCounts = pathService.findPathByUserId(userId).size();
-        userSimpleResDTO.setPathCount(pathCounts);
+            // 따라걷기한 경로 개수 (현재는 path, 나중에 따라걷기로 바꿔야함)
+            Integer pathCounts = pathService.findPathByUserId(userId).size();
+            userSimpleResDTO.setPathCount(pathCounts);
 
-        //날 구독한 유저 수
-        Integer subscriberCounts = subscribeService.findSubscriberByUserId(userId).size();
-        userSimpleResDTO.setSubscribeByCount(subscriberCounts);
+            //날 구독한 유저 수
+            Integer subscriberCounts = subscribeService.findSubscribeByUserId(userId).size();
+            userSimpleResDTO.setSubscribeByCount(subscriberCounts);
 
-        log.info(userSimpleResDTO.toString());
-        return userSimpleResDTO;
+            userSimpleResDTOList.add(userSimpleResDTO);
+        });
+        return userSimpleResDTOList;
     }
 }
