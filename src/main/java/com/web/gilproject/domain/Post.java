@@ -74,6 +74,11 @@ public class Post {
     @OneToMany(mappedBy = "post",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<PostImage> postImages=new HashSet<>();
 
+    // 삭제가 안 먹힘, post 와 notification 의 연관관계가 post 에서도 이어져야 한다
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private Set<Notification> notifications = new HashSet<>();
+
     public void addPostImage(PostImage postImage) {
         if (this.postImages == null) {
             this.postImages = new HashSet<>();
