@@ -14,7 +14,7 @@ public interface GilListRepository extends JpaRepository<Post, Long> {
     /**
      * 삭제되지 않은 전체 게시글 조회
      * */
-    @Query("select p  from Post p left join p.postLikes pl left join p.replies r where p.state = 0 group by (p.id ) order by size(pl) desc")
+    @Query("select p from Post p left join p.postLikes pl left join p.replies r where p.state = 0 group by p.id order by size(pl) desc")
     //List<PostDTO> findAllPostDTO();
     Page<Post> findAllPostDTO(Pageable pageable);
 
