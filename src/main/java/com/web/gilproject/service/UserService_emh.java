@@ -19,7 +19,7 @@ public interface UserService_emh {
      * 프로필 눌렀을 때 다른 유저에게 보이는 내 정보 조회
      * (프로필 이미지, 닉네임, 자기소개글, 내가 쓴 글 개수, 구독자 수, 따라걷기 수)
      */
-    UserSimpleResDTO findSimpleInfoById(Long id);
+    UserSimpleResDTO findSimpleInfoById(Long selectedUserId, Long userId);
 
     /**
      * 내 프로필 이미지 수정

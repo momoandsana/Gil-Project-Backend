@@ -55,10 +55,10 @@ public class UserServiceImpl_emh implements UserService_emh{
     @Transactional
     @Override
     //내 정보 간단 조회 (프로필 이미지 눌렀을때 보이는 요약 버전)
-    public UserSimpleResDTO findSimpleInfoById(Long userId) {
-        log.info("findSimpleInfoById : userId = " + userId);
+    public UserSimpleResDTO findSimpleInfoById(Long selectedUserId, Long userId) {
+
         // user 정보 추출
-        User userEntity = userRepository.findById(userId).orElse(null);
+        User userEntity = userRepository.findById(selectedUserId).orElse(null);
         UserSimpleResDTO userSimpleResDTO = new UserSimpleResDTO(userEntity);
 
         // 내가 쓴 글 개수 추출
@@ -70,8 +70,19 @@ public class UserServiceImpl_emh implements UserService_emh{
         userSimpleResDTO.setPathCount(pathCounts);
 
         //날 구독한 유저 수
-        Integer subscriberCounts = subscribeService.findSubscribeByUserId(userId).size();
+        List<Subscribe> subscribeList = subscribeService.findSubscribeByUserId(userId);
+        Integer subscriberCounts = subscribeList.size();
         userSimpleResDTO.setSubscribeByCount(subscriberCounts);
+
+        //조회한 유저가 나를 구독하고 있는지 여부
+        subscribeList.forEach(subscribe -> {
+            if(userId.equals(subscribe.getUserId())){
+                userSimpleResDTO.setIsSubscribed(1);
+            } else {
+                userSimpleResDTO.setIsSubscribed(0);
+            }
+
+        });
 
         log.info(userSimpleResDTO.toString());
         return userSimpleResDTO;
