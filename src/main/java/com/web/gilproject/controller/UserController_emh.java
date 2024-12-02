@@ -170,6 +170,7 @@ public class UserController_emh {
         Long userId = customUserDetails.getId();
         log.info("findSubscribeById call...userId = {}", userId);
         List<UserSimpleResDTO> userSimpleResDTOList = userService.findAllSubscribeByUserId(userId);
+        System.out.println("구독자리스트"+userSimpleResDTOList);
         return new ResponseEntity<>(userSimpleResDTOList, HttpStatus.OK);
     }
 
