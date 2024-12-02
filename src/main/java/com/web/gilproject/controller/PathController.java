@@ -48,8 +48,8 @@ public class PathController {
         Coordinate[] coordinates = new Coordinate[coordinateDtos.size()];
         for (int i = 0; i < coordinateDtos.size(); i++) {
             coordinates[i] = new Coordinate(
-                    Double.parseDouble(coordinateDtos.get(i).getLongitude()), // x = 경도
-                    Double.parseDouble(coordinateDtos.get(i).getLatitude())   // y = 위도
+                    Double.parseDouble(coordinateDtos.get(i).getLongitude()), // x = 위도 Latitude()
+                    Double.parseDouble(coordinateDtos.get(i).getLatitude())   // y = 경도 Longitude()
             );
         }
         return geometryFactory.createLineString(coordinates);

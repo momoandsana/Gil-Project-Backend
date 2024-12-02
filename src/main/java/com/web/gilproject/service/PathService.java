@@ -99,8 +99,8 @@ public class PathService {
                                 Arrays.stream(path.getRoute().getCoordinates())
                                         .map(coordinate -> {
                                             CoordinateResDTO coordDto = new CoordinateResDTO();
-                                            coordDto.setLatitude(String.valueOf(coordinate.x)); // 현재 y를 latitude로 설정
-                                            coordDto.setLongitude(String.valueOf(coordinate.y)); // 현재 x를 longitude로 설정
+                                            coordDto.setLatitude(String.valueOf(coordinate.y)); // 현재 y를 latitude로 설정
+                                            coordDto.setLongitude(String.valueOf(coordinate.x)); // 현재 x를 longitude로 설정
                                             return coordDto;
                                         }).collect(Collectors.toList())
                         );
@@ -155,8 +155,8 @@ public class PathService {
                 Arrays.stream(path.getRoute().getCoordinates())
                         .map(coordinate -> {
                             CoordinateResDTO coordDto = new CoordinateResDTO();
-                            coordDto.setLatitude(String.valueOf(coordinate.x));
-                            coordDto.setLongitude(String.valueOf(coordinate.y));
+                            coordDto.setLatitude(String.valueOf(coordinate.y));
+                            coordDto.setLongitude(String.valueOf(coordinate.x));
                             return coordDto;
                         }).collect(Collectors.toList())
         );
@@ -208,8 +208,8 @@ public class PathService {
                                 Arrays.stream(path.getRoute().getCoordinates())
                                         .map(coordinate -> {
                                             CoordinateResDTO coordDto = new CoordinateResDTO();
-                                            coordDto.setLatitude(String.valueOf(coordinate.x));
-                                            coordDto.setLongitude(String.valueOf(coordinate.y));
+                                            coordDto.setLatitude(String.valueOf(coordinate.y));
+                                            coordDto.setLongitude(String.valueOf(coordinate.x));
                                             return coordDto;
                                         }).collect(Collectors.toList())
                         );
@@ -265,8 +265,8 @@ public class PathService {
                 Arrays.stream(path.getRoute().getCoordinates())
                         .map(coordinate -> {
                             CoordinateResDTO coordDto = new CoordinateResDTO();
-                            coordDto.setLatitude(String.valueOf(coordinate.x)); // 위도
-                            coordDto.setLongitude(String.valueOf(coordinate.y)); // 경도
+                            coordDto.setLatitude(String.valueOf(coordinate.y)); // 위도
+                            coordDto.setLongitude(String.valueOf(coordinate.x)); // 경도
                             return coordDto;
                         }).collect(Collectors.toList())
         );
