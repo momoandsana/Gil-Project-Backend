@@ -74,6 +74,10 @@ public class Post {
     @OneToMany(mappedBy = "post",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<PostImage> postImages=new HashSet<>();
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private Set<Notification> notifications = new HashSet<>();
+
     public void addPostImage(PostImage postImage) {
         if (this.postImages == null) {
             this.postImages = new HashSet<>();

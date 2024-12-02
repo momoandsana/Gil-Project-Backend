@@ -68,6 +68,7 @@ public class SecurityConfig {
 
                         //허용할 주소
                         config.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+//                        config.setAllowedOriginPatterns(Collections.singletonList("https://gil-project-fe.vercel.app:*"));
                         //허용할 메소드
                         config.setAllowedMethods(Collections.singletonList("*"));
                         //프론트에서 credential 설정을 할 경우 마찬가지로 true
