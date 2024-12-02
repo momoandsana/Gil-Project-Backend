@@ -37,7 +37,7 @@ public interface UserRepository_JHW extends JpaRepository<User, Long> {
      * @param email
      * @return
      */
-    @Query("SELECT u FROM User u WHERE u.email = :email AND u.name= :name AND u.platform = 0 AND u.state=0")
+    @Query("SELECT u FROM User u WHERE u.email = :email AND u.name= :name AND u.platform = 0")
     User findByNameAndEmail(@Param("name") String name, @Param("email") String email);
 
     /**
@@ -45,7 +45,7 @@ public interface UserRepository_JHW extends JpaRepository<User, Long> {
      * @return
      */
     @Modifying
-    @Query("UPDATE User u set u.password= :password where u.name= :name and u.email =:email AND u.platform=0 AND u.state=0")
+    @Query("UPDATE User u set u.password= :password where u.name= :name and u.email =:email AND u.platform=0")
     int updateUserPassword(@Param("name") String name, @Param("email") String email, @Param("password") String password);
 
 
