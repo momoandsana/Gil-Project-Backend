@@ -69,7 +69,7 @@ public class UserController_emh {
      * 내 프로필 이미지 수정 (s3에 올라와 있는 파일 삭제도 구현 필요 - 추후 진행 예정)
      */
     @PostMapping("/mypage/profile")
-    public String updateUserProfile(Authentication authentication, @RequestParam("file") MultipartFile file){
+    public ResponseEntity<?> updateUserProfile(Authentication authentication, @RequestParam("file") MultipartFile file){
         CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
         Long userId = customUserDetails.getId();
         log.info("updateUserProfile call... id={} file={} ", userId, file);
@@ -81,9 +81,9 @@ public class UserController_emh {
             //s3에 있는 기존 파일 삭제??
 
         } catch (IOException e) {
-            return "파일 업로드 실패";
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(e.getMessage());
         }
-        return "redirect:/user/mypage/"+userId;
+        return ResponseEntity.ok("Success Update UserInfo");
     }
 
     /**
