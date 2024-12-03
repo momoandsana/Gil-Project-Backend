@@ -8,6 +8,7 @@ import com.web.gilproject.repository.GilListRepository;
 import com.web.gilproject.repository.UserRepository_YJ;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -175,24 +177,39 @@ public class GilListServiceImpl implements GilListService {
     @Transactional(readOnly = true)
     @Override
     public Page<PostResDTO> findByKeyword(String keyword, Pageable pageable, Long userId) {
-        List<Post> searchList = new ArrayList<>();
-
-        List<String> esRe = elasticsearchService.multiFieldSearch("post-index", keyword, List.of("title", "content", "startAddr", "nickName"));
-        for(String postId:esRe){
-            searchList.addAll(gilListRepository.findById(Long.parseLong(postId), pageable).getContent());
+        //검색 조건에 맞는 postId들 조회
+        List<String> postIds = elasticsearchService.multiFieldSearch(
+                "post-index",
+                keyword,
+                List.of("title", "content", "startAddr", "nickName")
+        );
+        if (postIds.isEmpty()) {
+            return new PageImpl<>(Collections.emptyList(), pageable, 0);
         }
 
-        //좋아요 많은 순으로 정렬
-        searchList.sort((p1, p2) -> Integer.compare(p2.getPostLikes().size(), p1.getPostLikes().size()));
-        // 전체 데이터 수 계산
-        long total = searchList.size();
-
-        // 페이징 처리: 현재 페이지 범위에 해당하는 데이터 슬라이싱
+        //현재 페이지에 해당하는 postId들만 처리
         int start = (int) pageable.getOffset();
-        int end = Math.min((start + pageable.getPageSize()), searchList.size());
-        List<Post> pagedResult = searchList.subList(start, end);
+        int end = Math.min(start + pageable.getPageSize(), postIds.size());
 
-        return new PageImpl<>(this.changeList(pagedResult, userId), pageable, total);
+        if (start >= postIds.size()) {
+            return new PageImpl<>(Collections.emptyList(), pageable, postIds.size());
+        }
+
+        List<String> pagedPostIds = postIds.subList(start, end);
+
+        // 현재 페이지의 postId들로 Post 조회
+        List<Post> pagePosts = new ArrayList<>();
+        for (String postId : pagedPostIds) {
+            Page<Post> postPage = gilListRepository.findById(Long.parseLong(postId), PageRequest.of(0, 1));
+            if (!postPage.isEmpty()) {
+                pagePosts.addAll(postPage.getContent());
+            }
+        }
+        pagePosts.sort((p1, p2) -> Integer.compare(p2.getPostLikes().size(), p1.getPostLikes().size()));
+
+        List<PostResDTO> postResDTOs = this.changeList(pagePosts, userId);
+
+        return new PageImpl<>(postResDTOs, pageable, postIds.size());
     }
 
     /**

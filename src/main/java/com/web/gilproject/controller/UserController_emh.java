@@ -54,10 +54,14 @@ public class UserController_emh {
      * 간단 정보 조회 (프로필 눌렀을 때 다른 유저에게 보이는 내 프로필)
      * (프로필 이미지, 닉네임, 자기소개글, 내가 쓴 글 개수, 구독자 수, 따라걷기 수)
      */
-    @GetMapping("/simpleInfo/{userId}")
-    public ResponseEntity<?> findSimpleInfoById(@PathVariable Long userId){
-        log.info("findSimpleInfoById call...userId={}", userId);
-        UserSimpleResDTO userSimpleResDTO = userService.findSimpleInfoById(userId);
+    @GetMapping("/simpleInfo/{selectedUserId}")
+    public ResponseEntity<?> findSimpleInfoById(Authentication authentication, @PathVariable Long selectedUserId){
+        CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
+        Long userId = customUserDetails.getId();
+        log.info("findSimpleInfoById call...userId = {}, selectedUserId = {}", userId, selectedUserId);
+
+        UserSimpleResDTO userSimpleResDTO = userService.findSimpleInfoById(userId, selectedUserId);
+        log.info(userSimpleResDTO.toString());
         return new ResponseEntity<>(userSimpleResDTO, HttpStatus.OK);
     }
 

@@ -198,6 +198,10 @@ public class BoardService {
     @Transactional
     public void updatePost(Long postId, Long userId, PostPatchRequestDTO postPatchRequestDTO)
     {
+        //기존 엘라스틱서치 인덱싱 제거
+        String re = elasticsearchService.deleteDocument("post-index", ""+postId);
+        System.out.println("re = " + re);
+
         Post postEntity=boardRepository.findById(postId).orElseThrow(()->new BoardException(BoardErrorCode.POST_NOT_FOUND));
         User userEntity=userRepository.findById(userId).orElseThrow(()->new BoardException(BoardErrorCode.USER_NOT_FOUND));
 
@@ -270,7 +274,11 @@ public class BoardService {
         }
 
         boardRepository.save(postEntity);
-
+        //엘라스틱서치 인덱싱 추가
+        re = elasticsearchService.indexDocument(
+                "post-index", ""+postId, Map.of("title", postEntity.getTitle(), "content", postEntity.getContent(), "startAddr", postEntity.getPath().getStartAddr(), "nickName", postEntity.getUser().getNickName())
+        );
+        System.out.println("re = " + re);
     }
 
 

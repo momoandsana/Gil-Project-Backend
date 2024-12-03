@@ -23,7 +23,7 @@ import java.util.Set;
 public class UserServiceImpl_emh implements UserService_emh{
 
     private final UserRepository_emh userRepository;
-    private final PathService pathService;
+    private final PointService pointService;
     private final GilListRepository gilListRepository;
     private final SubscribeService subscribeService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -42,7 +42,7 @@ public class UserServiceImpl_emh implements UserService_emh{
         userDTO.setPostCount(postCount.intValue());
 
         //따라걷기한 경로 개수
-        Integer pathCount = pathService.findPathByUserId(userId).size();
+        Integer pathCount = pointService.getWalkAlongLength(userId);
         userDTO.setPathCount(pathCount);
 
         //날 구독한 유저 수
@@ -55,25 +55,33 @@ public class UserServiceImpl_emh implements UserService_emh{
     @Transactional
     @Override
     //내 정보 간단 조회 (프로필 이미지 눌렀을때 보이는 요약 버전)
-    public UserSimpleResDTO findSimpleInfoById(Long userId) {
-        log.info("findSimpleInfoById : userId = " + userId);
+    public UserSimpleResDTO findSimpleInfoById(Long userId, Long selectedUserId) {
+
         // user 정보 추출
-        User userEntity = userRepository.findById(userId).orElse(null);
+        User userEntity = userRepository.findById(selectedUserId).orElse(null);
         UserSimpleResDTO userSimpleResDTO = new UserSimpleResDTO(userEntity);
 
         // 내가 쓴 글 개수 추출
-        Long postCount = gilListRepository.countByUserId(userId);
+        Long postCount = gilListRepository.countByUserId(selectedUserId);
         userSimpleResDTO.setPostCount(postCount.intValue());
 
-        // 따라걷기한 경로 개수 (현재는 path, 나중에 따라걷기로 바꿔야함)
-        Integer pathCounts = pathService.findPathByUserId(userId).size();
-        userSimpleResDTO.setPathCount(pathCounts);
+        // 따라걷기한 경로 개수
+        Integer pathCount = pointService.getWalkAlongLength(selectedUserId);
+        userSimpleResDTO.setPathCount(pathCount);
 
         //날 구독한 유저 수
-        Integer subscriberCounts = subscribeService.findSubscribeByUserId(userId).size();
-        userSimpleResDTO.setSubscribeByCount(subscriberCounts);
+        List<Subscribe> subscribeList = subscribeService.findSubscribeByUserId(selectedUserId);
+        Integer subscriberCount = subscribeList.size();
+        userSimpleResDTO.setSubscribeByCount(subscriberCount);
 
-        log.info(userSimpleResDTO.toString());
+        //조회한 유저가 나를 구독하고 있는지 여부
+        subscribeList.forEach(subscribe -> {
+            if(userId.equals(subscribe.getUserId().getId())){
+                userSimpleResDTO.setIsSubscribed(1);
+            } else {
+                userSimpleResDTO.setIsSubscribed(0);
+            }
+        });
         return userSimpleResDTO;
     }
 
@@ -151,9 +159,9 @@ public class UserServiceImpl_emh implements UserService_emh{
             Long postCount = gilListRepository.countByUserId(userId);
             userSimpleResDTO.setPostCount(postCount.intValue());
 
-            // 따라걷기한 경로 개수 (현재는 path, 나중에 따라걷기로 바꿔야함)
-            Integer pathCounts = pathService.findPathByUserId(userId).size();
-            userSimpleResDTO.setPathCount(pathCounts);
+            // 따라걷기한 경로 개수
+            Integer pathCount = pointService.getWalkAlongLength(userId);
+            userSimpleResDTO.setPathCount(pathCount);
 
             //날 구독한 유저 수
             Integer subscriberCounts = subscribeService.findSubscribeByUserId(userId).size();
