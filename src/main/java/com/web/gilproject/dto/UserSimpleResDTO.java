@@ -21,11 +21,13 @@ public class UserSimpleResDTO {
     private Integer postCount;          //내가 쓴 글 개수
     private Integer pathCount;          //따라걷기 개수
     private Integer subscribeByCount;  //구독자 수(나를 구독하는 유저 수)
+    private Integer point; //포인트 현황
 
     public UserSimpleResDTO(User user) {
         this.id = user.getId();
         this.nickName = user.getNickName();
         this.imageUrl = user.getImageUrl();
         this.comment = user.getComment();
+        this.point = user.getPoint();
     }
 }

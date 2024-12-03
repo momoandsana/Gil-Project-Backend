@@ -72,7 +72,6 @@ public class UserServiceImpl_emh implements UserService_emh{
         //날 구독한 유저 수
         Integer subscriberCounts = subscribeService.findSubscribeByUserId(userId).size();
         userSimpleResDTO.setSubscribeByCount(subscriberCounts);
-
         log.info(userSimpleResDTO.toString());
         return userSimpleResDTO;
     }
