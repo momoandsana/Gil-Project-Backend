@@ -87,17 +87,15 @@ public class UserController_emh {
     }
 
     /**
-     * 내 정보 수정하기 (수정하기 or 뒤로가기 버튼 누르면)
-     * ※구현 내용 : 닉네임, 이메일, 자기소개글
-     * ※확인 필요 : 닉네임, 이메일, 비밀번호(닉네임, 이메일-검증된 값 받아서 수정)
+     * 자기소개글 수정
      */
-    @PutMapping("/mypage/update")
-    public String updateUserInfo(Authentication authentication, @RequestBody UserDTO userDTO){
+    @PutMapping("/mypage/update/comment/{newComment}")
+    public ResponseEntity<?> updateUserComment(Authentication authentication, @PathVariable String newComment){
         CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
         Long userId = customUserDetails.getId();
-        log.info("updateUserInfo call.... userId = {}, userDTO = {}",userId ,userDTO);
-        userService.updateUserInfo(userId, userDTO);
-        return "redirect:/user/mypage/"+userId;
+        log.info("updateUserComment call.... userId = {}, newComment = {}",userId ,newComment);
+        userService.updateUserComment(userId, newComment);
+        return ResponseEntity.ok(1);
     }
 
     /**
