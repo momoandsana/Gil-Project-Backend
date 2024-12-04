@@ -103,16 +103,18 @@ public class UserController_emh {
     /**
      *  비밀번호 변경 (암호화된 정보 받아서 DB에 update)
      */
-    @PutMapping("/mypage/updatePwd")
-    public String updateUserPwd(Authentication authentication, @PathVariable String password, @PathVariable String newPassword){
+    @PutMapping("/mypage/update/pwd")
+    public ResponseEntity<Integer> updateUserPwd(Authentication authentication, @RequestParam String password, @RequestParam String newPassword){
         CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
         Long userId = customUserDetails.getId();
         log.info("updateUserPwd call...userId = {}, password={}", userId, password);
 
-        if(!customUserDetails.getPassword().equals(password)) return "비밀번호가 일치하지 않습니다";
+        if(!userService.matchUserPassword(userId, password))
+            return ResponseEntity.ok(0);
 
         userService.updateUserPassword(userId, newPassword);
-        return "redirect:/user/mypage/"+userId;
+//        return "redirect:/user/mypage/"+userId;
+        return ResponseEntity.ok(1);
     }
 
     /**
@@ -180,6 +182,19 @@ public class UserController_emh {
         List<UserSimpleResDTO> userSimpleResDTOList = userService.findAllSubscribeByUserId(userId);
         System.out.println("구독자리스트"+userSimpleResDTOList);
         return new ResponseEntity<>(userSimpleResDTOList, HttpStatus.OK);
+    }
+
+    /**
+     *  닉네임 변경
+     */
+    @PutMapping("/mypage/update/nickname")
+    public ResponseEntity<Integer> updateNickName(Authentication authentication, @RequestParam String nickName){
+        CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
+        Long userId = customUserDetails.getId();
+
+        userService.updateUserNickname(userId, nickName);
+
+        return ResponseEntity.ok(1);
     }
 
 }
