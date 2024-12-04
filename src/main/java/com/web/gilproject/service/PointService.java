@@ -28,7 +28,11 @@ public class PointService {
             pathRepository.findById(pathId).ifPresent(path -> {
 
                 Double distance= path.getDistance();
-            user.setPoint((int) (user.getPoint() + Math.round(distance / 10.0)));
+                user.setPoint(
+                        distance < 100 ?
+                                user.getPoint() + 10 : // 100m 미만일 때 10포인트
+                                (int)(user.getPoint() + Math.round(distance / 10.0)) // 100m 이상일 때 거리비례 포인트
+                );
             userRepository.save(user); // 변경 사항 저장
 
 
