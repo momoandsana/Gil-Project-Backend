@@ -68,7 +68,13 @@ public class SecurityConfig {
 
                         //허용할 주소
 //                        config.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
-                        config.setAllowedOrigins(Collections.singletonList("https://gil-project-fe.vercel.app/"));
+                        config.setAllowedOrigins(Arrays.asList(
+                                "http://localhost:3000",
+                                "https://gil-project-fe.vercel.app",
+                                "https://gil-project-fe.vercel.app/",
+                                "http://gil-project-fe.vercel.app",
+                                "http://gil-project-fe.vercel.app/"
+                        ));
 //                        config.setAllowedOriginPatterns(Collections.singletonList("https://gil-project-fe.vercel.app:*"));
                         //허용할 메소드
                         config.setAllowedMethods(Collections.singletonList("*"));

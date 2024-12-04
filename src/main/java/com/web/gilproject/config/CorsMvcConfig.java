@@ -13,7 +13,14 @@ public class CorsMvcConfig implements WebMvcConfigurer {
         registry.addMapping("/**") //모든 경로에 대해서
                 //.exposedHeaders("Set-Cookie")
 //                .allowedOrigins("http://localhost:3000")
-                .allowedOrigins("https://gil-project-fe.vercel.app/")
+                .allowedOrigins(
+                        "http://localhost:3000",
+                        "https://gil-project-fe.vercel.app",
+                        "https://gil-project-fe.vercel.app/",
+                        "http://gil-project-fe.vercel.app/",
+                        "http://gil-project-fe.vercel.app"
+                        )
+
 //                .allowedOriginPatterns("https://gil-project-fe.vercel.app:*")
 
                 .allowedMethods("*")
