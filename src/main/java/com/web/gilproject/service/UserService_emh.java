@@ -56,4 +56,15 @@ public interface UserService_emh {
     List<UserSimpleResDTO> findAllSubscribeByUserId(Long userId);
 
 
+    /**
+     * 들어온 비밀번호와 유저의 비밀번호가 일치하는지 확인
+     */
+    Boolean matchUserPassword(Long userId, String password);
+
+    /**
+     * 닉네임 변경
+     * @param id
+     * @param nickname
+     */
+    void updateUserNickname(Long id, String nickname);
 }
