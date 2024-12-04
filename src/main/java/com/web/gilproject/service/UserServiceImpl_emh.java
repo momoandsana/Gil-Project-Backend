@@ -171,4 +171,22 @@ public class UserServiceImpl_emh implements UserService_emh{
         });
         return userSimpleResDTOList;
     }
+
+    /**
+     * 유저의 비밀번호와 일치하는지 비교
+     * @param userId
+     * @param password
+     * @return
+     */
+    public Boolean matchUserPassword(Long userId, String password) {
+        User userEntity = userRepository.findById(userId).orElse(null);
+        return bCryptPasswordEncoder.matches(password, userEntity.getPassword());
+    }
+
+    @Transactional
+    @Override
+    public void updateUserNickname(Long id, String nickname) {
+        User userEntity = userRepository.findById(id).orElse(null);
+        userEntity.setNickName(nickname);
+    }
 }
