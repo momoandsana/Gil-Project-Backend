@@ -29,11 +29,11 @@ public interface UserService_emh {
     void updateUserImg(Long id, String fileUrl);
 
     /**
-     * 내 정보 수정 (닉네임, 이메일, 자기소개글)
+     * 자기소개글 수정
      * @param id
-     * @param userDTO
+     * @param newComment
      */
-    void updateUserInfo(Long id, UserDTO userDTO);
+    void updateUserComment(Long id, String newComment);
 
     /**
      * 비밀번호 변경

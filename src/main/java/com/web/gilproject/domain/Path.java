@@ -2,10 +2,7 @@ package com.web.gilproject.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.locationtech.jts.geom.LineString;
@@ -13,7 +10,8 @@ import org.locationtech.jts.geom.LineString;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor

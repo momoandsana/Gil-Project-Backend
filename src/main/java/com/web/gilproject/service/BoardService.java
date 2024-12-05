@@ -85,19 +85,6 @@ public class BoardService {
         // 사용자가 사진을 보내면 postRequestDTO.images()를 리스트에 넣고, 사진을 보내지 않은 상태라면 빈 리스트를 만들어서 리스트에 넣는다
         List<MultipartFile> images = postRequestDTO.images() != null ? postRequestDTO.images() : new ArrayList<>();
 
-//        for(MultipartFile image:images)
-//        {
-//            String imageUrl = amazonService.uploadFile(image, "upload_images/" + post.getId() + "/" + image.getOriginalFilename());
-//
-//            PostImage postImage = PostImage.builder()
-//                    .post(post)
-//                    .imageUrl(imageUrl)
-//                    .build();
-//            post.addPostImage(postImage);
-//            postImages.add(postImage);
-//            imageUrls.add(imageUrl);
-//        }
-
         // 사용자가 게시글에 사진을 첨부하지 않는 경우
         if (!images.isEmpty()) {
             List<PostImage> postImages = new ArrayList<>();
@@ -118,7 +105,6 @@ public class BoardService {
                 throw new BoardException(BoardErrorCode.IMAGE_UPLOAD_FAILED);
             }
 
-
             // 빈 리스트가 아닌 경우에만 저장
             if (!postImages.isEmpty()) {
                 postImageRepository.saveAll(postImages);
@@ -137,7 +123,8 @@ public class BoardService {
     }
 
     @Transactional
-    public void deletePost(Long postId,Long userId) {
+    public void deletePost(Long postId,Long userId)
+    {
         Post postEntity=boardRepository
                 .findById(postId)
                 .orElseThrow(()->new BoardException(BoardErrorCode.POST_NOT_FOUND));
@@ -149,10 +136,7 @@ public class BoardService {
 //        }
 
         Post post=boardRepository.findById(postId).get();
-        boardRepository.delete(post);// 임시, 하드 딜리트
-
-//        postEntity.setState(1);// 소프트 딜리트
-//        boardRepository.save(postEntity);
+        boardRepository.delete(post);
 
         //엘라스틱서치 인덱싱 제거
         String re = elasticsearchService.deleteDocument("post-index", ""+post.getId());
@@ -280,90 +264,6 @@ public class BoardService {
         );
         System.out.println("re = " + re);
     }
-
-
-
-//    public String saveBase64ToTmp(String base64Data) throws IOException {
-//        String fileName="tmp_"+System.currentTimeMillis()+".jpg";
-//        String filePath=TMP_DIR+ File.separator+fileName;
-//
-//        byte[] decodedBytes= Base64.getDecoder().decode(base64Data);
-//        // 표준 Base64 방식으로 디코딩
-//
-//        /*
-//        Base64.getUrlDecoder()
-//        Base64.getMimeDecoder()
-//        로 변경 가능
-//         */
-//
-//        try(FileOutputStream fos=new FileOutputStream(filePath))
-//        {
-//            fos.write(decodedBytes);
-//        }
-//
-//        return filePath;
-//    }
-//
-//    public String uploadFileFromTemp(String filePath) throws IOException {
-//        File file = new File(filePath);
-//
-//        String fileName = file.getName();
-//        String key = "upload_images/" + fileName;
-//
-//        ObjectMetadata metadata = new ObjectMetadata();
-//        metadata.setContentLength(file.length());
-//        metadata.setContentType(Files.probeContentType(file.toPath()));
-//
-//
-//        try (FileInputStream inputStream = new FileInputStream(filePath)) {
-//            amazonS3.putObject(bucketName, key, inputStream, metadata);
-//        }
-//
-//
-//        String awsUrl = amazonS3.getUrl(bucketName, key).toString();
-//
-//
-//        // 업로드하고 로컬에서는 해당 파일 삭제
-//        if (!file.delete()) {
-//            throw new IOException("사진 파일 삭제 실패");
-//        }
-//
-//        return awsUrl;
-//    }
-//
-//    @Transactional
-//    public PostResponseDTO createPost(PostRequestDTO postRequestDTO,Long id) {
-//        Post postEntity=boardRepository.save(postRequestDTO.of(postRequestDTO,id));
-//        // 사용자 검증하기 나중에 추가 exception
-//        return PostResponseDTO.from(postEntity);
-//    }
-//
-//    @Transactional
-//    public PostResponseDTO updatePost(Long postId,PostPatchRequestDTO postPatchRequestDTO,Long userId) {
-//        Post postEntity=boardRepository
-//                .findById(postId)
-//                .orElseThrow(
-//                        ()->new RuntimeException("post id not found")
-//                );
-//
-//        if(postPatchRequestDTO.content()!=null)
-//        {
-//            postEntity.setContent(postPatchRequestDTO.content());
-//        }
-//        if(postPatchRequestDTO.tag()!=null)
-//        {
-//            postEntity.setTag(postPatchRequestDTO.tag());
-//        }
-//
-//        if(!postEntity.getUser().getId().equals(userId))
-//        {
-//            throw new RuntimeException("no user found");// 임시
-//        }
-//
-//        Post updatedPost=boardRepository.save(postEntity);
-//        return PostResponseDTO.from(updatedPost);
-//    }
-
 
 }
 

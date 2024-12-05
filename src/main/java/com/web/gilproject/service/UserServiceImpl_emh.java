@@ -113,15 +113,11 @@ public class UserServiceImpl_emh implements UserService_emh{
 
     @Transactional
     @Override
-    //내 정보 수정
-    public void updateUserInfo(Long userId, UserDTO userDTO) {
-        log.info("updateUserInfo : userId = {}, userDTO = {}" ,userId ,userDTO);
-        User userEntity = userRepository.findById(userId).orElse(null); //★예외 처리 필요
-
-        //수정(닉네임, 이메일, 자기소개글)
-        userEntity.setNickName(userDTO.getNickName());   //닉네임
-        userEntity.setEmail(userDTO.getEmail());         //이메일(★검증필요)
-        userEntity.setComment(userDTO.getComment());     //자기소개글
+    //자기소개글 수정
+    public void updateUserComment(Long userId, String newComment) {
+        log.info("updateUserComment : newComment = {}, userDTO = {}" ,userId ,newComment);
+        User userEntity = userRepository.findById(userId).orElse(null);
+        userEntity.setComment(newComment);
     }
 
     @Transactional
@@ -132,19 +128,6 @@ public class UserServiceImpl_emh implements UserService_emh{
         String newPassword = bCryptPasswordEncoder.encode(password); //암호화
         userEntity.setPassword(newPassword);
     }
-
-//    @Transactional
-//    @Override
-//    //내 주소 수정
-//    public void updateUserAddr(Long userId, UserDTO userDTO) {
-//        log.info("updateUserAddr : userId = {}, userDTO = {}" ,userId ,userDTO);
-//
-//        User userEntity = userRepository.findById(userId).orElse(null);
-//        //주소 변경 ★API로 받아온 값 저장 필요
-//        userEntity.setAddress(userDTO.getAddress());
-//        userEntity.setLatitude(userDTO.getLatitude());
-//        userEntity.setLongitude(userDTO.getLongitude());
-//    }
 
     //나를 구독한 유저 목록 조회
     @Transactional
