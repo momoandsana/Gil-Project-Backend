@@ -246,6 +246,7 @@ public class BoardController {
         postWishlistService.togglePostWishlist(userId,postId);
         return ResponseEntity.ok().build();
     }
+    //
 
 
 
