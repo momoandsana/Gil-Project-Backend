@@ -1,5 +1,5 @@
 name: Spring & Elasticsearch Deployment Workflow
-# Build java, build docker, push docker, connect to ec2, stop docker compose, delete docekr container & iamge,pull docker,docker compose up
+# Build java, build docker, push docker, connect to ec2, stop docker compose, delete docker container & image, pull docker, docker compose up
 
 on:
   push:
@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. GitHub Actions가 저장소 체크아웃->여기부터 GitHub Actions 서버
+    # 1. GitHub Actions가 저장소 체크아웃
     - name: Checkout code
       uses: actions/checkout@v3
 
@@ -22,12 +22,16 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    # 3. Gradle 빌드 
+    # 3. Gradle Wrapper에 실행 권한 추가
+    - name: Grant execute permission for Gradle Wrapper
+      run: chmod +x ./gradlew
+
+    # 4. Gradle 빌드
     - name: Build JAR with Gradle
       run: |
         ./gradlew clean build -x test
 
-    # 4. Docker Hub 로그인
+    # 5. Docker Hub 로그인
     - name: Login to Docker Hub
       env:
         DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
@@ -35,7 +39,7 @@ jobs:
       run: |
         echo "${DOCKER_HUB_TOKEN}" | docker login -u "${DOCKER_HUB_USERNAME}" --password-stdin
 
-    # 5. Docker 이미지 빌드 및 푸시->여기까지 GitHub Actions 서버
+    # 6. Docker 이미지 빌드 및 푸시
     - name: Build and Push Docker Image
       env:
         DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
@@ -43,7 +47,7 @@ jobs:
         docker build -t ${DOCKER_HUB_USERNAME}/gil-project:latest .
         docker push ${DOCKER_HUB_USERNAME}/gil-project:latest
 
-    # 6. EC2에서 Docker Compose 실행->여기부터는 ec2에서 실행되는 내용들
+    # 7. EC2에서 Docker Compose 실행
     - name: Deploy on EC2
       env:
         PEM_KEY: ${{ secrets.EC2_PEM_KEY }}
@@ -64,7 +68,7 @@ jobs:
           # Docker Hub 로그인
           echo "${DOCKER_HUB_TOKEN}" | docker login -u "${DOCKER_HUB_USERNAME}" --password-stdin
 
-          # gil-project 컨테이너 정지 및 삭제, Elastic Search 는 그대로
+          # gil-project 컨테이너 정지 및 삭제, Elastic Search는 그대로 유지
           if [ -f docker-compose.yml ]; then
             docker compose stop gil-project || true
             docker compose rm -f gil-project || true
