@@ -83,7 +83,7 @@ public class UserController_emh {
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(e.getMessage());
         }
-        return ResponseEntity.ok("Success Update UserInfo");
+        return ResponseEntity.ok(1);
     }
 
     /**
