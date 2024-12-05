@@ -4,6 +4,7 @@ import com.web.gilproject.dto.CustomOAuth2User;
 import com.web.gilproject.jwt.JWTUtil;
 import com.web.gilproject.repository.RefreshRepository;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,13 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String refreshToken = jwtUtil.createJwt("refresh", customUserDetails, 1000 * 60 * 60 * 24 * 90L); //90일
         log.info("refresh 토큰 쿠키에 저장");
         response.addCookie(JWTUtil.createCookie("refresh", refreshToken));
+
+        //페이지 처리용 토큰 생성
+        Cookie loginchecker = new Cookie("loginchecker",null);
+        loginchecker.setPath("/");
+        response.addCookie(loginchecker);
+
+
 
         Boolean isExist = refreshRepository.existsByRefreshToken(refreshToken);
         if (!isExist) {

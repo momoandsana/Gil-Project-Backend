@@ -5,7 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Table(name = "walk_alongs")
 @ToString(exclude = {"user","path"})
 @Builder

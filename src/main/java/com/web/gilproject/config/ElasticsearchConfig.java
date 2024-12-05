@@ -17,7 +17,7 @@ public class ElasticsearchConfig {
     @Bean
     public ElasticsearchClient elasticsearchClient() {
         RestClientBuilder builder = RestClient.builder(
-                new HttpHost("localhost", 9200, "http")); // Elasticsearch 주소
+                new HttpHost("es", 9200, "http")); // Elasticsearch 주소
                 //도커에 구울때는 localhost를 es로 바꾸고 구우세요
 
         RestClient restClient = builder.build();
