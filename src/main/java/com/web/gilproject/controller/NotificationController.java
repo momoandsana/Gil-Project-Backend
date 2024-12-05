@@ -82,4 +82,14 @@ public class NotificationController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    //알림 전체 삭제
+    @DeleteMapping
+    public ResponseEntity<?> deleteAllNotifications(Authentication authentication, @PathVariable Long userId){
+        //CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
+        //Long userId = customUserDetails.getId();
+        log.info("deleteAllNotifications call...userId = {}", userId);
+        notificationService.deleteAllNotifications(userId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 }

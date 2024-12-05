@@ -205,5 +205,10 @@ public class NotificationServiceImpl implements NotificationService {
         notificationRepository.deleteByIdAndUserId(notificationId, userId);
     }
 
+    @Override
+    public void deleteAllNotifications(Long userId) {
+        notificationRepository.deleteById(userId);
+    }
+
 
 }
