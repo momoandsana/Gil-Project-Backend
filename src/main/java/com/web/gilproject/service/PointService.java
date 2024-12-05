@@ -22,7 +22,7 @@ public class PointService {
     private final WalkAlongsRepository walkAlongsRepository;
     private final PathRepository pathRepository;
 
-    //따라걷기 끝났을 때 포인트+10,해당 아이디에 대한 따라걷기정보 DB에 저장.
+    //기본으로 +10점, 그 후 100m마다 10점씩 ++
     public void pointPlus(Long userId, Long pathId) {
         userRepository.findById(userId).ifPresent(user -> {
             pathRepository.findById(pathId).ifPresent(path -> {
@@ -32,7 +32,7 @@ public class PointService {
                 if (distance <= 0.1) {
                     additionalPoints = 10;
                 } else {
-                    additionalPoints = (int) Math.round(distance / 10.0);
+                    additionalPoints = (int) Math.round(distance*100)+10;
                 }
 
                 user.setPoint(user.getPoint() + additionalPoints);
