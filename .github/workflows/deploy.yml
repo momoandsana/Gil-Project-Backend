@@ -4,7 +4,7 @@ name: Spring & Elasticsearch Deployment Workflow
 on:
   push:
     branches:
-      - dev
+      - HoSeok
 
 jobs:
   build-and-deploy:
