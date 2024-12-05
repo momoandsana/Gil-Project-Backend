@@ -15,10 +15,10 @@ public class CorsMvcConfig implements WebMvcConfigurer {
 //                .allowedOrigins("http://localhost:3000")
                 .allowedOrigins(
                         "http://localhost:3000",
-                        "https://gil-project-fe.vercel.app",
-                        "https://gil-project-fe.vercel.app/",
-                        "http://gil-project-fe.vercel.app/",
-                        "http://gil-project-fe.vercel.app"
+                        "https://gilddara.vercel.app",
+                        "https://gilddara.vercel.app/",
+                        "http://gilddara.vercel.app/",
+                        "http://gilddara.vercel.app"
                         )
 
 //                .allowedOriginPatterns("https://gil-project-fe.vercel.app:*")

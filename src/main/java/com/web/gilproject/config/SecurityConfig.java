@@ -70,10 +70,10 @@ public class SecurityConfig {
 //                        config.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
                         config.setAllowedOrigins(Arrays.asList(
                                 "http://localhost:3000",
-                                "https://gil-project-fe.vercel.app",
-                                "https://gil-project-fe.vercel.app/",
-                                "http://gil-project-fe.vercel.app",
-                                "http://gil-project-fe.vercel.app/"
+                                "https://gilddara.vercel.app",
+                                "https://gilddara.vercel.app/",
+                                "http://gilddara.vercel.app",
+                                "http://gilddara.vercel.app/"
                         ));
 //                        config.setAllowedOriginPatterns(Collections.singletonList("https://gil-project-fe.vercel.app:*"));
                         //허용할 메소드
