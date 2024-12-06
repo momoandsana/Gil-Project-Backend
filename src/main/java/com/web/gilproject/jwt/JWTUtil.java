@@ -110,6 +110,7 @@ public class JWTUtil {
                 .httpOnly(true)
                 .path("/")
                 .sameSite("None")
+                .domain("gilddara.vercel.app")
                 .build();
     }
 
