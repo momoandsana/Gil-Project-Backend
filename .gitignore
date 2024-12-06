@@ -42,5 +42,3 @@ out/
 #src/main/resources/application.properties
 src/main/resources/.env.txt
 src/main/resources/.env
-
-
