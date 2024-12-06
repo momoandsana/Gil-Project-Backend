@@ -46,7 +46,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             JWTUtil.addRefreshEntity(refreshRepository, id, refreshToken, 1000 * 60 * 60 * 24 * 90L); //90일
         }
 
-        response.sendRedirect("http://localhost:3000/main");
+        response.sendRedirect("https://gilddara.vercel.app/main");
     }
 
 }
