@@ -15,7 +15,7 @@ import java.util.List;
 @RequestMapping("/api")
 public class AmazonController {
 
-    ////
+    /////
     private final AmazonService s3Service;
     //
     public AmazonController(AmazonService s3Service) {
