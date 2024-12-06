@@ -106,7 +106,7 @@ public class JWTUtil {
     public static ResponseCookie createCookie(String key, String value) {
         return ResponseCookie.from(key, value)
                 .maxAge(60 * 60 * 24 * 90) // 90일
-//                .secure(true)
+                .secure(true)
                 .httpOnly(true)
                 .path("/")
                 .sameSite("None")
