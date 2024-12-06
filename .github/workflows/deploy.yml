@@ -27,6 +27,10 @@ jobs:
       run: |
         ./gradlew clean build -x test
 
+     # 3. Gradle Wrapper에 실행 권한 추가
+    - name: Grant execute permission for Gradle Wrapper
+      run: chmod +x ./gradlew
+
     # 4. Docker Hub 로그인
     - name: Login to Docker Hub
       env:
