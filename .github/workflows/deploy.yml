@@ -47,7 +47,7 @@ jobs:
         docker build -t ${DOCKER_HUB_USERNAME}/gil-project:latest .
         docker push ${DOCKER_HUB_USERNAME}/gil-project:latest
 
-    # 7. EC2에서 Docker Compose 실행-> 여기서부터 ec2에서 실행행
+    # 7. EC2에서 Docker Compose 실행-> 여기서부터 EC2에 접속해서 실행
     - name: Deploy on EC2
       env:
         PEM_KEY: ${{ secrets.EC2_PEM_KEY }}
