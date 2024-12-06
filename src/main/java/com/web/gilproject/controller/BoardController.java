@@ -1,37 +1,28 @@
 package com.web.gilproject.controller;
 
-import com.web.gilproject.domain.Path;
-import com.web.gilproject.domain.Post;
-import com.web.gilproject.domain.PostWishlist;
-import com.web.gilproject.domain.User;
-import com.web.gilproject.dto.BoardDTO.*;
-import com.web.gilproject.dto.PathDTO;
+import com.web.gilproject.dto.BoardDTO.PostPatchRequestDTO;
+import com.web.gilproject.dto.BoardDTO.PostRequestDTO;
 import com.web.gilproject.dto.CustomUserDetails;
 import com.web.gilproject.dto.PathResDTO;
 import com.web.gilproject.dto.PostDTO_YJ.PostResDTO;
 import com.web.gilproject.repository.BoardRepository;
-import com.web.gilproject.repository.UserRepository_emh;
 import com.web.gilproject.service.AmazonService;
-import com.web.gilproject.service.PathService;
-
 import com.web.gilproject.service.BoardService;
+import com.web.gilproject.service.PathService;
 import com.web.gilproject.service.PostWishlistService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.couchbase.CouchbaseProperties;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/posts")
+@Slf4j
 public class BoardController {
     private final PathService pathService;
     private final BoardService boardService;
