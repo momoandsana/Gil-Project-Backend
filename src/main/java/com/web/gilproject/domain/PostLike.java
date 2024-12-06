@@ -1,5 +1,6 @@
 package com.web.gilproject.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -14,10 +15,19 @@ public class PostLike {
 
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="POST_ID",nullable = false)
+    @JsonIgnore
     private Post post;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="USER_ID",nullable = false)
+    @JsonIgnore
     private User user;
+
+    public static PostLike of(User user,Post post) {
+        PostLike like = new PostLike();
+        like.setUser(user);
+        like.setPost(post);
+        return like;
+    }
 
 }
