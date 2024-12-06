@@ -32,7 +32,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        log.info("JWT Filter access토큰 검증 시작");
+//        log.info("JWT Filter access토큰 검증 시작");
         //응답 한글깨짐현상 해결
         response.setContentType("text/plain; charset=UTF-8");
         response.setCharacterEncoding("UTF-8");

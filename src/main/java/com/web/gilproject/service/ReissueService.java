@@ -53,15 +53,15 @@ public class ReissueService {
 
         CustomUserDetails customUserDetails = new CustomUserDetails(User.builder().id(id).nickName(nickName).build());
 
-        log.info("access토큰, 새로운 refresh토큰 생성");
+//        log.info("access토큰, 새로운 refresh토큰 생성");
         String accessToken = jwtUtil.createJwt("access", customUserDetails, 1000 * 60 * 60L); //1시간
         String newRefreshToken = jwtUtil.createJwt("refresh", customUserDetails, 1000 * 60 * 60 * 24 * 90L); //90일
 
-        log.info("기존 refresh DB에서 삭제, 새로운 refresh DB에 저장");
+//        log.info("기존 refresh DB에서 삭제, 새로운 refresh DB에 저장");
         refreshRepository.deleteByRefreshToken(refresh);
         JWTUtil.addRefreshEntity(refreshRepository, id,newRefreshToken,1000 * 60 * 60 * 24 * 90L);
 
-        log.info("access 토큰이 헤더를 통해, refresh 토큰은 쿠키를 통해 재발급되었습니다");
+//        log.info("access 토큰이 헤더를 통해, refresh 토큰은 쿠키를 통해 재발급되었습니다");
         response.setHeader("newaccess", "Bearer " + accessToken);
 //        response.addCookie(JWTUtil.createCookie("refresh", newRefreshToken));
         ResponseCookie refreshCookie = JWTUtil.createCookie("refresh", newRefreshToken);
@@ -75,7 +75,7 @@ public class ReissueService {
      * @return
      */
     public ResponseEntity<String> validateRefreshToken(String refresh){
-        log.info("refresh 토큰 검증 Call");
+//        log.info("refresh 토큰 검증 Call");
         if (refresh == null) {
             log.info("쿠키에 refresh 토큰이 없습니다, 400 응답");
             return new ResponseEntity<>("refresh token null", HttpStatus.BAD_REQUEST); //400
@@ -106,7 +106,7 @@ public class ReissueService {
             return new ResponseEntity<>("DB에 없는 refresh토큰입니다", HttpStatus.BAD_REQUEST);
         }
 
-        log.info("refresh 토큰 검증 끝");
+//        log.info("refresh 토큰 검증 끝");
         return null;
     }
 
@@ -115,7 +115,7 @@ public class ReissueService {
      */
     @Scheduled(fixedRate = 3600000) // 1시간마다 실행
     public void cleanUpExpiredTokens() {
-        log.info("DB에서 기한만료 토큰 삭제 스케쥴러 실행(1시간마다)");
+//        log.info("DB에서 기한만료 토큰 삭제 스케쥴러 실행(1시간마다)");
         refreshRepository.deleteExpiredTokens();
     }
 

@@ -25,13 +25,13 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        log.info("소셜 로그인 성공");
+//        log.info("소셜 로그인 성공");
         CustomOAuth2User customUserDetails = (CustomOAuth2User) authentication.getPrincipal();
         Long id = customUserDetails.getId();
 
-        log.info("refresh 토큰 생성");
+//        log.info("refresh 토큰 생성");
         String refreshToken = jwtUtil.createJwt("refresh", customUserDetails, 1000 * 60 * 60 * 24 * 90L); //90일
-        log.info("refresh 토큰 쿠키에 저장");
+//        log.info("refresh 토큰 쿠키에 저장");
 //        response.addCookie(JWTUtil.createCookie("refresh", refreshToken));
         ResponseCookie refreshCookie = JWTUtil.createCookie("refresh", refreshToken);
         response.setHeader("Set-Cookie", refreshCookie.toString());
