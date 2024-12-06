@@ -108,6 +108,18 @@ public class PathController {
                     .route(lineString)
                     .build();
 
+            System.out.println(path.getUser());
+            System.out.println(path.getContent());
+            System.out.println(path.getState());
+            System.out.println(path.getTitle());
+            System.out.println(path.getTime());
+            System.out.println(path.getDistance());
+            System.out.println(path.getStartLong());
+            System.out.println(path.getStartLat());
+            System.out.println(path.getStartAddr());
+            System.out.println(path.getRoute());
+            System.out.println(path.getCreatedDate());
+
             pathService.insert(path);
         } else {
             path = pathList.get(0); // 기존 경로 사용
