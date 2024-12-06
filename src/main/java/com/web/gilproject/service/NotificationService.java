@@ -59,5 +59,9 @@ public interface NotificationService {
      */
     void deleteNotification(Long userId, Long notificationId);
 
+    /**
+     * 알림 전체 삭제
+     * @param userId
+     */
     void deleteAllNotifications(Long userId);
 }
