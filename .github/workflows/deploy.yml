@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. GitHub Actions가 저장소 체크아웃
+    # 1. GitHub Actions가 저장소 체크아웃->여기부터 Github 서버
     - name: Checkout code
       uses: actions/checkout@v3
 
@@ -47,7 +47,7 @@ jobs:
         docker build -t ${DOCKER_HUB_USERNAME}/gil-project:latest .
         docker push ${DOCKER_HUB_USERNAME}/gil-project:latest
 
-    # 7. EC2에서 Docker Compose 실행
+    # 7. EC2에서 Docker Compose 실행-> 여기서부터 ec2에서 실행행
     - name: Deploy on EC2
       env:
         PEM_KEY: ${{ secrets.EC2_PEM_KEY }}
@@ -61,7 +61,7 @@ jobs:
         # PEM 키를 임시 파일로 저장
         echo "$PEM_KEY" > key.pem
         chmod 600 key.pem
-        # SSH로 Docker 작업 수행
+        # SSH로 Ec2 접속 후, Docker 작업 수행
         ssh -i key.pem -o StrictHostKeyChecking=no ${USER}@${EC2_HOST} << EOF
           set -e
           cd /home/${USER}
@@ -77,7 +77,7 @@ jobs:
           # 기존 Docker 이미지 삭제
           docker images --filter=reference='${DOCKER_HUB_USERNAME}/gil-project*' --format "{{.ID}}" | xargs -r docker rmi -f || true
 
-          # 최신 Docker 이미지 Pull
+          # 업로드한 Docker 이미지 Pull
           docker pull ${DOCKER_HUB_USERNAME}/gil-project:latest
 
           # Docker Compose 실행
