@@ -38,7 +38,9 @@ out/
 
 !src/main/resources/
 
-src/main/resources/aws.properties
-src/main/resources/application.properties
+#src/main/resources/aws.properties
+#src/main/resources/application.properties
+src/main/resources/.env.txt
+src/main/resources/.env
 
 
