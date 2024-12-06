@@ -22,26 +22,30 @@ public class PointService {
     private final WalkAlongsRepository walkAlongsRepository;
     private final PathRepository pathRepository;
 
-    //따라걷기 끝났을 때 포인트+10,해당 아이디에 대한 따라걷기정보 DB에 저장.
+    //기본으로 +10점, 그 후 100m마다 10점씩 ++
     public void pointPlus(Long userId, Long pathId) {
         userRepository.findById(userId).ifPresent(user -> {
             pathRepository.findById(pathId).ifPresent(path -> {
+                Double distance = path.getDistance();
+                int additionalPoints;
 
-                Double distance= path.getDistance();
-            user.setPoint((int) (user.getPoint() + Math.round(distance / 10.0)));
-            userRepository.save(user); // 변경 사항 저장
+                if (distance <= 0.1) {
+                    additionalPoints = 10;
+                } else {
+                    additionalPoints = (int) Math.round(distance*100)+10;
+                }
 
+                user.setPoint(user.getPoint() + additionalPoints);
+                userRepository.save(user);
 
-            WalkAlongs walkAlong = WalkAlongs
-                    .builder()
-                    .user(user)
-                    .path(path)
-                    .build();
-            walkAlongsRepository.save(walkAlong);
-
+                WalkAlongs walkAlong = WalkAlongs
+                        .builder()
+                        .user(user)
+                        .path(path)
+                        .build();
+                walkAlongsRepository.save(walkAlong);
             });
         });
-
     }
 
     //로그인된 유저의 point 프론트에 뿌리기

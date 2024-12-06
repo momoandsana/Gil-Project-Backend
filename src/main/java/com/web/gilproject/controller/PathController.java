@@ -205,13 +205,11 @@ public class PathController {
     }
 
 
-    //경로 state값(1로 들어오면 softDelite)
-    @PatchMapping("/{pathId}")
-    public void updatePath(@PathVariable Long pathId, @RequestBody PathDTO paramPath) {
+    //path삭제하기.
+    @DeleteMapping("/{pathId}")
+    public void deletePath(@PathVariable Long pathId) {
 
-        int state = paramPath.getState();
-
-        pathService.updateState(pathId, state);
+        pathService.deletePath(pathId);
     }
 
 

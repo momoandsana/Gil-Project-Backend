@@ -290,13 +290,13 @@ public class PathService {
     }
 
 
-    //Path State값 변경하기.
-    public void updateState(Long pathId, int state) {
+    //Path 지우기
+    public void deletePath(Long pathId) {
 
         Path path = pathRepository.findById(pathId)
                 .orElseThrow(() -> new PathPinException(PathErrorCode.PATH_UPDATE_FAILED));
 
-        path.setState(state);
+        pathRepository.delete(path);
 
     }
 }
