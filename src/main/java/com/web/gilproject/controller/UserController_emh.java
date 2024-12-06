@@ -32,7 +32,6 @@ import java.util.Set;
 public class UserController_emh {
 
     private final UserService_emh userService;
-    private final AmazonService s3Service;
     private final PathService pathService;
     private final GilListService gilListService;
 
@@ -72,17 +71,8 @@ public class UserController_emh {
     public ResponseEntity<?> updateUserProfile(Authentication authentication, @RequestParam("file") MultipartFile file){
         CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
         Long userId = customUserDetails.getId();
-        log.info("updateUserProfile call... id={} file={} ", userId, file);
-        try {
-            //s3에 파일 업로드하고
-            String fileUrl = s3Service.uploadFileToFolder(file,"profile_images");
-            //업로드된 url받아서 DB에 저장(기존 파일 있으면 수정)
-            userService.updateUserImg(userId, fileUrl);
-            //s3에 있는 기존 파일 삭제??
-
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(e.getMessage());
-        }
+        log.info("updateUserProfile call... userId={} file={} ", userId, file);
+            userService.updateUserImg(userId, file);
         return ResponseEntity.ok(1);
     }
 

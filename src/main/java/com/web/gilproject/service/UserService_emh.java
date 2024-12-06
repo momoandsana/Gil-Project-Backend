@@ -3,6 +3,7 @@ package com.web.gilproject.service;
 import com.web.gilproject.domain.Subscribe;
 import com.web.gilproject.dto.UserDTO;
 import com.web.gilproject.dto.UserSimpleResDTO;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -24,9 +25,9 @@ public interface UserService_emh {
     /**
      * 내 프로필 이미지 수정
      * @param id
-     * @param fileUrl
+     * @param file
      */
-    void updateUserImg(Long id, String fileUrl);
+    void updateUserImg(Long id, MultipartFile file);
 
     /**
      * 자기소개글 수정

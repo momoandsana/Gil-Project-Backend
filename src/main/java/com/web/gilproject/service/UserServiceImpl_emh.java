@@ -12,7 +12,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -27,7 +29,7 @@ public class UserServiceImpl_emh implements UserService_emh{
     private final GilListRepository gilListRepository;
     private final SubscribeService subscribeService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-
+    private final AmazonService s3Service;
 
     @Transactional(readOnly = true)
     @Override
@@ -106,9 +108,26 @@ public class UserServiceImpl_emh implements UserService_emh{
     @Transactional
     @Override
     //내 프로필 이미지 수정
-    public void updateUserImg(Long userId, String fileUrl) {
-        User userEntity = userRepository.findById(userId).orElse(null);
-        userEntity.setImageUrl(fileUrl);
+    public void updateUserImg(Long userId, MultipartFile file) {
+
+        try {
+            //s3에 있는 기존 파일 삭제
+            User userEntity = userRepository.findById(userId).orElse(null);
+            String preImageUrl = userEntity.getImageUrl();
+            if(preImageUrl != null) {
+                s3Service.deleteFile(preImageUrl);
+                log.info("프로필 이전 이미지 삭제 완료!!");
+            }
+
+            //새로 입력된 이미지 s3에 업로드하고 fileUrl 받기
+            String fileUrl = s3Service.uploadFileToFolder(file, "profile_images");
+
+            //fileUrl DB에 저장
+            userEntity.setImageUrl(fileUrl);
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Transactional
