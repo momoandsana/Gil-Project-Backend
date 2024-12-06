@@ -101,10 +101,10 @@ public class JWTUtil {
     public static Cookie createCookie(String key, String value) {
         Cookie cookie = new Cookie(key, value);
         cookie.setMaxAge(60 * 60 * 24 * 90); //90일
-//        cookie.setSecure(true); //https에서만 사용가능하도록 -> 배포하면 켜기
+        cookie.setSecure(true); //https에서만 사용가능하도록 -> 배포하면 켜기
         cookie.setHttpOnly(true); //자바스크립트가 가져가지못하도록 설정, XSS 공격방어
         cookie.setPath("/");
-        cookie.setDomain("gilddara.vercel.app");
+//        cookie.setDomain("gilddara.vercel.app");
 
         return cookie;
     }
