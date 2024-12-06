@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -31,7 +32,9 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         log.info("refresh 토큰 생성");
         String refreshToken = jwtUtil.createJwt("refresh", customUserDetails, 1000 * 60 * 60 * 24 * 90L); //90일
         log.info("refresh 토큰 쿠키에 저장");
-        response.addCookie(JWTUtil.createCookie("refresh", refreshToken));
+//        response.addCookie(JWTUtil.createCookie("refresh", refreshToken));
+        ResponseCookie refreshCookie = JWTUtil.createCookie("refresh", refreshToken);
+        response.setHeader("Set-Cookie", refreshCookie.toString());
 
         //페이지 처리용 토큰 생성
         Cookie loginchecker = new Cookie("loginchecker",null);

@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -62,7 +63,9 @@ public class ReissueService {
 
         log.info("access 토큰이 헤더를 통해, refresh 토큰은 쿠키를 통해 재발급되었습니다");
         response.setHeader("newaccess", "Bearer " + accessToken);
-        response.addCookie(JWTUtil.createCookie("refresh", newRefreshToken));
+//        response.addCookie(JWTUtil.createCookie("refresh", newRefreshToken));
+        ResponseCookie refreshCookie = JWTUtil.createCookie("refresh", newRefreshToken);
+        response.setHeader("Set-Cookie", refreshCookie.toString());
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
