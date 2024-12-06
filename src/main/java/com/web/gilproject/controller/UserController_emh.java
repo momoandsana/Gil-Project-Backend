@@ -43,35 +43,35 @@ public class UserController_emh {
     public ResponseEntity<?> findUserById(Authentication authentication) {
         CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
         Long userId = customUserDetails.getId();
-        log.info("findUserById call...userId = " + userId);
+        //log.info("findUserById call...userId = " + userId);
         UserDTO userDTO = userService.findUserById(userId);
-        log.info("userDTO = " + userDTO);
+        //log.info("userDTO = " + userDTO);
         return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }
 
     /**
      * 간단 정보 조회 (프로필 눌렀을 때 다른 유저에게 보이는 내 프로필)
-     * (프로필 이미지, 닉네임, 자기소개글, 내가 쓴 글 개수, 구독자 수, 따라걷기 수)
+     * (프로필 이미지, 닉네임, 자기소개글, 산ㅊ, 구독자 수, 따라걷기 수)
      */
     @GetMapping("/simpleInfo/{selectedUserId}")
     public ResponseEntity<?> findSimpleInfoById(Authentication authentication, @PathVariable Long selectedUserId){
         CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
         Long userId = customUserDetails.getId();
-        log.info("findSimpleInfoById call...userId = {}, selectedUserId = {}", userId, selectedUserId);
+        //log.info("findSimpleInfoById call...userId = {}, selectedUserId = {}", userId, selectedUserId);
 
         UserSimpleResDTO userSimpleResDTO = userService.findSimpleInfoById(userId, selectedUserId);
-        log.info(userSimpleResDTO.toString());
+        //log.info(userSimpleResDTO.toString());
         return new ResponseEntity<>(userSimpleResDTO, HttpStatus.OK);
     }
 
     /**
-     * 내 프로필 이미지 수정 (s3에 올라와 있는 파일 삭제도 구현 필요 - 추후 진행 예정)
+     * 내 프로필 이미지 수정
      */
     @PostMapping("/mypage/profile")
     public ResponseEntity<?> updateUserProfile(Authentication authentication, @RequestParam("file") MultipartFile file){
         CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
         Long userId = customUserDetails.getId();
-        log.info("updateUserProfile call... userId={} file={} ", userId, file);
+        //log.info("updateUserProfile call... userId={} file={} ", userId, file);
             userService.updateUserImg(userId, file);
         return ResponseEntity.ok(1);
     }
