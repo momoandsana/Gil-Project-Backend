@@ -1,14 +1,11 @@
 package com.web.gilproject.service;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.ListObjectsRequest;
-import com.amazonaws.services.s3.model.ObjectListing;
-import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import com.amazonaws.services.s3.model.S3ObjectSummary;
 
 
 import java.io.IOException;
@@ -41,6 +38,19 @@ public class AmazonService {
         // url 반환
         return amazonS3.getUrl(bucketName, fileName).toString();
     }
+
+    public String uploadFile(MultipartFile file, String uniqueFileName) throws IOException {
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentLength(file.getSize());
+        metadata.setContentType(file.getContentType());
+
+
+        amazonS3.putObject(bucketName, uniqueFileName, file.getInputStream(), metadata);
+
+
+        return amazonS3.getUrl(bucketName, uniqueFileName).toString();
+    }
+
 
     public List<String> listFiles() {
         ObjectListing objectListing = amazonS3.listObjects(bucketName);
@@ -75,4 +85,25 @@ public class AmazonService {
 
         return amazonS3.getUrl(bucketName, key).toString();
     }
+
+    public void deleteFile(String fileUrl)
+    {
+        String fileKey=getFileKeyFromUrl(fileUrl);
+        amazonS3.deleteObject(new DeleteObjectRequest(bucketName,fileKey));
+    }
+
+    public String getFileKeyFromUrl(String fileUrl) {
+        try {
+            // url 에서 버킷 이름과 영역을 제거하고 키만 추출
+            String prefix = "https://" + bucketName + ".s3.ap-northeast-2.amazonaws.com/";
+            if (fileUrl.startsWith(prefix)) {
+                return fileUrl.substring(prefix.length());
+            } else {
+                throw new IllegalArgumentException("Invalid S3 URL format: " + fileUrl);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to extract file key from URL: " + fileUrl, e);
+        }
+    }
+
 }

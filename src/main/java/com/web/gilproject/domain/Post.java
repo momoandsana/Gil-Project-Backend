@@ -1,17 +1,24 @@
 package com.web.gilproject.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
-@Data
+//@Data
 @Entity
 @DynamicUpdate //수정된 부분만 업데이트 되게하는 어노테이션
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Post {
 
     @Id
@@ -21,13 +28,15 @@ public class Post {
 
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="USER_ID",nullable=false)
+    @JsonIgnore
     private User user;
 
     @OneToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="PATH_ID",nullable=false)
+    @JsonIgnore
     private Path path;
 
-    private Integer state;
+    private Integer state=0;
 
     private String title;
 
@@ -42,16 +51,46 @@ public class Post {
     @UpdateTimestamp
     private LocalDateTime updateDate;
 
-    private Integer readNum; //조회수
+    @Column(nullable = false,columnDefinition = "int default 0")
+    private Integer repliesCount=0;
+
+    @Column(nullable=false,columnDefinition = "int default 0")
+    private Integer likesCount=0;
+
+    private Integer readNum=0; //조회수
 
     @OneToMany(mappedBy = "post",cascade = CascadeType.ALL,orphanRemoval = true)
+    @JsonIgnore
     private Set<PostLike> postLikes; //게시글 좋아요
 
     @OneToMany(mappedBy = "post",cascade = CascadeType.ALL,orphanRemoval = true)
+    @JsonIgnore
     private Set<Reply> replies; //댓글
 
     @OneToMany(mappedBy = "post",cascade = CascadeType.ALL,orphanRemoval = true)
+    @JsonIgnore
     private Set<PostWishlist> postWishLists; //게시글 찜
 
+    @OneToMany(mappedBy = "post",cascade = CascadeType.ALL,orphanRemoval = true)
+    private Set<PostImage> postImages=new HashSet<>();
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private Set<Notification> notifications = new HashSet<>();
+
+    public void addPostImage(PostImage postImage) {
+        if (this.postImages == null) {
+            this.postImages = new HashSet<>();
+        }
+        this.postImages.add(postImage);
+        postImage.setPost(this);
+    }
+
+    public void removePostImage(PostImage postImage) {
+        if (this.postImages != null) {
+            this.postImages.remove(postImage);
+            postImage.setPost(null);
+        }
+    }
 
 }
