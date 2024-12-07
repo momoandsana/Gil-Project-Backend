@@ -50,6 +50,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         }
 
         response.sendRedirect("https://gilddara.vercel.app/main");
+//        response.sendRedirect("http://localhost:3000/main");
     }
 
 }
