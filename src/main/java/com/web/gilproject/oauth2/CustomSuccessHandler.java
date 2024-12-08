@@ -38,7 +38,8 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         //페이지 처리용 토큰 생성
         Cookie loginchecker = new Cookie("loginchecker",null);
-//        loginchecker.setDomain(".vercel.app"); // 쿠키의 도메인을 프론트 기준으로
+        loginchecker.setPath("/");
+        loginchecker.setDomain("gilddara.vercel.app"); // 공통 도메인
         response.addCookie(loginchecker);
 
 //        ResponseCookie loginCheckerCookie = ResponseCookie.from("loginchecker")
