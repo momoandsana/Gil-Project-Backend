@@ -10,6 +10,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.cookie.SetCookie;
 import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;
@@ -101,7 +102,13 @@ public class CustomLogoutFilter extends GenericFilterBean {
         cookie.setMaxAge(0);
         cookie.setPath("/");
         response.addCookie(cookie);
-        
+
+        Cookie logincheckerCookie = new Cookie("loginchecker", null);
+        logincheckerCookie.setMaxAge(0);
+        logincheckerCookie.setPath("/");
+        response.addCookie(logincheckerCookie);
+
+
 //        log.info("로그아웃 성공");
         response.setStatus(HttpServletResponse.SC_OK);
     }
