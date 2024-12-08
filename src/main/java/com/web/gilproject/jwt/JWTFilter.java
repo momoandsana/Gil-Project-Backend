@@ -42,7 +42,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
         //Authorization 헤더 검증
         if (accessToken == null) {
-            log.info("access token이 헤더에 없음");
+//            log.info("access token이 헤더에 없음");
             filterChain.doFilter(request, response);
             return;
         }

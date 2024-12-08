@@ -19,6 +19,7 @@ public class CorsMvcConfig implements WebMvcConfigurer {
                         "https://gilddara.vercel.app/",
                         "http://gilddara.vercel.app/",
                         "http://gilddara.vercel.app"
+//                        "https://gil-project.kro.kr"
                         )
 
 //                .allowedOriginPatterns("https://gil-project-fe.vercel.app:*")

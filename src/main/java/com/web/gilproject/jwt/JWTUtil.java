@@ -110,10 +110,23 @@ public class JWTUtil {
                 .httpOnly(true)
                 .path("/")
                 .sameSite("None")
-//                .domain("gilddara.vercel.app")
                 .build();
     }
 
+    /**
+     * 쿠키 삭제
+     * @param key
+     * @return
+     */
+    public static ResponseCookie removeCookie(String key) {
+        return ResponseCookie.from(key)
+                .maxAge(0)
+                .secure(true)
+                .httpOnly(true)
+                .path("/")
+                .sameSite("None")
+                .build();
+    }
     /**
      * refresh 토큰을 DB에 저장
      *
