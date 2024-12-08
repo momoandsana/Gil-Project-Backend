@@ -37,9 +37,9 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         response.setHeader("Set-Cookie", refreshCookie.toString());
 
         //페이지 처리용 토큰 생성
-//        Cookie loginchecker = new Cookie("loginchecker",null);
-//        loginchecker.setPath("/");
-//        response.addCookie(loginchecker);
+        Cookie loginchecker = new Cookie("loginchecker",null);
+        loginchecker.setPath("/");
+        response.addCookie(loginchecker);
 
 //        ResponseCookie loginCheckerCookie = ResponseCookie.from("loginchecker")
 //                .path("/") // 모든 경로에서 유효
