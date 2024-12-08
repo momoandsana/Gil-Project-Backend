@@ -48,7 +48,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 .httpOnly(false) // JavaScript 접근 가능
                 .secure(true) // HTTPS가 아닌 환경에서도 작동
                 .sameSite("None") // 리디렉션에도 포함 가능
-                .domain("gilddara.vercel.app")
+//                .domain("gilddara.vercel.app")
                 .build();
         response.addHeader("Set-Cookie", loginCheckerCookie.toString());
 
