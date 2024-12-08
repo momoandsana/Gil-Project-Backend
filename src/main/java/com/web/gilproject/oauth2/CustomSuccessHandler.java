@@ -52,8 +52,8 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 //                .build();
 //        response.addHeader("Set-Cookie", loginCheckerCookie.toString());
 
-        ResponseCookie loginCheckerCookie = JWTUtil.createCookie("loginchecker", null);
-        response.addHeader("Set-Cookie", loginCheckerCookie.toString());
+//        ResponseCookie loginCheckerCookie = JWTUtil.createCookie("loginchecker", null);
+//        response.addHeader("Set-Cookie", loginCheckerCookie.toString());
 
 
 
