@@ -1,5 +1,6 @@
 package com.web.gilproject.jwt;
 
+import com.nimbusds.jwt.JWT;
 import com.web.gilproject.repository.RefreshRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -98,15 +99,18 @@ public class CustomLogoutFilter extends GenericFilterBean {
 //        log.info("refresh 토큰 DB에서 제거");
 
 //        log.info("refresh 토큰 쿠키에서 제거");
-        Cookie cookie = new Cookie("refresh", null);
-        cookie.setMaxAge(0);
-        cookie.setPath("/");
-        response.addCookie(cookie);
+//        Cookie cookie = new Cookie("refresh", null);
+//        cookie.setMaxAge(0);
+//        cookie.setPath("/");
+//        response.addCookie(cookie);
 
-        Cookie logincheckerCookie = new Cookie("loginchecker", null);
-        logincheckerCookie.setMaxAge(0);
-        logincheckerCookie.setPath("/");
-        response.addCookie(logincheckerCookie);
+//        Cookie logincheckerCookie = new Cookie("loginchecker", null);
+//        logincheckerCookie.setMaxAge(0);
+//        logincheckerCookie.setPath("/");
+//        response.addCookie(logincheckerCookie);
+
+        JWTUtil.removeCookie("refresh");
+        JWTUtil.removeCookie("loginchecker");
 
 
 //        log.info("로그아웃 성공");
