@@ -42,15 +42,18 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 //        loginchecker.setDomain("gilddara.vercel.app"); // 공통 도메인
 //        response.addCookie(loginchecker);
 
-        ResponseCookie loginCheckerCookie = ResponseCookie.from("loginchecker")
-                .path("/") // 모든 경로에서 유효
-//                .maxAge(60 * 60 * 24) // 유효 기간 1일
-                .httpOnly(false) // JavaScript 접근 가능
-                .secure(true) // HTTPS가 아닌 환경에서도 작동
-                .sameSite("None") // 리디렉션에도 포함 가능
-//                .domain(".gilddara.vercel.app")
-                .build();
-        response.addHeader("Set-Cookie", loginCheckerCookie.toString());
+//        ResponseCookie loginCheckerCookie = ResponseCookie.from("loginchecker")
+//                .path("/") // 모든 경로에서 유효
+////                .maxAge(60 * 60 * 24) // 유효 기간 1일
+//                .httpOnly(false) // JavaScript 접근 가능
+//                .secure(true) // HTTPS가 아닌 환경에서도 작동
+//                .sameSite("None") // 리디렉션에도 포함 가능
+////                .domain(".gilddara.vercel.app")
+//                .build();
+//        response.addHeader("Set-Cookie", loginCheckerCookie.toString());
+
+        ResponseCookie loginCheckerCookie = JWTUtil.createCookie("loginchecker", null);
+        response.setHeader("Set-Cookie", loginCheckerCookie.toString());
 
 
 
