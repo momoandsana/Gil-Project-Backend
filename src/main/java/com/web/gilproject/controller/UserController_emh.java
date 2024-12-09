@@ -37,7 +37,7 @@ public class UserController_emh {
 
     /**
      * 내 정보 조회하기 : 마이페이지 누르면 보이는 정보 모두 조회
-     * (User정보, pathCount, postCount, subscribeCount) - Wishlist정보??
+     * (User정보, 내 산책로 개수, 따라걷기 개수, 따름이 수)
      */
     @GetMapping("/mypage")
     public ResponseEntity<?> findUserById(Authentication authentication) {
@@ -83,7 +83,7 @@ public class UserController_emh {
     public ResponseEntity<?> updateUserComment(Authentication authentication, @PathVariable String newComment){
         CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
         Long userId = customUserDetails.getId();
-        log.info("updateUserComment call.... userId = {}, newComment = {}",userId ,newComment);
+        //log.info("updateUserComment call.... userId = {}, newComment = {}",userId ,newComment);
         userService.updateUserComment(userId, newComment);
         return ResponseEntity.ok(1);
     }
@@ -95,13 +95,12 @@ public class UserController_emh {
     public ResponseEntity<Integer> updateUserPwd(Authentication authentication, @RequestParam String password, @RequestParam String newPassword){
         CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
         Long userId = customUserDetails.getId();
-        log.info("updateUserPwd call...userId = {}, password={}", userId, password);
+        //log.info("updateUserPwd call...userId = {}, password={}", userId, password);
 
         if(!userService.matchUserPassword(userId, password))
             return ResponseEntity.ok(0);
 
         userService.updateUserPassword(userId, newPassword);
-//        return "redirect:/user/mypage/"+userId;
         return ResponseEntity.ok(1);
     }
 
@@ -109,13 +108,12 @@ public class UserController_emh {
      * 내 주소 수정 (주소API로 집 주소, 집 위도, 집 경도 받아서 내용 수정)
      */
     @PutMapping("/mypage/address")
-    public ResponseEntity<String> updateUserAddress(Authentication authentication, @RequestBody UserDTO userDTO){
+    public ResponseEntity<Integer> updateUserAddress(Authentication authentication, @RequestBody UserDTO userDTO){
         CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
         Long userId = customUserDetails.getId();
-        log.info("updateUserAddress call... userId={} userDTO = {}", userId, userDTO);
+        //log.info("updateUserAddress call... userId={} userDTO = {}", userId, userDTO);
         userService.updateUserAddr(userId, userDTO);
-//        return "redirect:/user/mypage/"+userId;
-        return ResponseEntity.ok("Address updated successfully"); // 200 OK
+        return ResponseEntity.ok(1); // 200 OK
     }
 
     /**
@@ -125,7 +123,7 @@ public class UserController_emh {
     public ResponseEntity<?> findPathById(Authentication authentication){
         CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
         Long userId = customUserDetails.getId();
-        log.info("findPathById call..userId={} ", userId);
+        //log.info("findPathById call..userId={} ", userId);
         List<PathResDTO> pathResDTOList = pathService.findPathByUserIdTransform(userId);
         return new ResponseEntity<>(pathResDTOList, HttpStatus.OK);
     }
@@ -166,9 +164,8 @@ public class UserController_emh {
     public ResponseEntity<?> findAllSubscribeByUserId(Authentication authentication){
         CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
         Long userId = customUserDetails.getId();
-        log.info("findSubscribeById call...userId = {}", userId);
+        //log.info("findSubscribeById call...userId = {}", userId);
         List<UserSimpleResDTO> userSimpleResDTOList = userService.findAllSubscribeByUserId(userId);
-        System.out.println("구독자리스트"+userSimpleResDTOList);
         return new ResponseEntity<>(userSimpleResDTOList, HttpStatus.OK);
     }
 
@@ -179,9 +176,7 @@ public class UserController_emh {
     public ResponseEntity<Integer> updateNickName(Authentication authentication, @RequestParam String nickName){
         CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
         Long userId = customUserDetails.getId();
-
         userService.updateUserNickname(userId, nickName);
-
         return ResponseEntity.ok(1);
     }
 

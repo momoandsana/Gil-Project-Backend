@@ -35,15 +35,15 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     @Transactional
     public SseEmitter subscribe(Long userId) {
-        log.info("클라이언트가 구독을 위해 호출하는 메소드");
+        //log.info("클라이언트가 구독을 위해 호출하는 메소드");
 
         //1. 현재 클라이언트를 위한 sseEmitter 객체 생성해서
-        log.info("사용자 아이디를 기반으로 이벤트 Emiiter를 생성");
+        //log.info("사용자 아이디를 기반으로 이벤트 Emiiter를 생성");
         SseEmitter emitter = new SseEmitter(30*60*1000L); // 권장하는 30분으로 설정(기본은 30초임)
         
         //2. map에 사용자 ID로 Emitter 저장
         emitters.put(userId, emitter);
-        log.info("Emitter 생성 완료! userId = {}, emitter={}", userId, emitter);
+        //log.info("Emitter 생성 완료! userId = {}, emitter={}", userId, emitter);
 
         // 3. 초기 연결 메세지 전송 (503 응답 에러 방지용 초기 메세지 + 미확인 메세지 전송)
         // sse연결이 이뤄진 후 하나의 데이터도 전송되지 않고 SseEmitter의 유효시간이 끝나면 503응답(Service Unavailable) 발생
@@ -66,17 +66,17 @@ public class NotificationServiceImpl implements NotificationService {
         //Emitter가 완료될 때 (모든 데이터가 성공적으로 전송된 상태) Emitter를 삭제한다
         //이 메소드는 단순히 현재 연결의 리소스 정리하는 역할. 연결이 끊어지면 클라이언트 측에서 자동재연결 매커니즘 제공함
         emitter.onCompletion(()->{
-            log.info("Emitter가 완료될 때 (모든 데이터가 성공적으로 전송된 상태)");
+            //log.info("Emitter가 완료될 때 (모든 데이터가 성공적으로 전송된 상태)");
             emitters.remove(userId);
         });
          //Emitter가 타임아웃 되었을 때(지정된 시간동안 어떠한 이벤트도 전송되지 않았을 때) Emitter를 삭제한다.
         emitter.onTimeout(()->{
-            log.info("server sent event timed out : id = {}", userId);
+            //log.info("server sent event timed out : id = {}", userId);
             emitters.remove(userId);
         });
          //에러 발생시 Emitter를 삭제한다
         emitter.onError((e)->{
-            log.info("server sent event error occured : id = {}, message={}", userId, e.getMessage());
+            //log.info("server sent event error occured : id = {}, message={}", userId, e.getMessage());
             emitters.remove(userId);
         });
 
@@ -89,7 +89,7 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     @Transactional
     public void sendToClient(Long userId, String name, String comment, Object data) {
-        log.info("클라이언트에게 데이터를 전송 userId={}, name={}, comment={}, data={}", userId, name, comment, data);
+        //log.info("클라이언트에게 데이터를 전송 userId={}, name={}, comment={}, data={}", userId, name, comment, data);
 
         //★이벤트 종류를 파악해서 보내는 데이터를 다르게하면 되겠다!
         SseEmitter emitter = emitters.get(userId);
@@ -101,7 +101,7 @@ public class NotificationServiceImpl implements NotificationService {
                         .data(data));
 
             } catch (IOException e) {
-                log.error("연결이 끊기거나 전송중 오류");
+                //log.error("연결이 끊기거나 전송중 오류");
                 emitters.remove(emitter);
                 emitter.completeWithError(e);
             }
@@ -112,7 +112,7 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     @Transactional
     public void notifyComment(Long replyId) {
-        log.info("댓글 알림주러 가쟈~~ replyId = {}", replyId);
+        //log.info("댓글 알림주러 가쟈~~ replyId = {}", replyId);
 
         //알림 보낼 댓글 정보
         Reply receivedReply = replyRepository.findById(replyId).orElse(null); //예외처리 필요
@@ -148,7 +148,7 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     @Transactional
     public void notifyPost(Long postId) {
-        log.info("게시글 알림주러 가쟈~~ postId = {}", postId);
+        //log.info("게시글 알림주러 가쟈~~ postId = {}", postId);
         
         //알림 보낼 게시글 정보
         Post post = boardRepository.findById(postId).orElse(null); //예외처리필요

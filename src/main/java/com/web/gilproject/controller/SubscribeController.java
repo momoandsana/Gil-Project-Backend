@@ -23,7 +23,7 @@ public class SubscribeController {
     public ResponseEntity<?> createSubscribe(Authentication authentication, @PathVariable Long subscribeUserId) {
         CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
         Long userId = customUserDetails.getId();
-        log.info("UserId = {}, subscribeUserId = {}", userId, subscribeUserId);
+        //log.info("UserId = {}, subscribeUserId = {}", userId, subscribeUserId);
         int re = subscribeService.createSubscribe(userId, subscribeUserId);
         return new ResponseEntity<>(re, HttpStatus.OK);
     }
@@ -33,7 +33,7 @@ public class SubscribeController {
     public ResponseEntity<?> deleteSubscribe(Authentication authentication, @PathVariable Long subscribeUserId) {
         CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
         Long userId = customUserDetails.getId();
-        log.info("UserId = {}, subscribeUserId = {}", userId, subscribeUserId);
+        //log.info("UserId = {}, subscribeUserId = {}", userId, subscribeUserId);
         int re = subscribeService.deleteSubscribe(userId, subscribeUserId);
         return new ResponseEntity<>(re, HttpStatus.OK);
     }

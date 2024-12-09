@@ -92,7 +92,7 @@ public class UserServiceImpl_emh implements UserService_emh{
     @Override
     //내 주소 수정
     public void updateUserAddr(Long id, UserDTO userDTO) {
-        log.info("updateUserAddr : id = {}, userDTO = {}" ,id ,userDTO);
+        //log.info("updateUserAddr : id = {}, userDTO = {}" ,id ,userDTO);
 
         User userEntity = userRepository.findById(id).orElse(null);
         //주소 변경 ★API로 받아온 값 저장 필요
@@ -116,7 +116,7 @@ public class UserServiceImpl_emh implements UserService_emh{
             String preImageUrl = userEntity.getImageUrl();
             if(preImageUrl != null) {
                 s3Service.deleteFile(preImageUrl);
-                log.info("프로필 이전 이미지 삭제 완료!!");
+                //log.info("프로필 이전 이미지 삭제 완료!!");
             }
 
             //새로 입력된 이미지 s3에 업로드하고 fileUrl 받기
@@ -134,7 +134,7 @@ public class UserServiceImpl_emh implements UserService_emh{
     @Override
     //자기소개글 수정
     public void updateUserComment(Long userId, String newComment) {
-        log.info("updateUserComment : newComment = {}, userDTO = {}" ,userId ,newComment);
+        //log.info("updateUserComment : newComment = {}, userDTO = {}" ,userId ,newComment);
         User userEntity = userRepository.findById(userId).orElse(null);
         userEntity.setComment(newComment);
     }
@@ -185,6 +185,7 @@ public class UserServiceImpl_emh implements UserService_emh{
         return bCryptPasswordEncoder.matches(password, userEntity.getPassword());
     }
 
+    //닉네임 변경
     @Transactional
     @Override
     public void updateUserNickname(Long id, String nickname) {

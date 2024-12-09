@@ -39,7 +39,7 @@ public class NotificationController {
     // 연결 (알림 받을 준비) - 로그인되면 호출 필요
     @GetMapping(value = "/subscribe/{userId}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public ResponseEntity<SseEmitter> subscribe(@PathVariable Long userId) {
-        log.info("Sse 세션 연결");
+        //log.info("Sse 세션 연결");
         SseEmitter emitter = notificationService.subscribe(userId);
         return new ResponseEntity<>(emitter, HttpStatus.OK);
     }
@@ -48,7 +48,7 @@ public class NotificationController {
     //테스트용(댓글알림) - 실제 호출은 ReplyService의 createReply 메소드에서 진행
     @PostMapping("/commentNotify/{postId}")
     public void notifyComment(@PathVariable Long postId){
-        log.info("클라이언트에게 댓글 알림");
+        //log.info("클라이언트에게 댓글 알림");
         notificationService.notifyComment(postId); //글 작성자에게 댓글 알림
 
     }
@@ -56,7 +56,7 @@ public class NotificationController {
     //테스트용(게시글 알림) - 실제 호출은 BoardService의 createPost 메소드애서 진행
     @PostMapping("/postNotify/{postId}")
     public void notifyPost(@PathVariable Long postId){
-        log.info("구독한 유저들에게 게시글 알림");
+        //log.info("구독한 유저들에게 게시글 알림");
         notificationService.notifyPost(postId);
     }
 
@@ -66,7 +66,7 @@ public class NotificationController {
     public ResponseEntity<?> markNotificationAsRead(Authentication authentication, @PathVariable Long notificationId){
         CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
         Long userId = customUserDetails.getId();
-        log.info("markNotificationAsRead userId={}, notificationId={}", userId, notificationId);
+        //log.info("markNotificationAsRead userId={}, notificationId={}", userId, notificationId);
         notificationService.markNotificationAsRead(userId, notificationId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -77,7 +77,7 @@ public class NotificationController {
     public ResponseEntity<?> deleteNotification(Authentication authentication, @PathVariable Long notificationId){
         CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
         Long userId = customUserDetails.getId();
-        log.info("deleteNotification userId={}, notificationId={}", userId, notificationId);
+        //log.info("deleteNotification userId={}, notificationId={}", userId, notificationId);
         notificationService.deleteNotification(userId, notificationId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -87,7 +87,7 @@ public class NotificationController {
     public ResponseEntity<?> deleteAllNotifications(Authentication authentication){
         CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();
         Long userId = customUserDetails.getId();
-        log.info("deleteAllNotifications call...userId = {}", userId);
+        //log.info("deleteAllNotifications call...userId = {}", userId);
         notificationService.deleteAllNotifications(userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }

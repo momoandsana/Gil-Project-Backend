@@ -31,13 +31,13 @@ public class SubscribeServiceImpl implements SubscribeService {
         //이미 구독하고 있는 유저는 아닌지 확인
         Optional<Subscribe> existingSubscribe = subscribeRepository.findByUserIdAndSubscribeUserId(user, subUser);
         if(existingSubscribe.isPresent()) {
-            log.info("이미 구독 관계가 존재합니다");
+            //log.info("이미 구독 관계가 존재합니다");
             return 0;
         } else if(userId.equals(subscribeUserId)) return 0;
 
         Subscribe subscribe = Subscribe.builder().userId(user).subscribeUserId(subUser).build();
         Subscribe dbSubscribe = subscribeRepository.save(subscribe);
-        log.info("dbSubscribe: " + dbSubscribe);
+        //log.info("dbSubscribe: " + dbSubscribe);
         return 1;
     }
 
@@ -50,7 +50,7 @@ public class SubscribeServiceImpl implements SubscribeService {
 
         Subscribe existingSubscribe = subscribeRepository.findByUserIdAndSubscribeUserId(user, subUser).orElse(null);
         if(existingSubscribe == null) {
-            log.info("구독 해지할 UserId가 없습니다.");
+            //log.info("구독 해지할 UserId가 없습니다.");
             return 0;
         }
         subscribeRepository.delete(existingSubscribe);
@@ -61,10 +61,10 @@ public class SubscribeServiceImpl implements SubscribeService {
     @Transactional
     @Override
     public List<Subscribe> findSubscribeByUserId(Long userId) {
-        log.info("userId = " + userId);
+        //log.info("userId = " + userId);
         User user = userRepository.findById(userId).orElse(null);
         List<Subscribe> subscriptions = subscribeRepository.findAllBySubscribeUserId(user);
-        log.info("subscriptions = " + subscriptions);
+        //log.info("subscriptions = " + subscriptions);
         return subscriptions;
     }
 
@@ -74,7 +74,7 @@ public class SubscribeServiceImpl implements SubscribeService {
     public List<Subscribe> findMySubscribeByUserId(Long userId) {
         User user = userRepository.findById(userId).orElse(null);
         List<Subscribe> mySubscribeList= subscribeRepository.findByUserId(user);
-        log.info("mySubscribeList = " + mySubscribeList);
+        //log.info("mySubscribeList = " + mySubscribeList);
         return mySubscribeList;
     }
 
