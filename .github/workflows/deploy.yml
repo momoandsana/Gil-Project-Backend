@@ -27,12 +27,11 @@ jobs:
       run: chmod +x ./gradlew
 
     # Gradle 빌드
-
     - name: Build JAR with Gradle
       run: |
         ./gradlew clean build -x test
 
-
+    # 도커 로그인
     - name: Login to Docker Hub
       env:
         DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
