@@ -11,7 +11,7 @@ public class CorsMvcConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
 
         registry.addMapping("/**") //모든 경로에 대해서
-                //.exposedHeaders("Set-Cookie")
+                .exposedHeaders("Set-Cookie")
 //                .allowedOrigins("http://localhost:3000")
                 .allowedOrigins(
                         "http://localhost:3000",
@@ -19,6 +19,7 @@ public class CorsMvcConfig implements WebMvcConfigurer {
                         "https://gilddara.vercel.app/",
                         "http://gilddara.vercel.app/",
                         "http://gilddara.vercel.app"
+//                        "https://gil-project.kro.kr"
                         )
 
 //                .allowedOriginPatterns("https://gil-project-fe.vercel.app:*")

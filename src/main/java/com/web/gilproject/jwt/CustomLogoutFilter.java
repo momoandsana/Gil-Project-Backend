@@ -1,5 +1,6 @@
 package com.web.gilproject.jwt;
 
+import com.nimbusds.jwt.JWT;
 import com.web.gilproject.repository.RefreshRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -10,6 +11,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.cookie.SetCookie;
 import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;
@@ -33,19 +35,19 @@ public class CustomLogoutFilter extends GenericFilterBean {
     }
 
     private void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
-        log.info("로그아웃 필터 시작");
+//        log.info("로그아웃 필터 시작");
         
         //경로, 메소드 검사
-        log.info("경로, 메소드 검사 시작");
+//        log.info("경로, 메소드 검사 시작");
         String requestUri = request.getRequestURI();
         if (!requestUri.matches("^\\/logout$")) {
-            log.info("로그아웃 필터 끝");
+//            log.info("로그아웃 필터 끝");
             filterChain.doFilter(request, response);
             return;
         }
         String requestMethod = request.getMethod();
         if (!requestMethod.equals("POST")) {
-            log.info("로그아웃 필터 끝");
+//            log.info("로그아웃 필터 끝");
             filterChain.doFilter(request, response);
             return;
         }
@@ -94,15 +96,24 @@ public class CustomLogoutFilter extends GenericFilterBean {
         }
 
         refreshRepository.deleteByRefreshToken(refresh);
-        log.info("refresh 토큰 DB에서 제거");
+//        log.info("refresh 토큰 DB에서 제거");
 
-        log.info("refresh 토큰 쿠키에서 제거");
+//        log.info("refresh 토큰 쿠키에서 제거");
         Cookie cookie = new Cookie("refresh", null);
         cookie.setMaxAge(0);
         cookie.setPath("/");
         response.addCookie(cookie);
-        
-        log.info("로그아웃 성공");
+
+//        Cookie logincheckerCookie = new Cookie("loginchecker", null);
+//        logincheckerCookie.setMaxAge(0);
+//        logincheckerCookie.setPath("/");
+//        response.addCookie(logincheckerCookie);
+
+//        JWTUtil.removeCookie("refresh");
+//        JWTUtil.removeCookie("loginchecker");
+
+
+//        log.info("로그아웃 성공");
         response.setStatus(HttpServletResponse.SC_OK);
     }
 }

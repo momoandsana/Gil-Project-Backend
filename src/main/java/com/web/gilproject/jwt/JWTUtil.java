@@ -4,8 +4,8 @@ import com.web.gilproject.domain.Refresh;
 import com.web.gilproject.dto.IntergrateUserDetails;
 import com.web.gilproject.repository.RefreshRepository;
 import io.jsonwebtoken.Jwts;
-import jakarta.servlet.http.Cookie;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -25,6 +25,7 @@ public class JWTUtil {
 
     /**
      * 토큰 내 이름 데이터 확인
+     *
      * @param token
      * @return
      */
@@ -35,6 +36,7 @@ public class JWTUtil {
 
     /**
      * 토큰 내 이메일 데이터 확인
+     *
      * @param token
      * @return
      */
@@ -45,6 +47,7 @@ public class JWTUtil {
 
     /**
      * 토큰 내 id 데이터 확인
+     *
      * @param token
      * @return
      */
@@ -66,6 +69,7 @@ public class JWTUtil {
 
     /**
      * 토큰이 만료됐는지
+     *
      * @param token
      * @return
      */
@@ -85,7 +89,7 @@ public class JWTUtil {
         return Jwts.builder()
                 .claim("category", category)
                 .claim("nickname", userDetails.getNickname())
-                .claim("id",userDetails.getId())
+                .claim("id", userDetails.getId())
                 .issuedAt(new Date(System.currentTimeMillis())) //생성일
                 .expiration(new Date(System.currentTimeMillis() + expiredMs)) //만료일
                 .signWith(secretKey) //시그니처 부분
@@ -94,27 +98,43 @@ public class JWTUtil {
 
     /**
      * 쿠키 생성
+     *
      * @param key
      * @param value
      * @return
      */
-    public static Cookie createCookie(String key, String value) {
-        Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(60 * 60 * 24 * 90); //90일
-//        cookie.setSecure(true); //https에서만 사용가능하도록 -> 배포하면 켜기
-        cookie.setHttpOnly(true); //자바스크립트가 가져가지못하도록 설정, XSS 공격방어
-        cookie.setPath("/");
-
-        return cookie;
+    public static ResponseCookie createCookie(String key, String value) {
+        return ResponseCookie.from(key, value)
+                .maxAge(60 * 60 * 24 * 90) // 90일
+                .secure(true)
+                .httpOnly(true)
+                .path("/")
+                .sameSite("None")
+                .build();
     }
 
     /**
+     * 쿠키 삭제
+     * @param key
+     * @return
+     */
+    public static ResponseCookie removeCookie(String key) {
+        return ResponseCookie.from(key)
+                .maxAge(0)
+                .secure(true)
+                .httpOnly(true)
+                .path("/")
+                .sameSite("None")
+                .build();
+    }
+    /**
      * refresh 토큰을 DB에 저장
+     *
      * @param userId
      * @param refresh
      * @param expiredMs
      */
-    public static void addRefreshEntity(RefreshRepository refreshRepository , Long userId, String refresh, Long expiredMs) {
+    public static void addRefreshEntity(RefreshRepository refreshRepository, Long userId, String refresh, Long expiredMs) {
 
         LocalDateTime expirationTime = LocalDateTime.now().plus(expiredMs, ChronoUnit.MILLIS);
 

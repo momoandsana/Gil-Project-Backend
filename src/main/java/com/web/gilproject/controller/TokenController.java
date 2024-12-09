@@ -31,11 +31,11 @@ public class TokenController {
      */
     @PostMapping("/verification")
     public ResponseEntity<String> handleVerifyRefresh(HttpServletRequest request, HttpServletResponse response, @CookieValue(value = "refresh", required = false) String refreshToken ) {
-        log.info("소셜로그인 refresh 토큰 검증 시작");
+//        log.info("소셜로그인 refresh 토큰 검증 시작");
 
         ResponseEntity<String> stringResponseEntity = reissueService.validateRefreshToken(refreshToken);
         if(stringResponseEntity !=null){
-            log.info("refresh 토큰 검증 실패");
+//            log.info("refresh 토큰 검증 실패");
             return stringResponseEntity;
         }
 
@@ -43,10 +43,10 @@ public class TokenController {
         String nickName = jwtUtil.getUserNickname(refreshToken);
         CustomUserDetails customUserDetails = new CustomUserDetails(User.builder().id(id).nickName(nickName).build());
 
-        log.info("accessToken 생성");
+//        log.info("accessToken 생성");
         String accessToken = jwtUtil.createJwt("access", customUserDetails, 1000 * 60 * 60L); //1시간
 
-        log.info("access 토큰이 헤더를 통해 발급되었습니다");
+//        log.info("access 토큰이 헤더를 통해 발급되었습니다");
         response.setHeader("oauth2access", "Bearer " + accessToken);
 
         return new ResponseEntity<>(HttpStatus.OK);
