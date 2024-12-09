@@ -31,7 +31,8 @@ public class ReplyService {
     @Transactional(readOnly = true)
     public List<ReplyDTO> getRepliesByPostId(Long postId,Long userId) {
         Post post=boardRepository.findById(postId).orElseThrow(()->new BoardException(BoardErrorCode.POST_NOT_FOUND));
-        List<Reply>replyEntities=replyRepository.findByPost(post);
+//        List<Reply>replyEntities=replyRepository.findByPost(post);
+        List<Reply>replyEntities=replyRepository.findByPostOrderByWriteDateDesc(post);
 
         return replyEntities.stream()
                 .map(reply->ReplyDTO.from(reply,userId))
