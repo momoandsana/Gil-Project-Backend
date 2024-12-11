@@ -65,7 +65,7 @@ public class ElasticsearchService {
     /**
      * 엘라스틱서치 복수필드 검색기능
      * */
-    public List<String> multiFieldSearch(String indexName, String searchText, List<String> fields) {
+    public List<String> multiFieldSearch(String indexName, String searchText, List<String> fields, int size) {
         try {
             SearchResponse<Map> response = elasticsearchClient.search(s -> s
                             .index(indexName)
@@ -75,7 +75,8 @@ public class ElasticsearchService {
                                             .fields(fields)     // 검색할 필드 목록
                                             .fuzziness("1") // 유사도 설정
                                     )
-                            ),
+                            )
+                            .size(size),
                     Map.class
             );
 

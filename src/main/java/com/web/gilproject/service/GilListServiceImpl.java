@@ -181,7 +181,8 @@ public class GilListServiceImpl implements GilListService {
         List<String> postIds = elasticsearchService.multiFieldSearch(
                 "post-index",
                 keyword,
-                List.of("title", "content", "startAddr", "nickName")
+                List.of("title", "content", "startAddr", "nickName"),
+                10000
         );
         if (postIds.isEmpty()) {
             return new PageImpl<>(Collections.emptyList(), pageable, 0);
