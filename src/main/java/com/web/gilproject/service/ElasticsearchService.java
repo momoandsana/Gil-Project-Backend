@@ -1,6 +1,8 @@
 package com.web.gilproject.service;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.query_dsl.Operator;
+import co.elastic.clients.elasticsearch._types.query_dsl.TextQueryType;
 import co.elastic.clients.elasticsearch.core.DeleteResponse;
 import co.elastic.clients.elasticsearch.core.IndexResponse;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
@@ -74,6 +76,9 @@ public class ElasticsearchService {
                                             .query(searchText)   // 검색어
                                             .fields(fields)     // 검색할 필드 목록
                                             .fuzziness("AUTO") // 유사도 설정
+                                            .type(TextQueryType.BestFields)  // 매칭 타입 설정
+                                            .minimumShouldMatch("75%")         // 최소 매칭 비율
+                                            .operator(Operator.Or)            // AND 연산자 사용
                                     )
                             )
                             .size(size),
