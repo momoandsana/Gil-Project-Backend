@@ -52,7 +52,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
 
 //        log.info("access토큰, refresh토큰 생성");
-        String accessToken = jwtUtil.createJwt("access", customUserDetails, 1000 * 60 * 60L); // 1시간
+        String accessToken = jwtUtil.createJwt("access", customUserDetails, 1000 * 60 * 60 * 24L); // 24시간
         String refreshToken = jwtUtil.createJwt("refresh", customUserDetails, 1000 * 60 * 60 * 24 * 90L); //90일
 
         Boolean isExist = refreshRepository.existsByRefreshToken(refreshToken);

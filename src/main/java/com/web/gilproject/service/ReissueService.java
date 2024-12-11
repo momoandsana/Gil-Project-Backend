@@ -54,7 +54,7 @@ public class ReissueService {
         CustomUserDetails customUserDetails = new CustomUserDetails(User.builder().id(id).nickName(nickName).build());
 
 //        log.info("access토큰, 새로운 refresh토큰 생성");
-        String accessToken = jwtUtil.createJwt("access", customUserDetails, 1000 * 60 * 60L); //1시간
+        String accessToken = jwtUtil.createJwt("access", customUserDetails, 1000 * 60 * 60 * 24L); //24시간
         String newRefreshToken = jwtUtil.createJwt("refresh", customUserDetails, 1000 * 60 * 60 * 24 * 90L); //90일
 
 //        log.info("기존 refresh DB에서 삭제, 새로운 refresh DB에 저장");

@@ -44,7 +44,7 @@ public class TokenController {
         CustomUserDetails customUserDetails = new CustomUserDetails(User.builder().id(id).nickName(nickName).build());
 
 //        log.info("accessToken 생성");
-        String accessToken = jwtUtil.createJwt("access", customUserDetails, 1000 * 60 * 60L); //1시간
+        String accessToken = jwtUtil.createJwt("access", customUserDetails, 1000 * 60 * 60 * 24L); //24시간
 
 //        log.info("access 토큰이 헤더를 통해 발급되었습니다");
         response.setHeader("oauth2access", "Bearer " + accessToken);
