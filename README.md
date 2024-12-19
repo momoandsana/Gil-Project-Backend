@@ -74,12 +74,13 @@ Kosta 286기 Final Project
 
 ## 📚 Reference Sites  
 - [Kream - 온라인 신발 경매 사이트](https://kream.co.kr/?airbridge_referrer=airbridge%3Dtrue%26event_uuid%3D0106418e-3582-4c15-928a-db6ebf741b10%26client_id%3Dbd892dce-96f7-456d-ba38-dc2939f41974%26referrer_timestamp%3D1734504220330%26channel%3Dnaver.searchad%26campaign%3DBS%26ad_group%3DPC_241216_2%26ad_creative%3DPC_241216_2_homelink%26term%3DKREAM%26sub_id%3D3&utm_source=naver.searchad&utm_campaign=BS&utm_medium=3&utm_term=KREAM&channel=naver.searchad&campaign=BS&ad_group=PC_241216_2&ad_creative=PC_241216_2_homelink&term=KREAM&sub_id=3&n_media=27758&n_query=KREAM&n_rank=1&n_ad_group=grp-a001-04-000000041246956&n_ad=nad-a001-04-000000339143353&n_keyword_id=nkw-a001-04-000006110978940&n_keyword=KREAM&n_campaign_type=4&n_contract=tct-a001-04-000000000993819&n_ad_group_type=5&NaPm=ct%3Dm4tj11ls%7Cci%3D0A00000qpQ9BK-33bLok%7Ctr%3Dbrnd%7Chk%3Df393f781f10e1ba57d1be2c11f2362e22c88a6cd%7Cnacn%3DbjXwBUwoDRnQ)
-- ![펫피- 포인트 적립형 강아지 산책 앱](https://www.petp.kr/)
-- ![당근마켓-중고거래부터 동네 정보까지, 당신 근처의 마켓](https://www.daangn.com/kr)
+- [펫피- 포인트 적립형 강아지 산책 앱](https://www.petp.kr/)
+- [당근마켓-중고거래부터 동네 정보까지, 당신 근처의 마켓](https://www.daangn.com/kr)
 ---
 
-### Final Outcome  
-![cream-입찰](https://github.com/user-attachments/assets/023ce291-60da-4df7-8cb2-b8c30d053b93)
+### Final Outcome 
+![사용프로세스1(산책길 기록 및 공유)](https://github.com/user-attachments/assets/57d66619-58f8-40bd-bf44-e8fb9a502e50)
+![사용프로세스2(산책길 따라걷기)](https://github.com/user-attachments/assets/e7c2afe0-1149-4861-bba2-c03a5ab54777)
 
 
 ---
