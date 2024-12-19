@@ -1,4 +1,4 @@
-# CREAM Project
+# 길따라 Project
 
 Kosta 286기 Final Project  
 
