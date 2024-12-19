@@ -91,7 +91,7 @@ Kosta 286기 Final Project
 
 [레이아웃 정의서](https://www.figma.com/design/VkhgfxGTFE0p0pj8XvpbNO/%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83-%EC%A0%95%EC%9D%98%EC%84%9C?node-id=0-1&p=f&t=Os4JbF5imC2lhyCb-0)
 
-### SRS,Software Request Specification  
+### SRS (Software Request Specification)  
 
 [[스택언더플로우] Final Project 요구사항명세서.pdf](https://github.com/user-attachments/files/18191679/Final.Project.pdf)
 
