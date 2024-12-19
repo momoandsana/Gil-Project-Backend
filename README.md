@@ -78,6 +78,7 @@ Kosta 286기 Final Project
 ![사용프로세스1(산책길 기록 및 공유)](https://github.com/user-attachments/assets/807f9d9a-9e03-4d25-a0da-a55d44b86cb0)
 ![사용프로세스2(산책길 따라걷기)](https://github.com/user-attachments/assets/36182fe4-bf39-453f-9068-81f9d6d8d859)
 
+### Demonstration video
 - [시연영상](https://www.youtube.com/watch?v=FEFOfonJVhA)
 
 ---
