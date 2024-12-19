@@ -67,7 +67,8 @@ Kosta 286기 Final Project
 ---
 
 ## 🌐 AWS Infrastructure  
-![AWS](https://github.com/user-attachments/assets/32dc947a-6639-4669-9aeb-3133fcbef338)
+![프로젝트 구조](https://github.com/user-attachments/assets/facbe03c-3f3b-40fd-8e1d-415968f5789f)
+
 
 ---
 
