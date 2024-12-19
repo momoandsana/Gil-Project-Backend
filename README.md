@@ -85,7 +85,7 @@ Kosta 286기 Final Project
 ## 📊 Project Artifacts
 
 ### ERD (Entity-Relationship Diagram)  
-![ERD](https://github.com/user-attachments/assets/87bd1928-d508-48ff-974d-2602428efa57)
+![데이터베이스 모델링](https://github.com/user-attachments/assets/3a534422-124d-4910-8f4f-fc42a79ad35b)
 
 ### Layout Definition  
 
