@@ -112,7 +112,7 @@ We would like to provide a service that allows users to conveniently find and re
 ![데이터베이스 모델링(Database Modelling)](https://github.com/user-attachments/assets/d783453f-a41d-4609-b3c2-a7656203d03f)
 
 ### Layout Definition  
-
+![레이아웃정의서](https://github.com/user-attachments/assets/4e1f7596-e736-4ede-9051-ece1ac7f2eb2)
 [레이아웃 정의서(Layout Definition)](https://www.figma.com/design/VkhgfxGTFE0p0pj8XvpbNO/%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83-%EC%A0%95%EC%9D%98%EC%84%9C?node-id=0-1&p=f&t=Os4JbF5imC2lhyCb-0)
 
 ### SRS (Software Request Specification)  
