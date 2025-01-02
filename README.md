@@ -58,7 +58,7 @@ We would like to provide a service that allows users to conveniently find and re
 ### Project Management:
 - ![Jira](https://img.shields.io/badge/jira-%230052CC?style=for-the-badge&logo=jira)
 ![Notion](https://img.shields.io/badge/notion-%23000000?style=for-the-badge&logo=notion)
-![Static Badge](https://img.shields.io/badge/slack-%234A154B?style=for-the-badge&logo=slack)
+![Slack](https://img.shields.io/badge/slack-%234A154B?style=for-the-badge&logo=slack)
 
 ### OS:
 - ![Windows 11](https://img.shields.io/badge/window11-blue?style=for-the-badge)
@@ -66,6 +66,7 @@ We would like to provide a service that allows users to conveniently find and re
 ### Tools:
 - ![IntelliJ IDEA](https://img.shields.io/badge/intellij-%23000000?style=for-the-badge&logo=intellijidea)
 ![VSCode](https://img.shields.io/badge/VSCode-%232F80ED?style=for-the-badge)
+![TypeScript](https://img.shields.io/badge/TypeScript-%233178C6?style=for-the-badge&logo=typescript&logoColor=white)
 
 
 ### Architect:
@@ -74,6 +75,8 @@ We would like to provide a service that allows users to conveniently find and re
 
 ### Infrastructure:
 - ![AWS](https://img.shields.io/badge/AWS-%23232F3E?style=for-the-badge&logo=amazonwebservices&logoColor=white)
+  ![DOCKER](https://img.shields.io/badge/Docker-%232496ED?style=for-the-badge&logo=docker&logoColor=white)
+  ![GitHub Action](https://img.shields.io/badge/GitHub%20Action-%232088FF?style=for-the-badge&logo=githubactions&logoColor=white)
 
 ### Testing:
 - ![Postman](https://img.shields.io/badge/postman-%23FF6C37?style=for-the-badge&logo=postman&logoColor=white)
