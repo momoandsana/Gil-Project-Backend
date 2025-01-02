@@ -68,8 +68,6 @@ We would like to provide a service that allows users to conveniently find and re
 ![TypeScript](https://img.shields.io/badge/TypeScript-%233178C6?style=for-the-badge&logo=typescript&logoColor=white)
 ![Axios](https://img.shields.io/badge/Axios-%235A29E4?style=for-the-badge&logo=axios&logoColor=white)
 ![React Query](https://img.shields.io/badge/React%20Query-%23FF4154?style=for-the-badge&logo=reactquery&logoColor=white)
-
-
 ### Architect:
 - ![ERDCLOUD](https://img.shields.io/badge/ERDCLOUD-black?style=for-the-badge&logo=icloud&logoColor=white)
 ![Figma](https://img.shields.io/badge/figma-%23F24E1E?style=for-the-badge&logo=figma&logoColor=white)
