@@ -97,10 +97,9 @@ We would like to provide a service that allows users to conveniently find and re
 ---
 
 ### Final Outcome 
-![사용프로세스1(산책길 기록 및 공유)](https://github.com/user-attachments/assets/9140d6e6-fbe7-4923-8533-1fda180f5f60)  
 ![사용프로세스1(산책길 기록 및 공유)222](https://github.com/user-attachments/assets/e7658e43-f2c5-4408-ae4c-50ef6bcf8450)
+![사용프로세스2(산책길 따라걷기)222](https://github.com/user-attachments/assets/d6a01f08-b9bb-44e2-a0d5-2fb6b3943707)
 
-![사용프로세스2(산책길 따라걷기)](https://github.com/user-attachments/assets/707831f7-3f04-4d27-bcf7-901f0bf9060e)
 
 ### Demonstration video
 - [시연영상(Demonstration Video for Korean)](https://www.youtube.com/watch?v=FEFOfonJVhA)
