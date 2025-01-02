@@ -34,9 +34,8 @@ We would like to provide a service that allows users to conveniently find and re
 ## 💻 개발 환경(Development environment)
 
 ### Front-end:
-- ![React](https://img.shields.io/badge/react-black?style=for-the-badge&logo=react&logoColor=%2361DAFB) ![HTML5](https://img.shields.io/badge/html5-%23E34F26?style=for-the-badge&logo=html5&logoColor=white)
-![CSS3](https://img.shields.io/badge/css3-%231572B6?style=for-the-badge&logo=css3) ![JavaScript](https://img.shields.io/badge/javascript-black?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
-
+- ![React](https://img.shields.io/badge/react-black?style=for-the-badge&logo=react&logoColor=%2361DAFB)
+![Next.js](https://img.shields.io/badge/Next.js-%23000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
 
 ### Back-end:
 - ![Spring Boot](https://img.shields.io/badge/Springboot-%236DB33F?style=for-the-badge&logo=springboot&logoColor=white)
@@ -67,6 +66,8 @@ We would like to provide a service that allows users to conveniently find and re
 - ![IntelliJ IDEA](https://img.shields.io/badge/intellij-%23000000?style=for-the-badge&logo=intellijidea)
 ![VSCode](https://img.shields.io/badge/VSCode-%232F80ED?style=for-the-badge)
 ![TypeScript](https://img.shields.io/badge/TypeScript-%233178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![Axios](https://img.shields.io/badge/Axios-%235A29E4?style=for-the-badge&logo=axios&logoColor=white)
+![React Query](https://img.shields.io/badge/React%20Query-%23FF4154?style=for-the-badge&logo=reactquery&logoColor=white)
 
 
 ### Architect:
