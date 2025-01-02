@@ -72,10 +72,8 @@ We would like to provide a service that allows users to conveniently find and re
 ### Infrastructure:
 - ![AWS](https://img.shields.io/badge/AWS-%23232F3E?style=for-the-badge&logo=amazonwebservices&logoColor=white)
 
-- 
 ### Testing:
 - ![Postman](https://img.shields.io/badge/postman-%23FF6C37?style=for-the-badge&logo=postman&logoColor=white)
-![JUnit5](https://img.shields.io/badge/junit5-%2325A162?style=for-the-badge&logo=junit5&logoColor=white)
 
 ---
 
