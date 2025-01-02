@@ -46,6 +46,11 @@ We would like to provide a service that allows users to conveniently find and re
 ![AWS S3](https://img.shields.io/badge/s3-%23569A31?style=for-the-badge&logo=amazons3&logoColor=white)
 ![AWS RDS](https://img.shields.io/badge/rds-%23527FFF?style=for-the-badge&logo=amazonrds&logoColor=white)
 
+![AWS S3](https://img.shields.io/badge/s3-%23569A31?style=for-the-badge&logo=amazons3&logoColor=white)
+![AWS RDS](https://img.shields.io/badge/rds-%23527FFF?style=for-the-badge&logo=amazonrds&logoColor=white)
+![Redis](https://img.shields.io/badge/redis-%23d82a20?style=for-the-badge)
+
+
 ### Version Control:
 - ![Git](https://img.shields.io/badge/git-%23F05032?style=for-the-badge&logo=git&logoColor=white)
 ![GitHub](https://img.shields.io/badge/github-%23181717?style=for-the-badge&logo=github)
