@@ -62,7 +62,7 @@ We would like to provide a service that allows users to conveniently find and re
 
 ### Tools:
 - ![IntelliJ IDEA](https://img.shields.io/badge/intellij-%23000000?style=for-the-badge&logo=intellijidea)
-![Static Badge](https://img.shields.io/badge/eclipseide-%232C2255?style=for-the-badge&logo=eclipseide)
+![VSCode](https://img.shields.io/badge/VSCode-%232F80ED?style=for-the-badge)
 
 
 ### Architect:
