@@ -116,7 +116,7 @@ We would like to provide a service that allows users to conveniently find and re
 [레이아웃 정의서(Layout Definition)](https://www.figma.com/design/VkhgfxGTFE0p0pj8XvpbNO/%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83-%EC%A0%95%EC%9D%98%EC%84%9C?node-id=0-1&p=f&t=Os4JbF5imC2lhyCb-0)
 
 ### SRS (Software Request Specification)  
-
+![요구사항명세서](https://github.com/user-attachments/assets/e3495e8a-8a20-4134-bee5-43e70722a9c5)
 [[스택언더플로우] Final Project 요구사항명세서.pdf (SRS(Software Request Specification))](https://github.com/user-attachments/files/18191679/Final.Project.pdf)
 
 ---
