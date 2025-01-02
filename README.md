@@ -101,7 +101,7 @@ We would like to provide a service that allows users to conveniently find and re
 ![사용프로세스2(산책길 따라걷기)222](https://github.com/user-attachments/assets/d6a01f08-b9bb-44e2-a0d5-2fb6b3943707)
 
 
-## Demonstration Videos
+## Demonstration Videos(Click Image!)
 
 ### Korean Version
 <a href="https://www.youtube.com/watch?v=FEFOfonJVhA" target="_blank">
