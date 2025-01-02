@@ -9,22 +9,24 @@ Kosta 286기 Final Project
 - **Project Name:** 길따라 (산책길 공유 플랫폼) (Gilddara (Walkway Sharing Platform)) 
 - **Team Members:** 정형우, 김태휘, 김호석, 염진, 최재구, 한은미
 - **Project Description:**
-  
-우리 주변의 산책길을 재발견함으로써, 일상에서도 짧은 시간 안에 힐링을 느낄 수 있는 기회를 제공하고자 합니다.  
-사용자가 편리하게 산책길을 찾아보고 기록할 수 있으며, 다른 유저의 산책길을 따라걷는 활동을 통해 산책 경험을 공유할 수 있는 서비스를 제공하고자 합니다.
+
+  우리 주변의 산책길을 재발견함으로써, 일상에서도 짧은 시간 안에 힐링을 느낄 수 있는 기회를 제공하고자 합니다.  
+사용자가 편리하게 산책길을 찾아보고 기록할 수 있으며, 다른 유저의 산책길을 따라걷는 활동을 통해 산책 경험을 공유할 수 있는 서비스를 제공하고자 합니다.  
 (By rediscovering the walkways around us, we would like to provide an opportunity to feel healed in a short time in everyday life.  
 We would like to provide a service that allows users to conveniently find and record walking paths and share their walking experiences through activities along other users' walking paths.)
 
 - **Project Goal🚩:**
 
-  **나의 산책길 경로 기록**(Record my walkway)
-  위치 기반 지도를 활용한 간편한 경로 탐색 및 나의 산책길 경로 기록, 관리
+  **나의 산책길 경로 기록**(Record my walkway)  
+  위치 기반 지도를 활용한 간편한 경로 탐색 및 나의 산책길 경로 기록, 관리  
   (Use location-based maps for easy route navigation and record and manage my walking path)
-  **다른 이용자의 산책길 따라걷기**(Walking along the walkway of another user)
-  내가 몰랐던 산책로를 발견하고 산책 후 리워드 제공을 통해 동기부여 제공
-  (Discovering walkways I didn't know about and providing rewards to motivate me after a walk)  
-  **커뮤니티 활성화**(Community vitalization)
-  좋아요, 댓글, 구독 등 다양한 기능을 제공하여 사용자 간의 소통의 장 마련
+  
+  **다른 이용자의 산책길 따라걷기**(Walking along the walkway of another user)  
+  내가 몰랐던 산책로를 발견하고 산책 후 리워드 제공을 통해 동기부여 제공  
+  (Discovering walkways I didn't know about and providing rewards to motivate me after a walk)    
+
+  **커뮤니티 활성화**(Community vitalization)  
+  좋아요, 댓글, 구독 등 다양한 기능을 제공하여 사용자 간의 소통의 장 마련  
   (Provides a variety of features such as likes, comments, and subscriptions to create a place for user-to-user communication)
   
 ---
