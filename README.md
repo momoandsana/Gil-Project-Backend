@@ -39,7 +39,8 @@ We would like to provide a service that allows users to conveniently find and re
 
 
 ### Back-end:
-- ![Spring Boot](https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&color=white) ![Java](https://img.shields.io/badge/java-%23e14a3a?style=for-the-badge)
+- ![Spring Boot](https://img.shields.io/badge/Springboot-%236DB33F?style=for-the-badge&logo=springboot&logoColor=white)
+![Java](https://img.shields.io/badge/java-%23e14a3a?style=for-the-badge)
 
 ### Database:
 - ![MySQL](https://img.shields.io/badge/mysql-%234479A1?style=for-the-badge&logo=mysql&logoColor=white)
