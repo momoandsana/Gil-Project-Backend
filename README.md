@@ -10,8 +10,8 @@ Kosta 286기 Final Project
 - **Team Members:** 정형우, 김태휘, 김호석, 염진, 최재구, 한은미
 - **Project Description:**
 
-  우리 주변의 산책길을 재발견함으로써, 일상에서도 짧은 시간 안에 힐링을 느낄 수 있는 기회를 제공하고자 합니다.  
-사용자가 편리하게 산책길을 찾아보고 기록할 수 있으며, 다른 유저의 산책길을 따라걷는 활동을 통해 산책 경험을 공유할 수 있는 서비스를 제공하고자 합니다.  
+  우리 주변의 산책길을 재발견함으로써, 일상에서도 짧은 시간 안에 힐링을 느낄 수 있는 기회를 제공합니다.  
+사용자가 편리하게 산책길을 찾아보고 기록할 수 있으며, 다른 유저의 산책길을 따라걷는 활동을 통해 산책 경험을 공유할 수 있는 서비스를 제공합니다.  
 (By rediscovering the walkways around us, we would like to provide an opportunity to feel healed in a short time in everyday life.  
 We would like to provide a service that allows users to conveniently find and record walking paths and share their walking experiences through activities along other users' walking paths.)
 
